@@ -162,10 +162,13 @@ void loop()
     rgbController(false, true, false, false);
     RotateWheels(false, false, false, false, false, true);
      // Serial.println("SAGA_DON");
-    }else if(ANALOG_GIT_BUTTON == geriAnalogValue){
+    }else if(ANALOG_GIT_BUTTON == geriAnalogValue)
+    {
 
 
-    }else if(ANALOG_GIT_BUTTON == ileriAnalogValue){
+    }
+    else if(ANALOG_GIT_BUTTON == ileriAnalogValue)
+    {
 
 
     }
@@ -178,18 +181,15 @@ void loop()
 //10 munite timer stanby mode 
 void timer_standby()
 {
-  if (TIME_NOW - oldTime > 10000)
+  if (TIME_NOW - oldTime > 600000)
   {
 
   }
 }
 
 
-
-
 void RotateWheels(bool ileri, bool geri, bool sag, bool sol, bool soldon, bool sagdon)
 {
-  
   if (ileri == true)
   {
     digitalWrite(ADIR, HIGH);
@@ -297,7 +297,7 @@ float vBattRead()
     return Vbatt;
 }
 
-void rgbController(bool WakeUpLight, bool straightLight, bool lateralLight,bool lidarLight)
+void rgbController(bool WakeUpLight, bool straightLight, bool lateralLight,bool lidarLight,bool stationLight)
 {
 if(WakeUpLight == true)
 {
@@ -315,12 +315,17 @@ else if(lidarLight == true)
 {
 lidarLightFade();
 }
+else if(stationLight == true)
+{
+stationLightFade();
+}
 else
 {
-
+  analogWrite(RED_PIN, 0);
+  analogWrite(GREEN_PIN, 0);
+  analogWrite(BLUE_PIN, 0);
 }
 }
-
 
 void WakeUpLightFade(){
     newTime = millis(); 
@@ -344,6 +349,7 @@ void straightLightFade(){
 if(newTime-oldTime > 1000) {
 for(int i = 0; i < 102; i++){
 analogWrite(BLUE_PIN, i);
+analogWrite(GREEN_PIN, 0);
 if(redCount != 76){
 analogWrite(RED_PIN, redCount);
 redCount++;
@@ -351,6 +357,7 @@ redCount++;
     }
 for(int i = 102; i < 0; i--){
 analogWrite(BLUE_PIN, i);
+analogWrite(GREEN_PIN, 0);
 if(redCount != 0){
 analogWrite(RED_PIN, redCount);
 redCount--;
@@ -365,6 +372,7 @@ void lateralLightFade(){
 if(newTime-oldTime > 1000) {
 for(int i = 0; i < 77; i++){
 analogWrite(BLUE_PIN, i);
+analogWrite(RED_PIN, 0);
 if(greenCount != 26){
 analogWrite(GREEN_PIN, greenCount);
 greenCount++;
@@ -372,6 +380,7 @@ greenCount++;
     }
 for(int i = 77; i < 0; i--){
 analogWrite(BLUE_PIN, i);
+analogWrite(RED_PIN, 0);
 if(greenCount != 0){
 analogWrite(GREEN_PIN, greenCount);
 greenCount--;
@@ -385,11 +394,31 @@ void lidarLightFade(){
 if(newTime-oldTime > 1000) {
 for(int i = 0; i < 127; i++){
 analogWrite(RED_PIN, i);
+analogWrite(GREEN_PIN, 0);
+analogWrite(BLUE_PIN, 0);
 }
     }
 for(int i = 127; i < 0; i--){
 analogWrite(RED_PIN, i);
+analogWrite(GREEN_PIN, 0);
+analogWrite(BLUE_PIN, 0);
+    }
+    oldTime = newTime;
+}
 
+void stationLightFade(){
+    newTime = millis(); 
+if(newTime-oldTime > 1000) {
+for(int i = 0; i < 127; i++){
+analogWrite(GREEN_PIN, i);
+analogWrite(RED_PIN, 0);
+analogWrite(BLUE_PIN, 0);
+}
+    }
+for(int i = 127; i < 0; i--){
+analogWrite(RED_PIN, i);
+analogWrite(RED_PIN, 0);
+analogWrite(BLUE_PIN, 0);
     }
     oldTime = newTime;
 }

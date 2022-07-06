@@ -179,7 +179,7 @@ void loop()
 {
   /*
   RotateWheels(bool ileri, bool geri, bool sag, bool sol, bool soldon, bool sagdon)
-  rgbController(bool WakeUpLight, bool straightLight, bool lateralLight,bool lidarLight,bool stationLight)
+  rgbController(bool white, bool red, bool green, bool blue, bool purple,bool cyan,bool yellow,bool stop){
   LineFlowingEnable(bool front,bool back,bool right,bool left)
   PwmStart(int pwm_value)
   PwmStop(int pwm_value)
@@ -241,14 +241,14 @@ void loop()
   if (SAGA_TRY == LOW )
   {
     RotateWheels(false, false, false, true, false, false);
-    rgbController(true, false, false, false,false);
+    rgbController(true, false, false, false,false,false,false,false);
     PwmStart(PWM_START);
     // Serial.println("SAGA");
   }
   else if (GERI_TRY == LOW )
   {
     RotateWheels(true, false, false, false, false, false);
-    rgbController(true, false, false, false,false);
+    rgbController(false, true, false, false,false,false,false,false);
     PwmStart(PWM_START);
 
    // Serial.println("GERI");
@@ -256,7 +256,7 @@ void loop()
   else if (ILERI_TRY == LOW )
   {
     RotateWheels(false, true, false, false, false, false);
-    rgbController(true, false, false, false,false);
+    rgbController(false, false, true, false,false,false,false,false);
     PwmStart(PWM_START);
 
    //Serial.println("ILERI");
@@ -264,7 +264,7 @@ void loop()
   else if (SOLA_TRY == LOW)
   {
     RotateWheels(false, false, true, false, false, false);
-    rgbController(false, true, false, false,false);
+    rgbController(false, false, true, false,false,false,false,false);
     PwmStart(PWM_START);
 
    // Serial.println("SOLA");
@@ -273,14 +273,14 @@ void loop()
   {
    
    RotateWheels(false, false, false, false, true, false);
-   rgbController(false, true, false, false,false);
+   rgbController(false, false, false, true,false,false,false,false);
    PwmStart(PWM_START);
 
     // Serial.println("SOLA_DON");
   }
   else if (SAGA_DON == LOW)
   {
-   rgbController(false, true, false, false,false);
+   rgbController(false, true, false, false,false,false,false,false);
    RotateWheels(false, false, false, false, false, true);
    PwmStart(PWM_START);
 
@@ -288,8 +288,8 @@ void loop()
    }
    else
    {
-    RotateWheels(false, false, false, false, false, false);
-    rgbController(false, true, false, false,false);
+   RotateWheels(false, false, false, false, false, false);
+   rgbController(true, false, false, false,false,false,false,false);
     PwmStop(PWM_STOP);
    }
 
@@ -488,131 +488,64 @@ float vBattRead()
     return Vbatt;
 }
 
-void rgbController(bool WakeUpLight, bool straightLight, bool lateralLight,bool lidarLight,bool stationLight)
-{
-if(WakeUpLight == true)
-{
-WakeUpLightFade();
-}
-else if(straightLight == true)
-{
-straightLightFade();
-}
-else if(lateralLight == true)
-{
-lateralLightFade();
-}
-else if(lidarLight == true)
-{
-lidarLightFade();
-}
-else if(stationLight == true)
-{
-stationLightFade();
-}
-else
-{
-  analogWrite(RED_PIN, 0);
-  analogWrite(GREEN_PIN, 0);
-  analogWrite(BLUE_PIN, 0);
-}
-}
 
-void WakeUpLightFade(){
+
+void rgbController(bool white, bool red, bool green, bool blue, bool purple,bool cyan,bool yellow,bool stop){
     newTime = millis(); 
-if(newTime-oldTime > 1000) {
-for(int i = 0; i < 127; i++){
-analogWrite(RED_PIN, i);
-analogWrite(GREEN_PIN, i);
-analogWrite(BLUE_PIN, i);
-    }
-    for(int i = 127; i < 0; i--){
-analogWrite(RED_PIN, i);
-analogWrite(GREEN_PIN, i);
-analogWrite(BLUE_PIN, i);
-    }
+    static int i=0;
+    static int artirFlag = 0;
+if(newTime-oldTime > 10) {
+
+  if (i==0) {
+    artirFlag=1;
+  }
+
+  if (i==38) {
+    artirFlag=0;
+  }
+
+  if (artirFlag==1) {
+    i++;
+  }
+  else {
+    i--;
+  }
+  if(white){
+    analogWrite(RED_PIN, i);
+    analogWrite(GREEN_PIN, i);
+    analogWrite(BLUE_PIN, i);
+  }else if(red){
+    analogWrite(RED_PIN, i);
+    analogWrite(GREEN_PIN, 0);
+    analogWrite(BLUE_PIN, 0);
+  }else if(green){
+    analogWrite(RED_PIN, 0);
+    analogWrite(GREEN_PIN, i);
+    analogWrite(BLUE_PIN, 0);
+  }else if(blue){
+    analogWrite(RED_PIN, 0);
+    analogWrite(GREEN_PIN, 0);
+    analogWrite(BLUE_PIN, i);
+  }else if(purple){
+    analogWrite(RED_PIN, i);
+    analogWrite(GREEN_PIN, 0);
+    analogWrite(BLUE_PIN, i);
+  }else if(cyan){
+    analogWrite(RED_PIN, 0);
+    analogWrite(GREEN_PIN, i);
+    analogWrite(BLUE_PIN, i);
+  }else if(yellow){
+    analogWrite(RED_PIN, i);
+    analogWrite(GREEN_PIN, i);
+    analogWrite(BLUE_PIN, 0);
+  }else{
+    analogWrite(RED_PIN, 0);
+    analogWrite(GREEN_PIN, 0);
+    analogWrite(BLUE_PIN, 0);
+  }
     oldTime = newTime;
 }}
 
-void straightLightFade(){
-    newTime = millis(); 
-    int redCount = 0;
-if(newTime-oldTime > 1000) {
-for(int i = 0; i < 102; i++){
-analogWrite(BLUE_PIN, i);
-analogWrite(GREEN_PIN, 0);
-if(redCount != 76){
-analogWrite(RED_PIN, redCount);
-redCount++;
-}
-    }
-for(int i = 102; i < 0; i--){
-analogWrite(BLUE_PIN, i);
-analogWrite(GREEN_PIN, 0);
-if(redCount != 0){
-analogWrite(RED_PIN, redCount);
-redCount--;
-}
-    }
-    oldTime = newTime;
-}}
-
-void lateralLightFade(){
-    newTime = millis(); 
-    int greenCount = 0;
-if(newTime-oldTime > 1000) {
-for(int i = 0; i < 77; i++){
-analogWrite(BLUE_PIN, i);
-analogWrite(RED_PIN, 0);
-if(greenCount != 26){
-analogWrite(GREEN_PIN, greenCount);
-greenCount++;
-}
-    }
-for(int i = 77; i < 0; i--){
-analogWrite(BLUE_PIN, i);
-analogWrite(RED_PIN, 0);
-if(greenCount != 0){
-analogWrite(GREEN_PIN, greenCount);
-greenCount--;
-}
-    }
-    oldTime = newTime;
-}}
-
-void lidarLightFade(){
-    newTime = millis(); 
-if(newTime-oldTime > 1000) {
-for(int i = 0; i < 127; i++){
-analogWrite(RED_PIN, i);
-analogWrite(GREEN_PIN, 0);
-analogWrite(BLUE_PIN, 0);
-}
-    }
-for(int i = 127; i < 0; i--){
-analogWrite(RED_PIN, i);
-analogWrite(GREEN_PIN, 0);
-analogWrite(BLUE_PIN, 0);
-    }
-    oldTime = newTime;
-}
-
-void stationLightFade(){
-    newTime = millis(); 
-if(newTime-oldTime > 1000) {
-for(int i = 0; i < 127; i++){
-analogWrite(GREEN_PIN, i);
-analogWrite(RED_PIN, 0);
-analogWrite(BLUE_PIN, 0);
-}
-    }
-for(int i = 127; i < 0; i--){
-analogWrite(RED_PIN, i);
-analogWrite(RED_PIN, 0);
-analogWrite(BLUE_PIN, 0);
-    }
-    oldTime = newTime;
-}
 
 void buzzerFlipFlop(){
     newTime = millis();

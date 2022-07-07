@@ -234,49 +234,49 @@ void loop()
     if(lineSensorValue() == B100000000000000)
     {
 RotateWheels(true,false,false,false,false,false);
-PwmStraigtRight();
+PwmStraigtRight(PWM_START);
     }
     else if(lineSensorValue() == B110000000000000)
     {
 RotateWheels(true,false,false,false,false,false);
-PwmStraigtRight();
+PwmStraigtRight(PWM_START);
     }
     else if(lineSensorValue() == B111000000000000)
     {
 RotateWheels(true,false,false,false,false,false);
-PwmStraigtRight();
+PwmStraigtRight(PWM_START);
     }
     else if(lineSensorValue() == B000111000000000)
 
     {
 RotateWheels(true,false,false,false,false,false);
-PwmStraigtRight();
+PwmStraigtRight(PWM_START);
     }
     else if(lineSensorValue() == B000000111000000)
     {
 RotateWheels(true,false,false,false,false,false);
-PwmStart();
+PwmStart(PWM_START);
     }
     else if(lineSensorValue() == B000000000111000)
 
     {
 RotateWheels(true,false,false,false,false,false);
-PwmStraigtLeft();
+PwmStraigtLeft(PWM_START);
     }
     else if(lineSensorValue() == B000000000000111)
     {
 RotateWheels(true,false,false,false,false,false);
-PwmStraigtLeft();
+PwmStraigtLeft(PWM_START);
     }
     else if(lineSensorValue() == B000000000000011)
     {
 RotateWheels(true,false,false,false,false,false);
-PwmStraigtLeft();
+PwmStraigtLeft(PWM_START);
     }
     else if(lineSensorValue() == B00000000000001)
     {
 RotateWheels(true,false,false,false,false,false);
-PwmStraigtLeft();
+PwmStraigtLeft(PWM_START);
     }}
     }
     //ONCEKİ İSTASYON 
@@ -286,47 +286,47 @@ PwmStraigtLeft();
    if(lineSensorValue() == B100000000000000)
     {
 RotateWheels(false,true,false,false,false,false);
-PwmStraigtLeft();
+PwmStraigtLeft(PWM_START);
     }
     else if(lineSensorValue() == B110000000000000)
     {
 RotateWheels(false,true,false,false,false,false);
-PwmStraigtLeft();
+PwmStraigtLeft(PWM_START);
     }
     else if(lineSensorValue() == B111000000000000)
     {
 RotateWheels(false,true,false,false,false,false);
-PwmStraigtLeft();
+PwmStraigtLeft(PWM_START);
     }
     else if(lineSensorValue() == B000111000000000)
     {
 RotateWheels(false,true,false,false,false,false);
-PwmStraigtLeft();
+PwmStraigtLeft(PWM_START);
     }
     else if(lineSensorValue() == B000000111000000)
     {
 RotateWheels(false,true,false,false,false,false);
-PwmStart();
+PwmStart(PWM_START);
     }
     else if(lineSensorValue() == B000000000111000)
     {
 RotateWheels(false,true,false,false,false,false);
-PwmStraigtRight();
+PwmStraigtRight(PWM_START);
     }
     else if(lineSensorValue() == B000000000000111)
     {
 RotateWheels(false,true,false,false,false,false);
-PwmStraigtRight();
+PwmStraigtRight(PWM_START);
     }
     else if(lineSensorValue() == B000000000000011)
     {
 RotateWheels(false,true,false,false,false,false);
-PwmStraigtRight();
+PwmStraigtRight(PWM_START);
     }
     else if(lineSensorValue() == B00000000000001)
     {
 RotateWheels(false,true,false,false,false,false);
-PwmStraigtRight();
+PwmStraigtRight(PWM_START);
     }
     }
     }

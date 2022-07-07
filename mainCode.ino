@@ -52,6 +52,8 @@
 //BATTERY
 #define VBATTADC 14
 #define BATTERY_AVARAGE_READ_COUNT 10
+//AMPERAGE PIN
+#define AMPERAGE_PIN A15
 //RGB 
 #define RED_PIN 2
 #define GREEN_PIN 3
@@ -108,6 +110,10 @@ void setup()
   pinMode(BPWM, OUTPUT);
   pinMode(CPWM, OUTPUT);
   pinMode(DPWM, OUTPUT);
+//VOLTAGE SENSOR PİNMODE
+  pinMode(VBATTADC, INPUT);
+//AMPERAGE PİNMODE
+  pinMode(AMPERAGE_PIN, INPUT);
 //CONTROL BUTTON PİNMODE
   pinMode(ILERI_PIN, INPUT);
   pinMode(GERI_PIN, INPUT);
@@ -213,23 +219,116 @@ void loop()
   int Sensor14 = digitalRead(SENSOR_PIN14);
   int Sensor15 = digitalRead(SENSOR_PIN15);
 
+ 
 
   TIME_NOW = millis();
-  if (TIME_NOW - adc_millis > 1)
+  if (TIME_NOW - adc_millis > 1000)
   {
     adc_millis = TIME_NOW;
-    int battery_value = vBattRead();
+  // lcdMessages();
   }
 
-    if(ANALOG_GIT_BUTTON == geriAnalogValue)
+    if(ANALOG_GIT_BUTTON == ileriAnalogValue)
     {
-
-
+    while(lineSensorValue() != B111111111111111){      
+    if(lineSensorValue() == B100000000000000)
+    {
+RotateWheels(true,false,false,false,false,false);
+PwmStraigtRight();
     }
-    else if(ANALOG_GIT_BUTTON == ileriAnalogValue)
+    else if(lineSensorValue() == B110000000000000)
     {
+RotateWheels(true,false,false,false,false,false);
+PwmStraigtRight();
+    }
+    else if(lineSensorValue() == B111000000000000)
+    {
+RotateWheels(true,false,false,false,false,false);
+PwmStraigtRight();
+    }
+    else if(lineSensorValue() == B000111000000000)
 
+    {
+RotateWheels(true,false,false,false,false,false);
+PwmStraigtRight();
+    }
+    else if(lineSensorValue() == B000000111000000)
+    {
+RotateWheels(true,false,false,false,false,false);
+PwmStart();
+    }
+    else if(lineSensorValue() == B000000000111000)
 
+    {
+RotateWheels(true,false,false,false,false,false);
+PwmStraigtLeft();
+    }
+    else if(lineSensorValue() == B000000000000111)
+    {
+RotateWheels(true,false,false,false,false,false);
+PwmStraigtLeft();
+    }
+    else if(lineSensorValue() == B000000000000011)
+    {
+RotateWheels(true,false,false,false,false,false);
+PwmStraigtLeft();
+    }
+    else if(lineSensorValue() == B00000000000001)
+    {
+RotateWheels(true,false,false,false,false,false);
+PwmStraigtLeft();
+    }}
+    }
+    //ONCEKİ İSTASYON 
+    else if(ANALOG_GIT_BUTTON == geriAnalogValue)
+    {
+    while(lineSensorValue() != B111111111111111){
+   if(lineSensorValue() == B100000000000000)
+    {
+RotateWheels(false,true,false,false,false,false);
+PwmStraigtLeft();
+    }
+    else if(lineSensorValue() == B110000000000000)
+    {
+RotateWheels(false,true,false,false,false,false);
+PwmStraigtLeft();
+    }
+    else if(lineSensorValue() == B111000000000000)
+    {
+RotateWheels(false,true,false,false,false,false);
+PwmStraigtLeft();
+    }
+    else if(lineSensorValue() == B000111000000000)
+    {
+RotateWheels(false,true,false,false,false,false);
+PwmStraigtLeft();
+    }
+    else if(lineSensorValue() == B000000111000000)
+    {
+RotateWheels(false,true,false,false,false,false);
+PwmStart();
+    }
+    else if(lineSensorValue() == B000000000111000)
+    {
+RotateWheels(false,true,false,false,false,false);
+PwmStraigtRight();
+    }
+    else if(lineSensorValue() == B000000000000111)
+    {
+RotateWheels(false,true,false,false,false,false);
+PwmStraigtRight();
+    }
+    else if(lineSensorValue() == B000000000000011)
+    {
+RotateWheels(false,true,false,false,false,false);
+PwmStraigtRight();
+    }
+    else if(lineSensorValue() == B00000000000001)
+    {
+RotateWheels(false,true,false,false,false,false);
+PwmStraigtRight();
+    }
+    }
     }
     else
     {
@@ -323,7 +422,20 @@ void loop()
 
 
 
-
+void PwmStraigtRight(int pwm_value)
+{
+  analogWrite(APWM, pwm_value);
+  analogWrite(BPWM, pwm_value);
+  analogWrite(CPWM, pwm_value/2);
+  analogWrite(DPWM, pwm_value/2);
+}
+void PwmStraigtLeft(int pwm_value)
+{
+  analogWrite(APWM, pwm_value/2);
+  analogWrite(BPWM, pwm_value/2);
+  analogWrite(CPWM, pwm_value);
+  analogWrite(DPWM, pwm_value);
+}
 
 void PwmStart(int pwm_value)
 {
@@ -452,7 +564,7 @@ void RotateWheels(bool ileri, bool geri, bool sag, bool sol, bool soldon, bool s
   }
 }
 
-void LCD_MESSAGE(int hiz)
+void lcdMessages()
 {
   //en son yapılacak 
 lcd.setCursor(0, 0);
@@ -468,10 +580,12 @@ lcd.setCursor(11, 2);
 lcd.print("%");
 lcd.setCursor(13, 2);    
 lcd.setCursor(15, 2);
-lcd.print("   ");
+lcd.print(vBattRead());
 lcd.setCursor(0, 3);
-lcd.print("HIZ: ");
+lcd.print(amparageRead());
 lcd.setCursor(6, 3);
+lcd.print("HIZ: ");
+
 lcd.setCursor(9, 3);
 lcd.print("metre/dk");
 }
@@ -488,6 +602,17 @@ float vBattRead()
     return Vbatt;
 }
 
+float amparageRead()
+{
+    int adc_value = 0;
+    for (int i = 0; i < BATTERY_AVARAGE_READ_COUNT; i++)
+    {
+        adc_value += analogRead(AMPERAGE_PIN);
+    }
+    adc_value = adc_value / BATTERY_AVARAGE_READ_COUNT;
+    float Vbatt = (adc_value * 5) / 1024;
+    return Vbatt;
+}
 
 
 void rgbController(bool white, bool red, bool green, bool blue, bool purple,bool cyan,bool yellow,bool stop){
@@ -561,3 +686,44 @@ buzzerCount = 0;
 oldTime = newTime;
 }
 }
+
+uint16_t lineSensorValue(){
+union lineFollow
+{
+uint16_t sensorAll; 
+bool sensor1;
+bool sensor2;
+bool sensor3;
+bool sensor4;
+bool sensor5;
+bool sensor6;
+bool sensor7;
+bool sensor8;
+bool sensor9;
+bool sensor10;
+bool sensor11;
+bool sensor12;
+bool sensor13;
+bool sensor14;
+bool sensor15;
+}lineSensor;
+
+lineSensor.sensor1 = digitalRead(SENSOR_PIN1);
+lineSensor.sensor2 = digitalRead(SENSOR_PIN2);  
+lineSensor.sensor3 = digitalRead(SENSOR_PIN3);
+lineSensor.sensor4 = digitalRead(SENSOR_PIN4);
+lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
+lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
+lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
+lineSensor.sensor8 = digitalRead(SENSOR_PIN8);
+lineSensor.sensor9 = digitalRead(SENSOR_PIN9);
+lineSensor.sensor10 = digitalRead(SENSOR_PIN10);
+lineSensor.sensor11 = digitalRead(SENSOR_PIN11);
+lineSensor.sensor12 = digitalRead(SENSOR_PIN12);
+lineSensor.sensor13 = digitalRead(SENSOR_PIN13);
+lineSensor.sensor14 = digitalRead(SENSOR_PIN14);
+lineSensor.sensor15 = digitalRead(SENSOR_PIN15);
+
+return lineSensor.sensorAll;
+}
+

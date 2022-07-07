@@ -67,6 +67,7 @@
 unsigned long oldTime=0;
 unsigned long newTime;
 int buzzerCount = 0;
+int sensorCount = 0;
 
 long TIME_NOW = 0;
 unsigned long adc_millis = 0;
@@ -227,10 +228,13 @@ void loop()
     adc_millis = TIME_NOW;
   // lcdMessages();
   }
-
+    newTime = millis(); 
+if(newTime-oldTime > 1) {
     if(ANALOG_GIT_BUTTON == ileriAnalogValue)
     {
-    while(lineSensorValue() != B111111111111111){      
+    while(lineSensorValue() != B111111111111111){
+    sensorEnabled();
+    
     if(lineSensorValue() == B100000000000000)
     {
 RotateWheels(true,false,false,false,false,false);
@@ -279,6 +283,9 @@ RotateWheels(true,false,false,false,false,false);
 PwmStraigtLeft(PWM_START);
     }}
     }
+
+
+
     //ONCEKİ İSTASYON 
     else if(ANALOG_GIT_BUTTON == geriAnalogValue)
     {
@@ -334,7 +341,9 @@ PwmStraigtRight(PWM_START);
     {
       
     }
-    
+        oldTime = newTime;
+
+}
 
 
   if (SAGA_TRY == LOW )
@@ -688,25 +697,31 @@ oldTime = newTime;
 }
 
 uint16_t lineSensorValue(){
-union lineFollow
-{
-uint16_t sensorAll; 
-bool sensor1;
-bool sensor2;
-bool sensor3;
-bool sensor4;
-bool sensor5;
-bool sensor6;
-bool sensor7;
-bool sensor8;
-bool sensor9;
-bool sensor10;
-bool sensor11;
-bool sensor12;
-bool sensor13;
-bool sensor14;
-bool sensor15;
-}lineSensor;
+
+struct{
+  union {
+    struct {
+      uint16_t sensorAll:15;
+    };
+    struct {
+      uint16_t sensor1:1;
+      uint16_t sensor2:1;
+      uint16_t sensor3:1;
+      uint16_t sensor4:1;
+      uint16_t sensor5:1;
+      uint16_t sensor6:1;
+      uint16_t sensor7:1;
+      uint16_t sensor8:1;
+      uint16_t sensor9:1;
+      uint16_t sensor10:1;
+      uint16_t sensor11:1;
+      uint16_t sensor12:1;
+      uint16_t sensor13:1;
+      uint16_t sensor14:1;
+      uint16_t sensor15:1;
+    };
+  };
+} lineSensor;
 
 lineSensor.sensor1 = digitalRead(SENSOR_PIN1);
 lineSensor.sensor2 = digitalRead(SENSOR_PIN2);  
@@ -727,3 +742,19 @@ lineSensor.sensor15 = digitalRead(SENSOR_PIN15);
 return lineSensor.sensorAll;
 }
 
+void sensorEnabled(){
+  if(sensorCount==0){
+digitalWrite(FRONT_SENSOR_EN, HIGH);
+digitalWrite(BACK_SENSOR_EN, LOW);
+digitalWrite(LEFT_SENSOR_EN, LOW);
+digitalWrite(RIGHT_SENSOR_EN, LOW);
+    sensorCount=1;
+  }
+  else if(sensorCount==1){
+digitalWrite(FRONT_SENSOR_EN, HIGH);
+digitalWrite(BACK_SENSOR_EN, HIGH);
+digitalWrite(LEFT_SENSOR_EN, LOW);
+digitalWrite(RIGHT_SENSOR_EN, LOW);
+    sensorCount=0;
+  }
+}

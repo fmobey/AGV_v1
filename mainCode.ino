@@ -232,52 +232,52 @@ void loop()
 if(newTime-oldTime > 1) {
     if(ANALOG_GIT_BUTTON == ileriAnalogValue)
     {
-    while(lineSensorValue() != B111111111111111){
+    while(lineSensorValue() != 0b111111111111111){
     sensorEnabled();
     
-    if(lineSensorValue() == B100000000000000)
+    if(lineSensorValue() == 0b100000000000000)
     {
 RotateWheels(true,false,false,false,false,false);
 PwmStraigtRight(PWM_START);
     }
-    else if(lineSensorValue() == B110000000000000)
+    else if(lineSensorValue() == 0b110000000000000)
     {
 RotateWheels(true,false,false,false,false,false);
 PwmStraigtRight(PWM_START);
     }
-    else if(lineSensorValue() == B111000000000000)
+    else if(lineSensorValue() == 0b111000000000000)
     {
 RotateWheels(true,false,false,false,false,false);
 PwmStraigtRight(PWM_START);
     }
-    else if(lineSensorValue() == B000111000000000)
+    else if(lineSensorValue() == 0b000111000000000)
 
     {
 RotateWheels(true,false,false,false,false,false);
 PwmStraigtRight(PWM_START);
     }
-    else if(lineSensorValue() == B000000111000000)
+    else if(lineSensorValue() == 0b000000111000000)
     {
 RotateWheels(true,false,false,false,false,false);
 PwmStart(PWM_START);
     }
-    else if(lineSensorValue() == B000000000111000)
+    else if(lineSensorValue() == 0b000000000111000)
 
     {
 RotateWheels(true,false,false,false,false,false);
 PwmStraigtLeft(PWM_START);
     }
-    else if(lineSensorValue() == B000000000000111)
+    else if(lineSensorValue() == 0b000000000000111)
     {
 RotateWheels(true,false,false,false,false,false);
 PwmStraigtLeft(PWM_START);
     }
-    else if(lineSensorValue() == B000000000000011)
+    else if(lineSensorValue() == 0b000000000000011)
     {
 RotateWheels(true,false,false,false,false,false);
 PwmStraigtLeft(PWM_START);
     }
-    else if(lineSensorValue() == B00000000000001)
+    else if(lineSensorValue() == 0b00000000000001)
     {
 RotateWheels(true,false,false,false,false,false);
 PwmStraigtLeft(PWM_START);
@@ -289,48 +289,48 @@ PwmStraigtLeft(PWM_START);
     //ONCEKİ İSTASYON 
     else if(ANALOG_GIT_BUTTON == geriAnalogValue)
     {
-    while(lineSensorValue() != B111111111111111){
-   if(lineSensorValue() == B100000000000000)
+    while(lineSensorValue() != 0b111111111111111){
+   if(lineSensorValue() == 0b100000000000000)
     {
 RotateWheels(false,true,false,false,false,false);
 PwmStraigtLeft(PWM_START);
     }
-    else if(lineSensorValue() == B110000000000000)
+    else if(lineSensorValue() == 0b110000000000000)
     {
 RotateWheels(false,true,false,false,false,false);
 PwmStraigtLeft(PWM_START);
     }
-    else if(lineSensorValue() == B111000000000000)
+    else if(lineSensorValue() == 0b111000000000000)
     {
 RotateWheels(false,true,false,false,false,false);
 PwmStraigtLeft(PWM_START);
     }
-    else if(lineSensorValue() == B000111000000000)
+    else if(lineSensorValue() == 0b000111000000000)
     {
 RotateWheels(false,true,false,false,false,false);
 PwmStraigtLeft(PWM_START);
     }
-    else if(lineSensorValue() == B000000111000000)
+    else if(lineSensorValue() == 0b000000111000000)
     {
 RotateWheels(false,true,false,false,false,false);
 PwmStart(PWM_START);
     }
-    else if(lineSensorValue() == B000000000111000)
+    else if(lineSensorValue() == 0b000000000111000)
     {
 RotateWheels(false,true,false,false,false,false);
 PwmStraigtRight(PWM_START);
     }
-    else if(lineSensorValue() == B000000000000111)
+    else if(lineSensorValue() == 0b000000000000111)
     {
 RotateWheels(false,true,false,false,false,false);
 PwmStraigtRight(PWM_START);
     }
-    else if(lineSensorValue() == B000000000000011)
+    else if(lineSensorValue() == 0b000000000000011)
     {
 RotateWheels(false,true,false,false,false,false);
 PwmStraigtRight(PWM_START);
     }
-    else if(lineSensorValue() == B00000000000001)
+    else if(lineSensorValue() == 0b00000000000001)
     {
 RotateWheels(false,true,false,false,false,false);
 PwmStraigtRight(PWM_START);
@@ -747,14 +747,14 @@ void sensorEnabled(){
 digitalWrite(FRONT_SENSOR_EN, HIGH);
 digitalWrite(BACK_SENSOR_EN, LOW);
 digitalWrite(LEFT_SENSOR_EN, LOW);
-digitalWrite(RIGHT_SENSOR_EN, LOW);
+digitalWrite(RIGT_SENSOR_EN, LOW);
     sensorCount=1;
   }
   else if(sensorCount==1){
 digitalWrite(FRONT_SENSOR_EN, HIGH);
 digitalWrite(BACK_SENSOR_EN, HIGH);
 digitalWrite(LEFT_SENSOR_EN, LOW);
-digitalWrite(RIGHT_SENSOR_EN, LOW);
+digitalWrite(RIGT_SENSOR_EN, LOW);
     sensorCount=0;
   }
 }

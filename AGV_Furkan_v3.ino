@@ -1,675 +1,1132 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
-#define Sensor_Forward 24
-#define Sensor_Back 26
-#define Sensor_Right 28
-#define Sensor_Left 30
+//A MOTOR
+#define APWM 12
+#define ADIR 10
+#define ADIRFW 8
+//B MOTOR
+#define BPWM 46
+#define BDIR 48
+#define BDIRFW 30
+//C MOTOR
+#define CPWM 45
+#define CDIR 25
+#define CDIRFW 23
+//D MOTOR
+#define DPWM 13
+#define DDIR 11
+#define DDIRFW 9
+//LINE FOLLOWING SENSOR
+#define SENSOR_PIN1 A1
+#define SENSOR_PIN2 A2
+#define SENSOR_PIN3 A3
+#define SENSOR_PIN4 A4
+#define SENSOR_PIN5 A5
+#define SENSOR_PIN6 A6
+#define SENSOR_PIN7 A7
+#define SENSOR_PIN8 A8
+#define SENSOR_PIN9 A9
+#define SENSOR_PIN10 A10
+#define SENSOR_PIN11 A11
+#define SENSOR_PIN12 A12
+#define SENSOR_PIN13 A13
+#define SENSOR_PIN14 32
+#define SENSOR_PIN15 34
+//LINE FOLLOWING SENSOR ENABLE PIN
+#define FRONT_SENSOR_EN 36
+#define BACK_SENSOR_EN 40
+#define RIGT_SENSOR_EN 38
+#define LEFT_SENSOR_EN 42
+//STANBY 
+#define STANBY_PIN 6
+//CONTROL PANEL BUTTONS
+#define ILERI_PIN 43
+#define GERI_PIN 41
+#define SAGA_PIN 7
+#define SOLA_PIN 44
+#define SOLA_DON_PIN 29
+#define SAGA_DON_PIN 31
+//STATİONS BUTTONS
+#define ANALOG_PIN_BUTTON A0
+//BATTERY
+#define VBATTADC 14
+#define BATTERY_AVARAGE_READ_COUNT 10
+//AMPERAGE PIN
+#define AMPERAGE_PIN A15
+//RGB 
+#define RED_PIN 2
+#define GREEN_PIN 3
+#define BLUE_PIN 4
+//BUZZER
+#define BUZZER_PIN 5
+//PWM VALUE
+#define PWM_START 255
+#define PWM_STOP 0
+//LİDAR WARNING PIOUT
+#define WARN_LIDAR11 39
+#define WARN_LIDAR12 37
+#define WARN_LIDAR21 35
+#define WARN_LIDAR22 33
+//MILLIS
+unsigned long oldTime=0;
+unsigned long newTime;
+unsigned long oldTime1=0;
+unsigned long newTime1;
+unsigned long oldTime2=0;
+unsigned long newTime2;
+unsigned long oldTime3=0;
+unsigned long newTime3;
+unsigned long oldTime4=0;
+unsigned long newTime4;
+int buzzerCount = 0;
+int sensorCount = 0;
 
-#define A_Palse 8
-#define A_Alarm 4
-#define A_Enabled 12
-#define A_Dir 10
 
-#define B_Palse 44
-#define B_Alarm 40
-#define B_Enabled 48
-#define B_Dir 46
+long TIME_NOW = 0;long TIME_NOW1 = 0;long TIME_NOW2 = 0;long TIME_NOW3 = 0; long TIME_NOW4 = 0;
+unsigned long adc_millis = 0;unsigned long adc_millis1 = 0; unsigned long adc_millis2 = 0; unsigned long adc_millis3 = 0; unsigned long adc_millis4 = 0;
 
-#define RedPin 43
-#define GreenPin 45
-#define BluePin 47
-#define Siren 49
 
-#define C_Palse 13
-#define C_Alarm 23
-#define C_Enabled 29
-#define C_Dir 27
-/*
-Red43 Green45 Blue47 49Siren
-*/
-#define D_Palse 9
-#define D_Alarm 5
-#define D_Enabled 22
-#define D_Dir 11
-int RGBCount = 0;
-int AnalogCount = 0;
-
-int hiz = 680;
-int speedPlusButton = 0;
-int speedNegativeButton = 0;
-String MotorStateMessagesText = "";
-
-int pulsestate = 0;
-
-unsigned long time_now = 0;
-unsigned long time_now_AZ = 0;
-unsigned long time_now2 = 0;
-unsigned long time_now3 = 0;
 
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
-#define ILERI_PIN A6
-#define GERI_PIN A4
-#define SAGA_PIN A0
-#define SOLA_PIN A2
-#define SPEEDPLUSPIN A8
-#define SPEEDNEGATIVEPIN A10
 
-long lastMsg = 0;
-long last_RPM_Msg = 0;
-long TIME_NOW = 0;
-long TIME_RPM_NOW = 0;
+int ileriAnalogValue = 686;
+int geriAnalogValue = 333;
 
-int A_Alarm_val = 0;
-int B_Alarm_val = 0;
-int C_Alarm_val = 0;
-int D_Alarm_val = 0;
 
-#define ACCELARATION_VALUE 20
-static float acceleration_value = ACCELARATION_VALUE;
-int Ramp_function(int maxspeed, float acceleration);
-bool ramp_decrease = false;
 
-int yuzde = 0;
-int VbattRaw;
-int Vbatt;
-int VbattAver;
-int x,y;
-int acc_x = 0;
-int acc_x1 = 0;
+  //panel buttonarının durumlarını okuyup gösteriyoruz
+  int ILERI_TRY = -1;
+  int GERI_TRY = -1;
+  int SAGA_TRY = -1;
+  int SOLA_TRY = -1;
+  int SAGA_DON = -1;
+  int SOLA_DON = -1;
+  //istasyon butonunun durumlarını okuyup gösteriyoruz
+  int ANALOG_GIT_BUTTON = -1;
+  //Sensor Pinlerini durumlarını okuyup gösteriyoruz
+  int Sensor1 = -1;
+  int Sensor2 = -1;
+  int Sensor3 = -1;
+  int Sensor4 = -1;
+  int Sensor5 = -1;
+  int Sensor6 = -1;
+  int Sensor7 = -1;
+  int Sensor8 = -1;
+  int Sensor9 = -1;
+  int Sensor10 = -1;
+  int Sensor11 = -1;
+  int Sensor12 = -1;
+  int Sensor13 = -1;
+  int Sensor14 = -1;
+  int Sensor15 = -1;
+  
+  int rgbState = -1;
 
-int avarage_x,avarage_y,avarage_z = 0;
-
-unsigned long adc_millis = 0;
 
 void setup()
 {
+
+  Wire.begin();
+  Serial.begin(115200);
+
+//MOTOR PİNMODE
+  pinMode(APWM, OUTPUT);
+  pinMode(BPWM, OUTPUT);
+  pinMode(CPWM, OUTPUT);
+  pinMode(DPWM, OUTPUT);
+  
+  analogWrite(APWM,0);
+   analogWrite(BPWM,0);
+    analogWrite(CPWM,0);
+     analogWrite(DPWM,0);
 
   lcd.begin();
   lcd.backlight();
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("      OMNIMAN       ");
-  Wire.begin();
-  Serial.begin(115200);
 
   delay(1000);
+//RGB PİNMODE
+  pinMode(RED_PIN, OUTPUT);
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN, OUTPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
 
-  pinMode(RedPin, OUTPUT);
-  pinMode(GreenPin, OUTPUT);
-  pinMode(BluePin, OUTPUT);
-  pinMode(Siren, OUTPUT);
+//VOLTAGE SENSOR PİNMODE
+  pinMode(VBATTADC, INPUT);
+//AMPERAGE PİNMODE
+  pinMode(AMPERAGE_PIN, INPUT);
+//CONTROL BUTTON PİNMODE
+  pinMode(ILERI_PIN, INPUT);
+  pinMode(GERI_PIN, INPUT);
+  pinMode(SAGA_PIN, INPUT);
+  pinMode(SOLA_PIN, INPUT);
+  pinMode(SOLA_DON_PIN, INPUT);
+  pinMode(SAGA_DON_PIN, INPUT);
+//ANALOG PİNMODE
+  pinMode(ANALOG_PIN_BUTTON, INPUT);
+//MOTOR DİRECTİON PİNMODE
+  pinMode(ADIR, OUTPUT);
+  pinMode(BDIR, OUTPUT);
+  pinMode(CDIR, OUTPUT);
+  pinMode(DDIR, OUTPUT);
+  pinMode(ADIRFW, OUTPUT);
+  pinMode(BDIRFW, OUTPUT);
+  pinMode(CDIRFW, OUTPUT);
+  pinMode(DDIRFW, OUTPUT);
+//LINE FOLLOWING SENSOR PİNMODE
+  pinMode(SENSOR_PIN1, INPUT);
+  pinMode(SENSOR_PIN2, INPUT);
+  pinMode(SENSOR_PIN3, INPUT);
+  pinMode(SENSOR_PIN4, INPUT);
+  pinMode(SENSOR_PIN5, INPUT);
+  pinMode(SENSOR_PIN6, INPUT);
+  pinMode(SENSOR_PIN7, INPUT);
+  pinMode(SENSOR_PIN8, INPUT);
+  pinMode(SENSOR_PIN9, INPUT);
+  pinMode(SENSOR_PIN10, INPUT);
+  pinMode(SENSOR_PIN11, INPUT);
+  pinMode(SENSOR_PIN12, INPUT);
+  pinMode(SENSOR_PIN13, INPUT);
+  pinMode(SENSOR_PIN14, INPUT);
+  pinMode(SENSOR_PIN15, INPUT);
+//LINE FOLLOWING SENSOR ENABLE PİNMODE
+  pinMode(FRONT_SENSOR_EN, OUTPUT);
+  pinMode(BACK_SENSOR_EN, OUTPUT);
+  pinMode(RIGT_SENSOR_EN, OUTPUT);
+  pinMode(LEFT_SENSOR_EN, OUTPUT);
+  //LIDAR WARNING PİNMODE
+  pinMode(WARN_LIDAR11, INPUT);
+  pinMode(WARN_LIDAR12, INPUT);
+  pinMode(WARN_LIDAR21, INPUT);
+  pinMode(WARN_LIDAR22, INPUT);
+  //LINE FOLLOWING SENSOR ENABLE
+  digitalWrite(FRONT_SENSOR_EN, HIGH);
+  digitalWrite(BACK_SENSOR_EN, HIGH);
+  digitalWrite(RIGT_SENSOR_EN, HIGH);
+  digitalWrite(LEFT_SENSOR_EN, HIGH);
 
-  pinMode(A_Palse, OUTPUT);
-  pinMode(B_Palse, OUTPUT);
-  pinMode(C_Palse, OUTPUT);
-  pinMode(D_Palse, OUTPUT);
+//MOTOR DİRECTİON SETUP
+  digitalWrite(ADIR, HIGH);
+  digitalWrite(ADIRFW, LOW);
+  digitalWrite(BDIR, HIGH);
+  digitalWrite(BDIRFW, LOW);
+  digitalWrite(CDIR, HIGH);
+  digitalWrite(CDIRFW, LOW);
+  digitalWrite(DDIR, HIGH);
+  digitalWrite(DDIRFW, LOW);
 
-  pinMode(Sensor_Forward, INPUT);
+//START ROBOT
+  delay(1000);
+  digitalWrite(STANBY_PIN, HIGH);
 
-  pinMode(A_Dir, OUTPUT);
-  pinMode(A_Alarm, INPUT);
-  pinMode(A_Enabled, OUTPUT);
-
-  pinMode(B_Dir, OUTPUT);
-  pinMode(B_Alarm, INPUT);
-  pinMode(B_Enabled, OUTPUT);
-
-  pinMode(C_Dir, OUTPUT);
-  pinMode(C_Alarm, INPUT);
-  pinMode(C_Enabled, OUTPUT);
-
-  pinMode(D_Dir, OUTPUT);
-  pinMode(D_Alarm, INPUT);
-  pinMode(D_Enabled, OUTPUT);
-
-  digitalWrite(A_Enabled, LOW);
-  digitalWrite(A_Dir, HIGH);
-
-  digitalWrite(B_Enabled, LOW);
-  digitalWrite(B_Dir, HIGH);
-
-  digitalWrite(C_Enabled, LOW);
-  digitalWrite(C_Dir, LOW);
-
-  digitalWrite(D_Enabled, LOW);
-  digitalWrite(D_Dir, HIGH);
-  digitalWrite(GreenPin, HIGH);
-  delay(500);
-  digitalWrite(GreenPin, LOW);
-  digitalWrite(RedPin, HIGH);
-  delay(500);
-  digitalWrite(RedPin, LOW);
-  digitalWrite(BluePin, HIGH);
-  delay(500);
-  digitalWrite(BluePin, LOW);
   lcd.clear();
 
-  LCD_MESSAGE(hiz);
 }
+
+
 
 void loop()
 {
+  /*
+  RotateWheels(bool ileri, bool geri, bool sag, bool sol, bool soldon, bool sagdon)
+  rgbController(bool white, bool red, bool green, bool blue, bool purple,bool cyan,bool yellow,bool stop){
+  LineFlowingEnable(bool front,bool back,bool right,bool left)
+  PwmStart(int pwm_value)
+  PwmStop(int pwm_value)
+
+  */
 
 
 
 
-
+  TIME_NOW4 = millis();
+  if (TIME_NOW4 - adc_millis4 > 10)
+  {
+//panel buttonarının durumlarını okuyup gösteriyoruz
+   ILERI_TRY = digitalRead(ILERI_PIN);
+   GERI_TRY = digitalRead(GERI_PIN);
+   SAGA_TRY = digitalRead(SAGA_PIN);
+   SOLA_TRY = digitalRead(SOLA_PIN);
+   SAGA_DON = digitalRead(SAGA_DON_PIN);
+   SOLA_DON = digitalRead(SOLA_DON_PIN);
+//istasyon butonunun durumlarını okuyup gösteriyoruz
+   ANALOG_GIT_BUTTON = analogRead(ANALOG_PIN_BUTTON);
+//Sensor Pinlerini durumlarını okuyup gösteriyoruz
+   Sensor1 = digitalRead(SENSOR_PIN1);
+   Sensor2 = digitalRead(SENSOR_PIN2);
+   Sensor3 = digitalRead(SENSOR_PIN3);
+   Sensor4 = digitalRead(SENSOR_PIN4);
+   Sensor5 = digitalRead(SENSOR_PIN5);
+   Sensor6 = digitalRead(SENSOR_PIN6);
+   Sensor7 = digitalRead(SENSOR_PIN7);
+   Sensor8 = digitalRead(SENSOR_PIN8);
+   Sensor9 = digitalRead(SENSOR_PIN9);
+   Sensor10 = digitalRead(SENSOR_PIN10);
+   Sensor11 = digitalRead(SENSOR_PIN11);
+   Sensor12 = digitalRead(SENSOR_PIN12);
+   Sensor13 = digitalRead(SENSOR_PIN13);
+   Sensor14 = digitalRead(SENSOR_PIN14);
+   Sensor15 = digitalRead(SENSOR_PIN15);
+//Lidar Warning Pinlerini durumlarını okuyup gösteriyoruz
+    Warn_Lidar11 = digitalRead(WARN_LIDAR11);
+    Warn_Lidar12 = digitalRead(WARN_LIDAR12);
+    Warn_Lidar21 = digitalRead(WARN_LIDAR21);
+    Warn_Lidar22 = digitalRead(WARN_LIDAR22);
+// Serial.println(lineSensorValue(),BIN);
+//Serial.println(ANALOG_GIT_BUTTON);
+    adc_millis4 = TIME_NOW4;
+      sensorEnabled();
+// lcdMessages();
+  }
 
  
-  VbattRaw = analogRead(15); 
- 
-    // 25=1v min 10v max 14v 
-    
-  Vbatt = VbattRaw/25;
- //Serial.println(Vbatt);
+/*
+Senaryo: 
+1. Robotun ileri ve geri istasyon butonuna basıldığında
+ - robot ileriye doğru hareket edecek
+ - robot düz cizgi gördügünde duracak ve yanlardaki sensor aktif olacak cizgi bulana kadar devam edecek ve duracak
+ - yancizgilerde olduğu için yön kontrolü yapıp o yöne doğru hareket edecek 
+ - aynı olay baştan başlayacak
+ - lidardan uzaklık okuyacak ve uzaklıkının küçük olduğu sürece hareket edecek
+2. Analog kontrol kumandası +
+ - tamamen manuel olarak yön kontrolü yapacak +
+ - lidar devre dışı bırakılacak +
 
-if (Vbatt < 21)
+*/ 
+//   newTime = millis(); 
+//if(newTime-oldTime > 1) {
+
+    if(ANALOG_GIT_BUTTON  >= 675 && ANALOG_GIT_BUTTON  <= 690)
     {
-      
-        digitalWrite(Siren, HIGH);
-       // digitalWrite(RedPin, HIGH);  
-    }
-
-
-
-  TIME_NOW = millis();
-  if (TIME_NOW - adc_millis > 1)
-  {
-    adc_millis = TIME_NOW;
-    speedControlButton();
-        AnalogKumandaReadAdc();
-
-    speedPlusButton = digitalRead(SPEEDPLUSPIN);
-    speedNegativeButton = digitalRead(SPEEDNEGATIVEPIN);
-  }
-
-
-  // int Forward_Sensor_Val = digitalRead(Sensor_Forward);
-
-  int ILERI_TRY = digitalRead(ILERI_PIN);
-  int GERI_TRY = digitalRead(GERI_PIN);
-  int SAGA_TRY = digitalRead(SAGA_PIN);
-  int SOLA_TRY = digitalRead(SOLA_PIN);
-
-  // A_Alarm_val = digitalRead(A_Alarm);
-  // B_Alarm_val = digitalRead(B_Alarm);
-  // C_Alarm_val = digitalRead(C_Alarm);
-  // D_Alarm_val = digitalRead(D_Alarm);
-
-  if (SAGA_TRY == LOW || (avarage_x < 550 && avarage_x >= 490))
-  {
-
-    RotateWheels(false, false, false, true, false, false);
-    Ramp_function((speedControlButton() / 2), 0.1);
-    RGBController(false, true, false);
-    ramp_decrease = true;
-    //Serial.println("SAGA");
-  }
-  else if (GERI_TRY == LOW || (avarage_x < 350 && avarage_x >= 290))
-  {
-
-    RotateWheels(true, false, false, false, false, false);
-    Ramp_function(speedControlButton(), 0.1);
-    RGBController(true, false, false);
-    ramp_decrease = true;
-   // Serial.println("GERI");
-  }
-  else if (ILERI_TRY == LOW || (avarage_x < 750 && avarage_x >= 685))
-  {
-
-    RotateWheels(false, true, false, false, false, false);
-    Ramp_function(speedControlButton(), 0.1);
-    RGBController(true, false, false);
-
-   //Serial.println("ILERI");
-  }
-  else if (SOLA_TRY == LOW || (avarage_x <= 80 && avarage_x >= 0))
-  {
-
-    RotateWheels(false, false, true, false, false, false);
-    RGBController(false, true, false);
-    Ramp_function((speedControlButton() / 2), 0.1);
-   // Serial.println("SOLA");
-  }
-  else if ((avarage_x <= 860 && avarage_x >= 800)) // BEYAZ BUTON
-  {
-
-    RotateWheels(false, false, false, false, true, false);
-    RGBController(false, true, false);
-    Ramp_function((speedControlButton() / 2), 0.1);
-  //  Serial.println("SOLADON");
-  }
-  else if ((avarage_x <= 980 && avarage_x >= 870)) // SIYAH BUTON
-  {
-
-    RotateWheels(false, false, false, false, false, true);
-    RGBController(false, true, false);
-    Ramp_function((speedControlButton() / 2), 0.1);
-   
-  //  Serial.println("SAGADON");
-  }
-  else if (ILERI_TRY == HIGH && SAGA_TRY == HIGH && SOLA_TRY == HIGH && GERI_TRY == HIGH || (avarage_x <= 1020 && avarage_x >= 980))
-  {
-
-    Ramp_reset(speedControlButton(), 2);
-    RGBController(false, false, true);
- 
-  }
-  else
-  {
-    Ramp_reset(speedControlButton(), 2);
-
-    RGBController(false, false, true);
-  }
+while(!(lineSensorValue()==65535 || lineSensorValue()==32768)){
+if (lineSensorValue()==0b1000000010000000) {
+        if(WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH) {
+          Pwm(PWM_STOP);
+          break;
+       }else {
+          RotateWheels(false, true, false, false, false, false);
+          Pwm(PWM_START);
+       }
+        }
+          if ((lineSensorValue() & 0b0111111110000000)>=256 && (lineSensorValue() & 0b0111111110000000)<=32640) {  // 2
+       //     Serial.println("sol");
+       if(WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH) {
+          Pwm(PWM_STOP);
+          rgbController(false, true, false, false,false,false,false,false);
+          break;
+       }else {
+          RotateWheels(false, true, false, false, false, false);
+          PwmStraigtRight(PWM_START);
+       } 
+        }else if ((lineSensorValue() & 0b0000000001111111)<=127 && (lineSensorValue() & 0b0000000001111111)>0 ) {
+         //     Serial.println("sag");
+        if(WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH) {
+          Pwm(PWM_STOP);
+          rgbController(false, true, false, false,false,false,false,false);
+       }else {
+          RotateWheels(false, true, false, false, false, false);
+          PwmStraigtLeft(PWM_START);
+       }
+        }
 }
 
-int speedControlButton()
+        if (lineSensorValue()==65535 || lineSensorValue()==32768) {
+          PwmStop(PWM_STOP);
+        }
+
+        
+
+        
+    }
+    else if(ANALOG_GIT_BUTTON  >= 320 && ANALOG_GIT_BUTTON  <= 340)
+    {
+
+    }
+    else
+    {
+      Pwm(PWM_STOP);
+    }
+    //    oldTime = newTime;
+
+//}
+
+
+ if (SAGA_DON == LOW)
+
+  {
+    RotateWheels(false, false, false, true, false, false);
+    rgbController(true, false, false, false,false,false,false,false);
+    Pwm(PWM_START);
+    buzzerFlipFlop();
+    // Serial.println("SAGA");
+  }
+  else if (GERI_TRY == LOW )
+  {
+    RotateWheels(true, false, false, false, false, false);
+    rgbController(false, true, false, false,false,false,false,false);
+    Pwm(PWM_START);
+    buzzerFlipFlop();
+
+    // Serial.println("GERI");
+  }
+  else if (ILERI_TRY == LOW )
+  {
+    RotateWheels(false, true, false, false, false, false);
+    rgbController(false, false, true, false,false,false,false,false);
+    Pwm(PWM_START);
+    buzzerFlipFlop();
+
+    //Serial.println("ILERI");
+  }
+  else if (SOLA_DON == LOW)
+  {
+    RotateWheels(false, false, true, false, false, false);
+    rgbController(false, false, true, false,false,false,false,false);
+    Pwm(PWM_START);
+    buzzerFlipFlop();
+
+    // Serial.println("SOLA");
+  }
+   else if (SAGA_TRY == LOW )
+
+  {
+   RotateWheels(false, false, false, false, true, false);
+   rgbController(false, false, false, true,false,false,false,false);
+   Pwm(PWM_START);
+   buzzerFlipFlop();
+
+    // Serial.println("SOLA_DON");
+  }
+       else if (SOLA_TRY == LOW)
+
+
+  {
+   rgbController(false, true, false, false,false,false,false,false);
+   RotateWheels(false, false, false, false, false, true);
+   Pwm(PWM_START);
+   buzzerFlipFlop();
+
+    // Serial.println("SAGA_DON");
+   }
+   else
+   {
+  //RotateWheels(false, false, false, false, false, false);
+  //rgbController(true, false, false, false,false,false,false,false);
+  //PwmStop(PWM_STOP);
+   }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void PwmStraigtRight(int pwm_value)
 {
-  if (speedPlusButton == LOW)
+  analogWrite(APWM, pwm_value);
+  analogWrite(BPWM, pwm_value);
+  analogWrite(CPWM, pwm_value/2);
+  analogWrite(DPWM, pwm_value/2);
+}
+void PwmStraigtLeft(int pwm_value)
+{
+  analogWrite(APWM, pwm_value/2);
+  analogWrite(BPWM, pwm_value/2);
+  analogWrite(CPWM, pwm_value);
+  analogWrite(DPWM, pwm_value);
+}
+
+void Pwm(int pwm_value)
+{
+  analogWrite(APWM, pwm_value);
+  analogWrite(BPWM, pwm_value);
+  analogWrite(CPWM, pwm_value);
+  analogWrite(DPWM, pwm_value);
+}
+
+
+//10 munite timer stanby mode 
+void timer_standby()
+{
+  if (TIME_NOW2 - oldTime2 > 600000)
   {
-    if (hiz < 700)
-    {
-      hiz = hiz + 10;
-      LCD_MESSAGE(hiz);
-    }
+    /*   */
   }
-  if (speedNegativeButton == LOW)
-  {
-    if (hiz > 140)
-    {
-      hiz = hiz - 10;
-      LCD_MESSAGE(hiz);
-    }
-  }
-  return hiz;
+}
+void LineFlowingEnable(bool front,bool back,bool right,bool left)
+{
+if(front){
+  digitalWrite(FRONT_SENSOR_EN, HIGH);
+  digitalWrite(BACK_SENSOR_EN, LOW);
+  digitalWrite(RIGT_SENSOR_EN, LOW);
+  digitalWrite(LEFT_SENSOR_EN, LOW);
+}else if(back){
+  digitalWrite(FRONT_SENSOR_EN, LOW);
+  digitalWrite(BACK_SENSOR_EN, HIGH);
+  digitalWrite(RIGT_SENSOR_EN, LOW);
+  digitalWrite(LEFT_SENSOR_EN, LOW);
+}else if(right){
+  digitalWrite(FRONT_SENSOR_EN, LOW);
+  digitalWrite(BACK_SENSOR_EN, LOW);
+  digitalWrite(RIGT_SENSOR_EN, HIGH);
+  digitalWrite(LEFT_SENSOR_EN, LOW);
+}else if(left){
+  digitalWrite(FRONT_SENSOR_EN, LOW);
+  digitalWrite(BACK_SENSOR_EN, LOW);
+  digitalWrite(RIGT_SENSOR_EN, LOW);
+  digitalWrite(LEFT_SENSOR_EN, HIGH);
+}else{
+  digitalWrite(FRONT_SENSOR_EN, LOW);
+  digitalWrite(BACK_SENSOR_EN, LOW);
+  digitalWrite(RIGT_SENSOR_EN, LOW);
+  digitalWrite(LEFT_SENSOR_EN, LOW);
+}
+}
+rgbStatus(int rgbState){
+    if(rgbState == 1){
+  rgbController(false, true, false, false,false,false,false,false);
+  }else
 }
 
 void RotateWheels(bool ileri, bool geri, bool sag, bool sol, bool soldon, bool sagdon)
 {
-  
-  if (ileri == true)
+  if (ileri)
   {
-    digitalWrite(A_Dir, HIGH);
-    digitalWrite(B_Dir, LOW);
-    digitalWrite(C_Dir, LOW);
-    digitalWrite(D_Dir, HIGH);
+    digitalWrite(ADIR, HIGH);
+    digitalWrite(ADIRFW, LOW);
+    digitalWrite(BDIR, LOW);
+    digitalWrite(BDIRFW, HIGH);
+    digitalWrite(CDIR, LOW);
+    digitalWrite(CDIRFW, HIGH);
+    digitalWrite(DDIR, HIGH);
+    digitalWrite(DDIRFW, LOW);
   }
-  else if (geri == true)
+  else if (geri)
   {
-    digitalWrite(A_Dir, LOW);
-    digitalWrite(B_Dir, HIGH);
-    digitalWrite(C_Dir, HIGH);
-    digitalWrite(D_Dir, LOW);
+    digitalWrite(ADIR, LOW);
+    digitalWrite(ADIRFW, HIGH);
+    digitalWrite(BDIR, HIGH);
+    digitalWrite(BDIRFW, LOW);
+    digitalWrite(CDIR, HIGH);
+    digitalWrite(CDIRFW, LOW);
+    digitalWrite(DDIR, LOW);
+    digitalWrite(DDIRFW, HIGH);
   }
-  else if (sag == true)
+  else if (sag)
   {
-    digitalWrite(A_Dir, LOW);
-    digitalWrite(B_Dir, LOW);
-    digitalWrite(C_Dir, HIGH);
-    digitalWrite(D_Dir, HIGH);
+    digitalWrite(ADIR, LOW);
+    digitalWrite(ADIRFW, HIGH);
+    digitalWrite(BDIR, LOW);
+    digitalWrite(BDIRFW, HIGH);
+    digitalWrite(CDIR, HIGH);
+    digitalWrite(CDIRFW, LOW);
+    digitalWrite(DDIR, HIGH);
+    digitalWrite(DDIRFW, LOW);
   }
-  else if (sol == true)
+  else if (sol)
   {
-    digitalWrite(A_Dir, HIGH);
-    digitalWrite(B_Dir, HIGH);
-    digitalWrite(C_Dir, LOW);
-    digitalWrite(D_Dir, LOW);
+    digitalWrite(ADIR, HIGH);
+    digitalWrite(ADIRFW, LOW);
+    digitalWrite(BDIR, HIGH);
+    digitalWrite(BDIRFW, LOW);
+    digitalWrite(CDIR, LOW);
+    digitalWrite(CDIRFW, HIGH);
+    digitalWrite(DDIR, LOW);
+    digitalWrite(DDIRFW, HIGH);
   }
-  else if (soldon == true)
+  else if (soldon)
   {
-    digitalWrite(A_Dir, HIGH);
-    digitalWrite(B_Dir, LOW);
-    digitalWrite(C_Dir, HIGH);
-    digitalWrite(D_Dir, LOW);
+    digitalWrite(ADIR, HIGH);
+    digitalWrite(ADIRFW, LOW);
+    digitalWrite(BDIR, LOW);
+    digitalWrite(BDIRFW, HIGH);
+    digitalWrite(CDIR, HIGH);
+    digitalWrite(CDIRFW, LOW);
+    digitalWrite(DDIR, LOW);
+    digitalWrite(DDIRFW, HIGH);
   }
-  else if (sagdon == true)
+  else if (sagdon)
   {
-    digitalWrite(A_Dir, LOW);
-    digitalWrite(B_Dir, HIGH);
-    digitalWrite(C_Dir, LOW);
-    digitalWrite(D_Dir, HIGH);
-  }
-  else
-  {
-  }
-}
-
-void MotorStateMessages()
-{
-  if (A_Alarm_val == HIGH)
-  {
-    MotorStateMessagesText = "A MOT. ERR";
-  }
-  else if (B_Alarm_val == HIGH)
-  {
-    MotorStateMessagesText = "B MOT. ERR";
-  }
-  else if (C_Alarm_val == HIGH)
-  {
-    MotorStateMessagesText = "C MOT. ERR";
-  }
-  else if (D_Alarm_val == HIGH)
-  {
-    MotorStateMessagesText = "D MOT. ERR";
-  }
-  else if (A_Alarm_val == LOW && B_Alarm_val == LOW && C_Alarm_val == LOW && D_Alarm_val == LOW)
-  {
-    MotorStateMessagesText = " UYARI YOK";
+    digitalWrite(ADIR, LOW);
+    digitalWrite(ADIRFW, HIGH);
+    digitalWrite(BDIR, HIGH);
+    digitalWrite(BDIRFW, LOW);
+    digitalWrite(CDIR, LOW);
+    digitalWrite(CDIRFW, HIGH);
+    digitalWrite(DDIR, HIGH);
+    digitalWrite(DDIRFW, LOW);
   }
   else
   {
   }
 }
 
-void LCD_MESSAGE(int hiz)
+void lcdMessages()
 {
-  lcd.setCursor(0, 0);
-  lcd.print("      OMNIMAN       ");
-  lcd.setCursor(0, 1);
-  lcd.print("RGB MOD : ON");
-  lcd.setCursor(0, 2);
-  lcd.print("AKU:");
-  lcd.setCursor(5, 2);
-  lcd.print(Vbatt);
-   lcd.setCursor(7, 2);
-  lcd.print("V");
-  lcd.setCursor(11, 2);
-  lcd.print("%");
-   lcd.setCursor(13, 2);   
-   // 28v = 100% 20v = %5 
-   yuzde = (Vbatt - 16)*10; 
-   
-  lcd.print(yuzde);
-    lcd.setCursor(15, 2);
-  lcd.print("   ");
-  
-  lcd.setCursor(0, 3);
-  lcd.print("HIZ: ");
-  lcd.setCursor(6, 3);
-  int mBoluDK = hiz/60;
-  
-  lcd.print(mBoluDK);
-  lcd.setCursor(9, 3);
-  lcd.print("metre/dk");
-}
-/*
-void lcdReflesh(unsigned long RPMValue)
-{
-  if (RPMValue < 10)
-  {
-
-    lcd.print("    ");
-  }
-  else if (RPMValue < 100)
-  {
-
-    lcd.print("   ");
-  }
-  else if (RPMValue < 1000)
-  {
-
-    lcd.print("  ");
-  }
-  else if (RPMValue < 10000)
-  {
-
-    lcd.print(' ');
-  }
-  else
-  {
-  }
-}
-*/
-int Ramp_function(int maxspeed, float acceleration)
-{
-
-  static int ramp_time_ms = 1000; // 2000=2sn
-  static unsigned long period_micros = 0;
-
-   ramp_decrease = true;
-
-  if (millis() > time_now2 + 10)
-  {
-
-    digitalWrite(A_Enabled, LOW);
-    digitalWrite(B_Enabled, LOW);
-    digitalWrite(C_Enabled, LOW);
-    digitalWrite(D_Enabled, LOW);
-
-    time_now2 = millis();
-    if (acceleration_value > 1 + acceleration)
-    {
-      acceleration_value = acceleration_value - acceleration;
-    }
-  }
-
-  period_micros = (100000 / maxspeed) * acceleration_value;
-
-  if (micros() > time_now + period_micros)
-  {
-    time_now = micros();
-
-    pulsestate = !pulsestate;
-
-    digitalWrite(A_Palse, pulsestate);
-    digitalWrite(B_Palse, pulsestate);
-    digitalWrite(C_Palse, pulsestate);
-    digitalWrite(D_Palse, pulsestate);
-  }
+  //en son yapılacak 
+lcd.setCursor(0, 0);
+lcd.print("      OMNIMAN       ");
+lcd.setCursor(0, 1);
+lcd.print("RGB MOD : ON");
+lcd.setCursor(0, 2);
+lcd.print("AKU:");
+lcd.setCursor(5, 2);
+lcd.setCursor(7, 2);
+lcd.print("V");
+lcd.setCursor(11, 2);
+lcd.print("%");
+lcd.setCursor(13, 2);    
+lcd.setCursor(15, 2);
+lcd.print(vBattRead());
+lcd.setCursor(0, 3);
+lcd.print(amparageRead());
+lcd.setCursor(6, 3);
+lcd.print("HIZ: ");
+lcd.setCursor(9, 3);
+lcd.print("metre/dk");
 }
 
-void Ramp_reset(int maxspeed, float acceleration)
+float vBattRead()
 {
-  static long time_ramp = 0;
-  static long time_ramp_millis = 0;
-  static unsigned long period_micros = 0;
-
-  if (ramp_decrease == true)
-  {
-
-    if (millis() > time_ramp_millis + 100)
+    int adc_value = 0;
+    for (int i = 0; i < BATTERY_AVARAGE_READ_COUNT; i++)
     {
-      time_ramp_millis = millis();
-      acceleration_value = acceleration_value + acceleration;
-      if (acceleration_value > ACCELARATION_VALUE)
-      {
-        ramp_decrease = false;
-      }
+        adc_value += analogRead(VBATTADC);
     }
+    adc_value = adc_value / BATTERY_AVARAGE_READ_COUNT;
+    float Vbatt = (adc_value * 5) / 1024;
+    return Vbatt;
+}
 
-    period_micros = (100000 / maxspeed) * acceleration_value;
-
-    if (micros() > time_ramp + period_micros)
+float amparageRead()
+{
+    int adc_value = 0;
+    for (int i = 0; i < BATTERY_AVARAGE_READ_COUNT; i++)
     {
-      time_ramp = micros();
-
-      pulsestate = !pulsestate;
-
-      digitalWrite(A_Palse, pulsestate);
-      digitalWrite(B_Palse, pulsestate);
-      digitalWrite(C_Palse, pulsestate);
-      digitalWrite(D_Palse, pulsestate);
+        adc_value += analogRead(AMPERAGE_PIN);
     }
+    adc_value = adc_value / BATTERY_AVARAGE_READ_COUNT;
+    float Vbatt = (adc_value * 5) / 1024;
+    return Vbatt;
+}
+
+
+void rgbController(bool white, bool red, bool green, bool blue, bool purple,bool cyan,bool yellow,bool stop){
+    newTime1 = millis(); 
+    static int i=0;
+    static int artirFlag = 0;
+if(newTime1-oldTime1 > 15) {
+
+  if (i==0) {
+    artirFlag=1;
+  }
+
+  if (i==30) {
+    artirFlag=0;
+  }
+
+  if (artirFlag==1) {
+    i++;
+  }
+  else {
+    i--;
+  }
+  if(white){
+    analogWrite(RED_PIN, i);
+    analogWrite(GREEN_PIN, i);
+    analogWrite(BLUE_PIN, i);
+  }else if(red){
+    analogWrite(RED_PIN, i);
+    analogWrite(GREEN_PIN, 0);
+    analogWrite(BLUE_PIN, 0);
+  }else if(green){
+    analogWrite(RED_PIN, 0);
+    analogWrite(GREEN_PIN, i);
+    analogWrite(BLUE_PIN, 0);
+  }else if(blue){
+    analogWrite(RED_PIN, 0);
+    analogWrite(GREEN_PIN, 0);
+    analogWrite(BLUE_PIN, i);
+  }else if(purple){
+    analogWrite(RED_PIN, i);
+    analogWrite(GREEN_PIN, 0);
+    analogWrite(BLUE_PIN, i);
+  }else if(cyan){
+    analogWrite(RED_PIN, 0);
+    analogWrite(GREEN_PIN, i);
+    analogWrite(BLUE_PIN, i);
+  }else if(yellow){
+    analogWrite(RED_PIN, i);
+    analogWrite(GREEN_PIN, i);
+    analogWrite(BLUE_PIN, 0);
   }else{
-    digitalWrite(A_Enabled, HIGH);
-    digitalWrite(B_Enabled, HIGH);
-    digitalWrite(C_Enabled, HIGH);
-    digitalWrite(D_Enabled, HIGH);
-  acceleration_value = ACCELARATION_VALUE;
+    analogWrite(RED_PIN, 0);
+    analogWrite(GREEN_PIN, 0);
+    analogWrite(BLUE_PIN, 0);
   }
-     
+    oldTime1 = newTime1;
+}}
+
+
+void buzzerFlipFlop(){
+    newTime3 = millis();
+if(newTime3-oldTime3 > 1000) {
+if(buzzerCount == 0){
+digitalWrite(BUZZER_PIN, HIGH);
+buzzerCount = 1;
+}
+else if(buzzerCount == 1){
+digitalWrite(BUZZER_PIN, LOW);
+buzzerCount = 0;
+}
+oldTime3 = newTime3;
+}
 }
 
-void AnalogKumandaReadAdc()
-{
-  static int indexsamples = 0;
-    static int indexsamples1 = 0;
+uint16_t lineSensorValue(){
 
-  x = analogRead(9);
-      acc_x1 = acc_x1 + x;
-    indexsamples1++;
+struct{
+  union {
+    struct {
+      uint16_t sensorAll:16;
+    };
+    struct {
+      uint16_t sensor1:1;
+      uint16_t sensor2:1;
+      uint16_t sensor3:1;
+      uint16_t sensor4:1;
+      uint16_t sensor5:1;
+      uint16_t sensor6:1;
+      uint16_t sensor7:1;
+      uint16_t sensor8:1;
+      uint16_t sensor9:1;
+      uint16_t sensor10:1;
+      uint16_t sensor11:1;
+      uint16_t sensor12:1;
+      uint16_t sensor13:1;
+      uint16_t sensor14:1;
+      uint16_t sensor15:1;
+      uint16_t sensor16:1;
+    };
+  };
+} lineSensor;
 
-  if (indexsamples1 >= 4)
-  {
-   indexsamples1 = 0;
-    avarage_y = acc_x1 / 4;
-    y=avarage_y;
-    acc_x1 = 0;
+lineSensor.sensorAll=0;
+
+static int sayac1_on=0;
+static int sayac1_off=0;
+
+if (digitalRead(SENSOR_PIN1)==0) {
+  sayac1_off=0;
+  if (sayac1_on<10) {
+    sayac1_on++;
   }
-
-  if(!(985<=y && y <=1023)){
-  acc_x = acc_x + y;
-  indexsamples++;
-  if (indexsamples >= 16)
-  {
-
-    indexsamples = 0;
-    avarage_x = acc_x / 16;
-    acc_x = 0;      
-   Serial.println(avarage_x);
-
-  }}else{
-    avarage_x=1023;
-    //Serial.println("muzaffer in tatli ruyasi");
-    }
+}else {
+  sayac1_on=0;
+    if (sayac1_off<10) {
+    sayac1_off++;
+  }
 }
+
+if (sayac1_on>=10) {
+  lineSensor.sensor1=0;
+}
+
+if (sayac1_off>=10) {
+  lineSensor.sensor1=1;
+}
+
+static int sayac2_on=0;
+static int sayac2_off=0;
+
+if (digitalRead(SENSOR_PIN2)==0) {
+  sayac2_off=0;
+  if (sayac2_on<10) {
+    sayac2_on++;
+  }
+}else {
+  sayac2_on=0;
+    if (sayac2_off<10) {
+    sayac2_off++;
+  }
+}
+
+if (sayac2_on>=10) {
+  lineSensor.sensor2=0;
+}
+
+if (sayac2_off>=10) {
+  lineSensor.sensor2=1;
+}
+
+static int sayac3_on=0;
+static int sayac3_off=0;
+
+if (digitalRead(SENSOR_PIN3)==0) {
+  sayac3_off=0;
+  if (sayac3_on<10) {
+    sayac3_on++;
+  }
+}else {
+  sayac3_on=0;
+    if (sayac3_off<10) {
+    sayac3_off++;
+  }
+}
+
+if (sayac3_on>=10) {
+  lineSensor.sensor3=0;
+}
+
+if (sayac3_off>=10) {
+  lineSensor.sensor3=1;
+}
+
+static int sayac4_on=0;
+static int sayac4_off=0;
+
+if (digitalRead(SENSOR_PIN4)==0) {
+  sayac4_off=0;
+  if (sayac4_on<10) {
+    sayac4_on++;
+  }
+}else {
+  sayac4_on=0;
+    if (sayac4_off<10) {
+    sayac4_off++;
+  }
+}
+
+if (sayac4_on>=10) {
+  lineSensor.sensor4=0;
+}
+
+if (sayac4_off>=10) {
+  lineSensor.sensor4=1;
+}
+
+static int sayac5_on=0;
+static int sayac5_off=0;
+
+if (digitalRead(SENSOR_PIN5)==0) {
+  sayac5_off=0;
+  if (sayac5_on<10) {
+    sayac5_on++;
+  }
+}else {
+  sayac5_on=0;
+    if (sayac5_off<10) {
+    sayac5_off++;
+  }
+}
+
+if (sayac5_on>=10) {
+  lineSensor.sensor5=0;
+}
+
+if (sayac5_off>=10) {
+  lineSensor.sensor5=1;
+}
+
+static int sayac6_on=0;
+static int sayac6_off=0;
+
+if (digitalRead(SENSOR_PIN6)==0) {
+  sayac6_off=0;
+  if (sayac6_on<10) {
+    sayac6_on++;
+  }
+}else {
+  sayac6_on=0;
+    if (sayac6_off<10) {
+    sayac6_off++;
+  }
+}
+
+if (sayac6_on>=10) {
+  lineSensor.sensor6=0;
+}
+
+if (sayac6_off>=10) {
+  lineSensor.sensor6=1;
+}
+
+static int sayac7_on=0;
+static int sayac7_off=0;
+
+if (digitalRead(SENSOR_PIN7)==0) {
+  sayac7_off=0;
+  if (sayac7_on<10) {
+    sayac7_on++;
+  }
+}else {
+  sayac7_on=0;
+    if (sayac7_off<10) {
+    sayac7_off++;
+  }
+}
+
+if (sayac7_on>=10) {
+  lineSensor.sensor7=0;
+}
+
+if (sayac7_off>=10) {
+  lineSensor.sensor7=1;
+}
+
+static int sayac8_on=0;
+static int sayac8_off=0;
+
+if (digitalRead(SENSOR_PIN8)==0) {
+  sayac8_off=0;
+  if (sayac8_on<10) {
+    sayac8_on++;
+  }
+}else {
+  sayac8_on=0;
+    if (sayac8_off<10) {
+    sayac8_off++;
+  }
+}
+
+if (sayac8_on>=10) {
+  lineSensor.sensor8=0;
+}
+
+if (sayac8_off>=10) {
+  lineSensor.sensor8=1;
+}
+
+static int sayac9_on=0;
+static int sayac9_off=0;
+
+if (digitalRead(SENSOR_PIN9)==0) {
+  sayac9_off=0;
+  if (sayac9_on<10) {
+    sayac9_on++;
+  }
+}else {
+  sayac9_on=0;
+    if (sayac9_off<10) {
+    sayac9_off++;
+  }
+}
+
+if (sayac9_on>=10) {
+  lineSensor.sensor9=0;
+}
+
+if (sayac9_off>=10) {
+  lineSensor.sensor9=1;
+}
+
+static int sayac10_on=0;
+static int sayac10_off=0;
+
+if (digitalRead(SENSOR_PIN10)==0) {
+  sayac10_off=0;
+  if (sayac10_on<10) {
+    sayac10_on++;
+  }
+}else {
+  sayac10_on=0;
+    if (sayac10_off<10) {
+    sayac10_off++;
+  }
+}
+
+if (sayac10_on>=10) {
+  lineSensor.sensor10=0;
+}
+
+if (sayac10_off>=10) {
+  lineSensor.sensor10=1;
+}
+
+static int sayac11_on=0;
+static int sayac11_off=0;
+
+if (digitalRead(SENSOR_PIN11)==0) {
+  sayac11_off=0;
+  if (sayac11_on<10) {
+    sayac11_on++;
+  }
+}else {
+  sayac11_on=0;
+    if (sayac11_off<10) {
+    sayac11_off++;
+  }
+}
+
+if (sayac11_on>=10) {
+  lineSensor.sensor11=0;
+}
+
+if (sayac11_off>=10) {
+  lineSensor.sensor11=1;
+}
+
+static int sayac12_on=0;
+static int sayac12_off=0;
+
+if (digitalRead(SENSOR_PIN12)==0) {
+  sayac12_off=0;
+  if (sayac12_on<10) {
+    sayac12_on++;
+  }
+}else {
+  sayac12_on=0;
+    if (sayac12_off<10) {
+    sayac12_off++;
+  }
+}
+
+if (sayac12_on>=10) {
+  lineSensor.sensor12=0;
+}
+
+if (sayac12_off>=10) {
+  lineSensor.sensor12=1;
+}
+
+static int sayac13_on=0;
+static int sayac13_off=0;
+
+if (digitalRead(SENSOR_PIN13)==0) {
+  sayac13_off=0;
+  if (sayac13_on<10) {
+    sayac13_on++;
+  }
+}else {
+  sayac13_on=0;
+    if (sayac13_off<10) {
+    sayac13_off++;
+  }
+}
+
+if (sayac13_on>=10) {
+  lineSensor.sensor13=0;
+}
+
+if (sayac13_off>=10) {
+  lineSensor.sensor13=1;
+}
+
+static int sayac14_on=0;
+static int sayac14_off=0;
+
+if (digitalRead(SENSOR_PIN14)==0) {
+  sayac14_off=0;
+  if (sayac14_on<10) {
+    sayac14_on++;
+  }
+}else {
+  sayac14_on=0;
+    if (sayac14_off<10) {
+    sayac14_off++;
+  }
+}
+
+if (sayac14_on>=10) {
+  lineSensor.sensor14=0;
+}
+
+if (sayac14_off>=10) {
+  lineSensor.sensor14=1;
+}
+
+static int sayac15_on=0;
+static int sayac15_off=0;
+
+if (digitalRead(SENSOR_PIN15)==0) {
+  sayac15_off=0;
+  if (sayac15_on<10) {
+    sayac15_on++;
+  }
+}else {
+  sayac15_on=0;
+    if (sayac15_off<10) {
+    sayac15_off++;
+  }
+}
+
+if (sayac15_on>=10) {
+  lineSensor.sensor15=0;
+}
+
+if (sayac15_off>=10) {
+  lineSensor.sensor15=1;
+}
+
 
 /*
-void AnalogKumandaReadAdc()
-{
-  static int indexsamples = 0;
-    x = analogRead(9);
-
-  acc_x = acc_x + (x);
-  indexsamples++;
-  if (indexsamples >= 8)
-  {
-
-    indexsamples = 0;
-    if (AnalogCount == 1)
-      {
-    avarage_y = acc_x / 8;
-
-      }
-      else if (AnalogCount == 2)
-      {
-    avarage_z = acc_x / 8;
-
-      }
-      else
-      {
-        AnalogCount = 0;
-      }
-      AnalogCount++;
-if(avarage_z-avarage_y<10 || avarage_y-avarage_z<10){
-  avarage_x=(avarage_y+avarage_z)/2;
-}else{
-            Serial.println("HATAAAA");
-
-  }
-}
-    acc_x = 0;
-            Serial.println("X");
-            Serial.println(avarage_x);
-            Serial.println("y");
-            Serial.println(avarage_y);
-            Serial.println("Z");
-                        Serial.println(avarage_z);
-
-
-
-  
-}
+lineSensor.sensor1 = digitalRead(SENSOR_PIN1);
+lineSensor.sensor2 = digitalRead(SENSOR_PIN2);  
+lineSensor.sensor3 = digitalRead(SENSOR_PIN3);
+lineSensor.sensor4 = digitalRead(SENSOR_PIN4);
+lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
+lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
+lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
+lineSensor.sensor8 = digitalRead(SENSOR_PIN8);
+lineSensor.sensor9 = digitalRead(SENSOR_PIN9);
+lineSensor.sensor10 = digitalRead(SENSOR_PIN10);
+lineSensor.sensor11 = digitalRead(SENSOR_PIN11);
+lineSensor.sensor12 = digitalRead(SENSOR_PIN12);
+lineSensor.sensor13 = digitalRead(SENSOR_PIN13);
+lineSensor.sensor14 = digitalRead(SENSOR_PIN14);
+lineSensor.sensor15 = digitalRead(SENSOR_PIN15);
 */
-void RGBController(bool straight, bool lateral, bool constant)
-{
-  
-  TIME_NOW = millis();
+lineSensor.sensor16 = 1;
 
-  if (TIME_NOW - lastMsg > 600)
-  {
-    lastMsg = TIME_NOW;
-    if (straight)
-    {
-      if (RGBCount == 1)
-      {
-        digitalWrite(Siren, LOW);
-        digitalWrite(RedPin, LOW);
-        digitalWrite(GreenPin, LOW);
-        digitalWrite(BluePin, LOW);
-      }
-      else if (RGBCount == 2)
-      {
-        digitalWrite(Siren, HIGH);
-        digitalWrite(RedPin, HIGH);
-        digitalWrite(GreenPin, LOW);
-        digitalWrite(BluePin, LOW);
-      }
-      else
-      {
-        RGBCount = 0;
-      }
-      RGBCount++;
-    }
-    else if (lateral)
-    {
 
-      if (RGBCount == 1)
-      {
-        digitalWrite(Siren, LOW);
-        digitalWrite(RedPin, LOW);
-        digitalWrite(GreenPin, LOW);
-        digitalWrite(BluePin, LOW);
-      }
-      else if (RGBCount == 2)
-      {
-        digitalWrite(Siren, HIGH);
-        digitalWrite(RedPin, LOW);
-        digitalWrite(GreenPin, LOW);
-        digitalWrite(BluePin, HIGH);
-      }
-      else
-      {
-        RGBCount = 0;
-      }
-      RGBCount++;
-    }
-    else if (constant)
-    {
-      if (RGBCount == 1)
-      {
-        digitalWrite(Siren, LOW);
-        digitalWrite(RedPin, LOW);
-        digitalWrite(GreenPin, LOW);
-        digitalWrite(BluePin, LOW);
-      }
-      else if (RGBCount == 2)
-      {
-        digitalWrite(Siren, LOW);
-        digitalWrite(RedPin, LOW);
-        digitalWrite(GreenPin, HIGH);
-        digitalWrite(BluePin, LOW);
-        LCD_MESSAGE(hiz);
-       } 
-          else if (Vbatt < 21)
-      {
-        digitalWrite(Siren, LOW);
-        digitalWrite(RedPin, LOW);
-        digitalWrite(GreenPin, LOW);
-        digitalWrite(BluePin, HIGH);
-        LCD_MESSAGE(hiz);    
-        digitalWrite(Siren, HIGH);
-      }
-      else
-      {
-        RGBCount = 0;
-      }
-      RGBCount++;
-    }
-    else
-    {
-    }
+return lineSensor.sensorAll;
+}
+
+void sensorEnabled(){
+  /*
+  if(sensorCount==0){
+digitalWrite(FRONT_SENSOR_EN, HIGH);
+digitalWrite(BACK_SENSOR_EN, LOW);
+digitalWrite(LEFT_SENSOR_EN, LOW);
+digitalWrite(RIGT_SENSOR_EN, LOW);
+    sensorCount=1;
   }
+  else if(sensorCount==1){
+digitalWrite(FRONT_SENSOR_EN, LOW);
+digitalWrite(BACK_SENSOR_EN, HIGH);
+digitalWrite(LEFT_SENSOR_EN, LOW);
+digitalWrite(RIGT_SENSOR_EN, LOW);
+    sensorCount=0;
+  }
+  */
+
+  digitalWrite(FRONT_SENSOR_EN, HIGH);
 }

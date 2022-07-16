@@ -134,7 +134,10 @@ int Sensor14 = -1;
 int Sensor15 = -1;
 int rgbState = -1;
 int followStationState = -1;
-
+  int  Warn_Lidar11 = -1;
+  int  Warn_Lidar12 = -1;
+  int  Warn_Lidar21 = -1;
+  int  Warn_Lidar22 = -1;
 void setup()
 {
 
@@ -203,6 +206,12 @@ void setup()
   pinMode(SENSOR_PIN13, INPUT);
   pinMode(SENSOR_PIN14, INPUT);
   pinMode(SENSOR_PIN15, INPUT);
+
+
+
+
+
+  
   // LINE FOLLOWING SENSOR ENABLE PİNMODE
   pinMode(FRONT_SENSOR_EN, OUTPUT);
   pinMode(BACK_SENSOR_EN, OUTPUT);
@@ -246,10 +255,31 @@ void loop()
   PwmStop(int pwm_value)
 
   */
-
-  TIME_NOW4 = millis();
+      digitalWrite(FRONT_SENSOR_EN, LOW);
+      digitalWrite(BACK_SENSOR_EN, LOW);
+      digitalWrite(LEFT_SENSOR_EN, LOW);
+      digitalWrite(RIGT_SENSOR_EN, HIGH);
+      TIME_NOW4 = millis();
   if (TIME_NOW4 - adc_millis4 > 10)
   {
+    //Serial.println(lineSensorValue(),BIN);
+    
+    Serial.println(Sensor1);
+    Serial.print(Sensor2);
+    Serial.print(Sensor3);
+    Serial.print(Sensor4);
+    Serial.print(Sensor5);
+    Serial.print(Sensor6);
+    Serial.print(Sensor7);
+    Serial.print(Sensor8);
+    Serial.print(Sensor9);
+    Serial.print(Sensor10);
+    Serial.print(Sensor11);
+    Serial.print(Sensor12);
+    Serial.print(Sensor13);
+    Serial.print(Sensor14);
+    Serial.print(Sensor15);
+    
     // panel buttonarının durumlarını okuyup gösteriyoruz
     ILERI_TRY = digitalRead(ILERI_PIN);
     GERI_TRY = digitalRead(GERI_PIN);
@@ -283,7 +313,6 @@ void loop()
     // Serial.println(lineSensorValue(),BIN);
     // Serial.println(ANALOG_GIT_BUTTON);
     adc_millis4 = TIME_NOW4;
-    sensorEnabled();
     // lcdMessages();
   }
 
@@ -351,6 +380,7 @@ void loop()
   {
     followStationState = 2;
   }
+
   else
   {
     Pwm(PWM_STOP);
@@ -418,13 +448,13 @@ void loop()
       rgbState = 0;
     }
   }
-
+/*
   if (WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH)
   {
     followStationState = 0;
     rgbState = 1;
   }
-
+*/
   if (followStationState == 0)
   {
     Pwm(PWM_STOP);
@@ -577,7 +607,7 @@ void LineFlowingEnable(bool front, bool back, bool right, bool left)
     digitalWrite(LEFT_SENSOR_EN, LOW);
   }
 }
-rgbStatus(int rgbState)
+void rgbStatus(int rgbState)
 {
   if (rgbState == 1)
   {

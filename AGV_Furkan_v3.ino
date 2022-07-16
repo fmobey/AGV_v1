@@ -18,26 +18,36 @@
 #define DDIR 11
 #define DDIRFW 9
 // LINE FOLLOWING SENSOR
-#define SENSOR_PIN1 A1
-#define SENSOR_PIN2 A2
-#define SENSOR_PIN3 A3
-#define SENSOR_PIN4 A4
-#define SENSOR_PIN5 A5
-#define SENSOR_PIN6 A6
-#define SENSOR_PIN7 A7
-#define SENSOR_PIN8 A8
-#define SENSOR_PIN9 A9
-#define SENSOR_PIN10 A10
-#define SENSOR_PIN11 A11
-#define SENSOR_PIN12 A12
-#define SENSOR_PIN13 A13
-#define SENSOR_PIN14 32
-#define SENSOR_PIN15 34
+#define SENSOR_PIN_FRONT_1 A1
+#define SENSOR_PIN_FRONT_2 A2
+#define SENSOR_PIN_FRONT_3 A3
+#define SENSOR_PIN_FRONT_4 A4
+#define SENSOR_PIN_FRONT_5 A5
+#define SENSOR_PIN_FRONT_6 A6
+#define SENSOR_PIN_FRONT_7 A7
+#define SENSOR_PIN_BACK_1 A8
+#define SENSOR_PIN_BACK_2 A9
+#define SENSOR_PIN_BACK_3 A10
+#define SENSOR_PIN_BACK_4 A11
+#define SENSOR_PIN_BACK_5 A12
+#define SENSOR_PIN_BACK_6 A13
+#define SENSOR_PIN_BACK_7 32
+#define SENSOR_PIN_RIGHT_1 34
+#define SENSOR_PIN_RIGHT_2 36
+#define SENSOR_PIN_RIGHT_3 38
+#define SENSOR_PIN_RIGHT_4 40
+#define SENSOR_PIN_RIGHT_5 42
+#define SENSOR_PIN_RIGHT_6 50
+#define SENSOR_PIN_RIGHT_7 52
+#define SENSOR_PIN_LEFT_1 47
+#define SENSOR_PIN_LEFT_2 49
+#define SENSOR_PIN_LEFT_3 51
+#define SENSOR_PIN_LEFT_4 53
+#define SENSOR_PIN_LEFT_5 14
+#define SENSOR_PIN_LEFT_6 15
+#define SENSOR_PIN_LEFT_7 16
 // LINE FOLLOWING SENSOR ENABLE PIN
-#define FRONT_SENSOR_EN 36
-#define BACK_SENSOR_EN 40
-#define RIGT_SENSOR_EN 38
-#define LEFT_SENSOR_EN 42
+
 // STANBY
 #define STANBY_PIN 6
 // CONTROL PANEL BUTTONS
@@ -117,27 +127,40 @@ int SOLA_DON = -1;
 // istasyon butonunun durumlarını okuyup gösteriyoruz
 int ANALOG_GIT_BUTTON = -1;
 // Sensor Pinlerini durumlarını okuyup gösteriyoruz
-int Sensor1 = -1;
-int Sensor2 = -1;
-int Sensor3 = -1;
-int Sensor4 = -1;
-int Sensor5 = -1;
-int Sensor6 = -1;
-int Sensor7 = -1;
-int Sensor8 = -1;
-int Sensor9 = -1;
-int Sensor10 = -1;
-int Sensor11 = -1;
-int Sensor12 = -1;
-int Sensor13 = -1;
-int Sensor14 = -1;
-int Sensor15 = -1;
+int SensorFront1 = -1;
+int SensorFront2 = -1;
+int SensorFront3 = -1;
+int SensorFront4 = -1;
+int SensorFront5 = -1;
+int SensorFront6 = -1;
+int SensorFront7 = -1;
+int SensorBack1 = -1;
+int SensorBack2 = -1;
+int SensorBack3 = -1;
+int SensorBack4 = -1;
+int SensorBack5 = -1;
+int SensorBack6 = -1;
+int SensorBack7 = -1;
+int SensorRight1 = -1;
+int SensorRight2 = -1;
+int SensorRight3 = -1;
+int SensorRight4 = -1;
+int SensorRight5 = -1;
+int SensorRight6 = -1;
+int SensorRight7 = -1;
+int SensorLeft1 = -1;
+int SensorLeft2 = -1;
+int SensorLeft3 = -1;
+int SensorLeft4 = -1;
+int SensorLeft5 = -1;
+int SensorLeft6 = -1;
+int SensorLeft7 = -1;
 int rgbState = -1;
 int followStationState = -1;
-  int  Warn_Lidar11 = -1;
-  int  Warn_Lidar12 = -1;
-  int  Warn_Lidar21 = -1;
-  int  Warn_Lidar22 = -1;
+int Warn_Lidar11 = -1;
+int Warn_Lidar12 = -1;
+int Warn_Lidar21 = -1;
+int Warn_Lidar22 = -1;
 void setup()
 {
 
@@ -191,42 +214,40 @@ void setup()
   pinMode(CDIRFW, OUTPUT);
   pinMode(DDIRFW, OUTPUT);
   // LINE FOLLOWING SENSOR PİNMODE
-  pinMode(SENSOR_PIN1, INPUT);
-  pinMode(SENSOR_PIN2, INPUT);
-  pinMode(SENSOR_PIN3, INPUT);
-  pinMode(SENSOR_PIN4, INPUT);
-  pinMode(SENSOR_PIN5, INPUT);
-  pinMode(SENSOR_PIN6, INPUT);
-  pinMode(SENSOR_PIN7, INPUT);
-  pinMode(SENSOR_PIN8, INPUT);
-  pinMode(SENSOR_PIN9, INPUT);
-  pinMode(SENSOR_PIN10, INPUT);
-  pinMode(SENSOR_PIN11, INPUT);
-  pinMode(SENSOR_PIN12, INPUT);
-  pinMode(SENSOR_PIN13, INPUT);
-  pinMode(SENSOR_PIN14, INPUT);
-  pinMode(SENSOR_PIN15, INPUT);
+  pinMode(SENSOR_PIN_FRONT_1, INPUT);
+  pinMode(SENSOR_PIN_FRONT_2, INPUT);
+  pinMode(SENSOR_PIN_FRONT_3, INPUT);
+  pinMode(SENSOR_PIN_FRONT_4, INPUT);
+  pinMode(SENSOR_PIN_FRONT_5, INPUT);
+  pinMode(SENSOR_PIN_FRONT_6, INPUT);
+  pinMode(SENSOR_PIN_FRONT_7, INPUT);
+  pinMode(SENSOR_PIN_BACK_1, INPUT);
+  pinMode(SENSOR_PIN_BACK_2, INPUT);
+  pinMode(SENSOR_PIN_BACK_3, INPUT);
+  pinMode(SENSOR_PIN_BACK_4, INPUT);
+  pinMode(SENSOR_PIN_BACK_5, INPUT);
+  pinMode(SENSOR_PIN_BACK_6, INPUT);
+  pinMode(SENSOR_PIN_BACK_7, INPUT);
+  pinMode(SENSOR_PIN_RIGHT_1, INPUT);
+  pinMode(SENSOR_PIN_RIGHT_2, INPUT);
+  pinMode(SENSOR_PIN_RIGHT_3, INPUT);
+  pinMode(SENSOR_PIN_RIGHT_4, INPUT);
+  pinMode(SENSOR_PIN_RIGHT_5, INPUT);
+  pinMode(SENSOR_PIN_RIGHT_6, INPUT);
+  pinMode(SENSOR_PIN_RIGHT_7, INPUT);
+  pinMode(SENSOR_PIN_LEFT_1, INPUT);
+  pinMode(SENSOR_PIN_LEFT_2, INPUT);
+  pinMode(SENSOR_PIN_LEFT_3, INPUT);
+  pinMode(SENSOR_PIN_LEFT_4, INPUT);
+  pinMode(SENSOR_PIN_LEFT_5, INPUT);
+  pinMode(SENSOR_PIN_LEFT_6, INPUT);
+  pinMode(SENSOR_PIN_LEFT_7, INPUT);
 
-
-
-
-
-  
-  // LINE FOLLOWING SENSOR ENABLE PİNMODE
-  pinMode(FRONT_SENSOR_EN, OUTPUT);
-  pinMode(BACK_SENSOR_EN, OUTPUT);
-  pinMode(RIGT_SENSOR_EN, OUTPUT);
-  pinMode(LEFT_SENSOR_EN, OUTPUT);
   // LIDAR WARNING PİNMODE
   pinMode(WARN_LIDAR11, INPUT);
   pinMode(WARN_LIDAR12, INPUT);
   pinMode(WARN_LIDAR21, INPUT);
   pinMode(WARN_LIDAR22, INPUT);
-  // LINE FOLLOWING SENSOR ENABLE
-  digitalWrite(FRONT_SENSOR_EN, HIGH);
-  digitalWrite(BACK_SENSOR_EN, HIGH);
-  digitalWrite(RIGT_SENSOR_EN, HIGH);
-  digitalWrite(LEFT_SENSOR_EN, HIGH);
 
   // MOTOR DİRECTİON SETUP
   digitalWrite(ADIR, HIGH);
@@ -255,30 +276,52 @@ void loop()
   PwmStop(int pwm_value)
 
   */
-      digitalWrite(FRONT_SENSOR_EN, LOW);
-      digitalWrite(BACK_SENSOR_EN, LOW);
-      digitalWrite(LEFT_SENSOR_EN, LOW);
-      digitalWrite(RIGT_SENSOR_EN, HIGH);
-      TIME_NOW4 = millis();
+  digitalWrite(FRONT_SENSOR_EN, LOW);
+  digitalWrite(BACK_SENSOR_EN, LOW);
+  digitalWrite(LEFT_SENSOR_EN, LOW);
+  digitalWrite(RIGT_SENSOR_EN, HIGH);
+  TIME_NOW4 = millis();
   if (TIME_NOW4 - adc_millis4 > 10)
   {
-    //Serial.println(lineSensorValue(),BIN);
-    
-    Serial.println(Sensor1);
-    Serial.print(Sensor2);
-    Serial.print(Sensor3);
-    Serial.print(Sensor4);
-    Serial.print(Sensor5);
-    Serial.print(Sensor6);
-    Serial.print(Sensor7);
-    Serial.print(Sensor8);
-    Serial.print(Sensor9);
-    Serial.print(Sensor10);
-    Serial.print(Sensor11);
-    Serial.print(Sensor12);
-    Serial.print(Sensor13);
-    Serial.print(Sensor14);
-    Serial.print(Sensor15);
+
+    // Serial.println(lineFrontSensorValue(),BIN);
+    Serial.println("Front Sensor");
+    Serial.print(SensorFront1);
+    Serial.print(SensorFront2);
+    Serial.print(SensorFront3);
+    Serial.print(SensorFront4);
+    Serial.print(SensorFront5);
+    Serial.print(SensorFront6);
+    Serial.print(SensorFront7);
+    Serial.println();
+    Serial.println("Back Sensor");
+    Serial.print(SensorBack1);
+    Serial.print(SensorBack2);
+    Serial.print(SensorBack3);
+    Serial.print(SensorBack4);
+    Serial.print(SensorBack5);
+    Serial.print(SensorBack6);
+    Serial.print(SensorBack7);
+    Serial.println();
+    Serial.println("Right Sensor");
+    Serial.print(SensorRight1);
+    Serial.print(SensorRight2);
+    Serial.print(SensorRight3);
+    Serial.print(SensorRight4);
+    Serial.print(SensorRight5);
+    Serial.print(SensorRight6);
+    Serial.print(SensorRight7);
+    Serial.println();
+    Serial.println("Left Sensor");
+    Serial.print(SensorLeft1);
+    Serial.print(SensorLeft2);
+    Serial.print(SensorLeft3);
+    Serial.print(SensorLeft4);
+    Serial.print(SensorLeft5);
+    Serial.print(SensorLeft6);
+    Serial.print(SensorLeft7);
+    Serial.println();
+
     
     // panel buttonarının durumlarını okuyup gösteriyoruz
     ILERI_TRY = digitalRead(ILERI_PIN);
@@ -290,27 +333,41 @@ void loop()
     // istasyon butonunun durumlarını okuyup gösteriyoruz
     ANALOG_GIT_BUTTON = analogRead(ANALOG_PIN_BUTTON);
     // Sensor Pinlerini durumlarını okuyup gösteriyoruz
-    Sensor1 = digitalRead(SENSOR_PIN1);
-    Sensor2 = digitalRead(SENSOR_PIN2);
-    Sensor3 = digitalRead(SENSOR_PIN3);
-    Sensor4 = digitalRead(SENSOR_PIN4);
-    Sensor5 = digitalRead(SENSOR_PIN5);
-    Sensor6 = digitalRead(SENSOR_PIN6);
-    Sensor7 = digitalRead(SENSOR_PIN7);
-    Sensor8 = digitalRead(SENSOR_PIN8);
-    Sensor9 = digitalRead(SENSOR_PIN9);
-    Sensor10 = digitalRead(SENSOR_PIN10);
-    Sensor11 = digitalRead(SENSOR_PIN11);
-    Sensor12 = digitalRead(SENSOR_PIN12);
-    Sensor13 = digitalRead(SENSOR_PIN13);
-    Sensor14 = digitalRead(SENSOR_PIN14);
-    Sensor15 = digitalRead(SENSOR_PIN15);
+    SensorFront1 = digitalRead(SENSOR_PIN_FRONT_1);
+    SensorFront2 = digitalRead(SENSOR_PIN_FRONT_2);
+    SensorFront3 = digitalRead(SENSOR_PIN_FRONT_3);
+    SensorFront4 = digitalRead(SENSOR_PIN_FRONT_4);
+    SensorFront5 = digitalRead(SENSOR_PIN_FRONT_5);
+    SensorFront6 = digitalRead(SENSOR_PIN_FRONT_6);
+    SensorFront7 = digitalRead(SENSOR_PIN_FRONT_7);
+    SensorBack1 = digitalRead(SENSOR_PIN_BACK_1);
+    SensorBack2 = digitalRead(SENSOR_PIN_BACK_2);
+    SensorBack3 = digitalRead(SENSOR_PIN_BACK_3);
+    SensorBack4 = digitalRead(SENSOR_PIN_BACK_4);
+    SensorBack5 = digitalRead(SENSOR_PIN_BACK_5);
+    SensorBack6 = digitalRead(SENSOR_PIN_BACK_6);
+    SensorBack7 = digitalRead(SENSOR_PIN_BACK_7);
+    SensorRight1 = digitalRead(SENSOR_PIN_RIGHT_1);
+    SensorRight2 = digitalRead(SENSOR_PIN_RIGHT_2);
+    SensorRight3 = digitalRead(SENSOR_PIN_RIGHT_3);
+    SensorRight4 = digitalRead(SENSOR_PIN_RIGHT_4);
+    SensorRight5 = digitalRead(SENSOR_PIN_RIGHT_5);
+    SensorRight6 = digitalRead(SENSOR_PIN_RIGHT_6);
+    SensorRight7 = digitalRead(SENSOR_PIN_RIGHT_7);
+    SensorLeft1 = digitalRead(SENSOR_PIN_LEFT_1);
+    SensorLeft2 = digitalRead(SENSOR_PIN_LEFT_2);
+    SensorLeft3 = digitalRead(SENSOR_PIN_LEFT_3);
+    SensorLeft4 = digitalRead(SENSOR_PIN_LEFT_4);
+    SensorLeft5 = digitalRead(SENSOR_PIN_LEFT_5);
+    SensorLeft6 = digitalRead(SENSOR_PIN_LEFT_6);
+    SensorLeft7 = digitalRead(SENSOR_PIN_LEFT_7);
+
     // Lidar Warning Pinlerini durumlarını okuyup gösteriyoruz
     Warn_Lidar11 = digitalRead(WARN_LIDAR11);
     Warn_Lidar12 = digitalRead(WARN_LIDAR12);
     Warn_Lidar21 = digitalRead(WARN_LIDAR21);
     Warn_Lidar22 = digitalRead(WARN_LIDAR22);
-    // Serial.println(lineSensorValue(),BIN);
+    // Serial.println(lineFrontSensorValue(),BIN);
     // Serial.println(ANALOG_GIT_BUTTON);
     adc_millis4 = TIME_NOW4;
     // lcdMessages();
@@ -332,7 +389,7 @@ void loop()
   //   newTime = millis();
   // if(newTime-oldTime > 1) {
   /*
-  if (lineSensorValue()==0b1000000010000000) {
+  if (lineFrontSensorValue()==0b1000000010000000) {
         if(WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH) {
           Pwm(PWM_STOP);
           rgbState=2;
@@ -342,7 +399,7 @@ void loop()
           Pwm(PWM_START);
        }
         }
-          if ((lineSensorValue() & 0b0111111110000000)>=256 && (lineSensorValue() & 0b0111111110000000)<=32640) {  // 2
+          if ((lineFrontSensorValue() & 0b0111111110000000)>=256 && (lineFrontSensorValue() & 0b0111111110000000)<=32640) {  // 2
        //     Serial.println("sol");
        if(WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH) {
           Pwm(PWM_STOP);
@@ -352,7 +409,7 @@ void loop()
           RotateWheels(false, true, false, false, false, false);
           PwmStraigtRight(PWM_START);
        }
-        }else if ((lineSensorValue() & 0b0000000001111111)<=127 && (lineSensorValue() & 0b0000000001111111)>0 ) {
+        }else if ((lineFrontSensorValue() & 0b0000000001111111)<=127 && (lineFrontSensorValue() & 0b0000000001111111)>0 ) {
          //     Serial.println("sag");
         if(WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH) {
           Pwm(PWM_STOP);
@@ -365,7 +422,7 @@ void loop()
         }
 
 
-        if (lineSensorValue()==65535 || lineSensorValue()==32768) {
+        if (lineFrontSensorValue()==65535 || lineFrontSensorValue()==32768) {
           PwmStop(PWM_STOP);
         }
 
@@ -390,21 +447,20 @@ void loop()
   //}
   if (followStationState == 1)
   {
-    sensorStaraigtEnabled();
-    if (lineSensorValue() == 0b1000000010000000)
+    if (lineFrontSensorValue() == 0b10001000)
     {
       rgbState = 2;
       RotateWheels(false, true, false, false, false, false);
       Pwm(PWM_START);
     }
 
-    if ((lineSensorValue() & 0b0111111110000000) >= 256 && (lineSensorValue() & 0b0111111110000000) <= 32640)
+    if ((lineFrontSensorValue() & 0b01111000) >= 16 && (lineFrontSensorValue() & 0b01111000) <= 120)
     { // 2
       rgbState = 2;
       RotateWheels(false, true, false, false, false, false);
       PwmStraigtRight(PWM_START);
     }
-    else if ((lineSensorValue() & 0b0000000001111111) <= 127 && (lineSensorValue() & 0b0000000001111111) > 0)
+    else if ((lineFrontSensorValue() & 0b0001111) <= 15 && (lineFrontSensorValue() & 0b0001111) > 0)
     {
       //     Serial.println("sag");
       rgbState = 2;
@@ -412,7 +468,7 @@ void loop()
       PwmStraigtLeft(PWM_START);
     }
 
-    if (lineSensorValue() == 65535 || lineSensorValue() == 32768)
+    if (lineFrontSensorValue() == 255 || lineFrontSensorValue() == 128)
     {
       followStationState = 0;
       rgbState = 0;
@@ -420,21 +476,20 @@ void loop()
   }
   if (followStationState == 2)
   {
-    sensorStaraigtEnabled();
-    if (lineSensorValue() == 0b1000000010000000)
+    if (lineBackSensorValue() == 0b10001000)
     {
       rgbState = 2;
       RotateWheels(true, false, false, false, false, false);
       Pwm(PWM_START);
     }
 
-    if ((lineSensorValue() & 0b0111111110000000) >= 256 && (lineSensorValue() & 0b0111111110000000) <= 32640)
+    if ((lineBackSensorValue() & 0b01111000) >= 16 && (lineBackSensorValue() & 0b01111000) <= 120)
     { // 2
       rgbState = 2;
       RotateWheels(true, false, false, false, false, false);
       PwmStraigtLeft(PWM_START);
     }
-    else if ((lineSensorValue() & 0b0000000001111111) <= 127 && (lineSensorValue() & 0b0000000001111111) > 0)
+    else if ((lineBackSensorValue() & 0b0001111) <= 15 && (lineBackSensorValue() & 0b0001111) > 0)
     {
       //     Serial.println("sag");
       rgbState = 2;
@@ -442,19 +497,19 @@ void loop()
       PwmStraigtRight(PWM_START);
     }
 
-    if (lineSensorValue() == 65535 || lineSensorValue() == 32768)
+    if (lineBackSensorValue() == 255 || lineBackSensorValue() == 128)
     {
       followStationState = 0;
       rgbState = 0;
     }
   }
-/*
-  if (WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH)
-  {
-    followStationState = 0;
-    rgbState = 1;
-  }
-*/
+  /*
+    if (WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH)
+    {
+      followStationState = 0;
+      rgbState = 1;
+    }
+  */
   if (followStationState == 0)
   {
     Pwm(PWM_STOP);
@@ -569,44 +624,7 @@ void timer_standby()
     /*   */
   }
 }
-void LineFlowingEnable(bool front, bool back, bool right, bool left)
-{
-  if (front)
-  {
-    digitalWrite(FRONT_SENSOR_EN, HIGH);
-    digitalWrite(BACK_SENSOR_EN, LOW);
-    digitalWrite(RIGT_SENSOR_EN, LOW);
-    digitalWrite(LEFT_SENSOR_EN, LOW);
-  }
-  else if (back)
-  {
-    digitalWrite(FRONT_SENSOR_EN, LOW);
-    digitalWrite(BACK_SENSOR_EN, HIGH);
-    digitalWrite(RIGT_SENSOR_EN, LOW);
-    digitalWrite(LEFT_SENSOR_EN, LOW);
-  }
-  else if (right)
-  {
-    digitalWrite(FRONT_SENSOR_EN, LOW);
-    digitalWrite(BACK_SENSOR_EN, LOW);
-    digitalWrite(RIGT_SENSOR_EN, HIGH);
-    digitalWrite(LEFT_SENSOR_EN, LOW);
-  }
-  else if (left)
-  {
-    digitalWrite(FRONT_SENSOR_EN, LOW);
-    digitalWrite(BACK_SENSOR_EN, LOW);
-    digitalWrite(RIGT_SENSOR_EN, LOW);
-    digitalWrite(LEFT_SENSOR_EN, HIGH);
-  }
-  else
-  {
-    digitalWrite(FRONT_SENSOR_EN, LOW);
-    digitalWrite(BACK_SENSOR_EN, LOW);
-    digitalWrite(RIGT_SENSOR_EN, LOW);
-    digitalWrite(LEFT_SENSOR_EN, LOW);
-  }
-}
+
 void rgbStatus(int rgbState)
 {
   if (rgbState == 1)
@@ -862,7 +880,7 @@ void buzzerFlipFlop()
   }
 }
 
-uint16_t lineSensorValue()
+uint16_t lineFrontSensorValue()
 {
 
   struct
@@ -871,7 +889,7 @@ uint16_t lineSensorValue()
     {
       struct
       {
-        uint16_t sensorAll : 16;
+        uint16_t sensorAll : 8;
       };
       struct
       {
@@ -883,14 +901,6 @@ uint16_t lineSensorValue()
         uint16_t sensor6 : 1;
         uint16_t sensor7 : 1;
         uint16_t sensor8 : 1;
-        uint16_t sensor9 : 1;
-        uint16_t sensor10 : 1;
-        uint16_t sensor11 : 1;
-        uint16_t sensor12 : 1;
-        uint16_t sensor13 : 1;
-        uint16_t sensor14 : 1;
-        uint16_t sensor15 : 1;
-        uint16_t sensor16 : 1;
       };
     };
   } lineSensor;
@@ -900,7 +910,7 @@ uint16_t lineSensorValue()
   static int sayac1_on = 0;
   static int sayac1_off = 0;
 
-  if (digitalRead(SENSOR_PIN1) == 0)
+  if (digitalRead(SENSOR_PIN_FRONT_1) == 0)
   {
     sayac1_off = 0;
     if (sayac1_on < 10)
@@ -930,7 +940,7 @@ uint16_t lineSensorValue()
   static int sayac2_on = 0;
   static int sayac2_off = 0;
 
-  if (digitalRead(SENSOR_PIN2) == 0)
+  if (digitalRead(SENSOR_PIN_FRONT_2) == 0)
   {
     sayac2_off = 0;
     if (sayac2_on < 10)
@@ -960,7 +970,7 @@ uint16_t lineSensorValue()
   static int sayac3_on = 0;
   static int sayac3_off = 0;
 
-  if (digitalRead(SENSOR_PIN3) == 0)
+  if (digitalRead(SENSOR_PIN_FRONT_3) == 0)
   {
     sayac3_off = 0;
     if (sayac3_on < 10)
@@ -990,7 +1000,7 @@ uint16_t lineSensorValue()
   static int sayac4_on = 0;
   static int sayac4_off = 0;
 
-  if (digitalRead(SENSOR_PIN4) == 0)
+  if (digitalRead(SENSOR_PIN_FRONT_4) == 0)
   {
     sayac4_off = 0;
     if (sayac4_on < 10)
@@ -1020,7 +1030,7 @@ uint16_t lineSensorValue()
   static int sayac5_on = 0;
   static int sayac5_off = 0;
 
-  if (digitalRead(SENSOR_PIN5) == 0)
+  if (digitalRead(SENSOR_PIN_FRONT_5) == 0)
   {
     sayac5_off = 0;
     if (sayac5_on < 10)
@@ -1050,7 +1060,7 @@ uint16_t lineSensorValue()
   static int sayac6_on = 0;
   static int sayac6_off = 0;
 
-  if (digitalRead(SENSOR_PIN6) == 0)
+  if (digitalRead(SENSOR_PIN_FRONT_6) == 0)
   {
     sayac6_off = 0;
     if (sayac6_on < 10)
@@ -1080,7 +1090,7 @@ uint16_t lineSensorValue()
   static int sayac7_on = 0;
   static int sayac7_off = 0;
 
-  if (digitalRead(SENSOR_PIN7) == 0)
+  if (digitalRead(SENSOR_PIN_FRONT_7) == 0)
   {
     sayac7_off = 0;
     if (sayac7_on < 10)
@@ -1107,244 +1117,256 @@ uint16_t lineSensorValue()
     lineSensor.sensor7 = 1;
   }
 
-  static int sayac8_on = 0;
-  static int sayac8_off = 0;
+  /*
+  lineSensor.sensor1 = digitalRead(SENSOR_PIN1);
+  lineSensor.sensor2 = digitalRead(SENSOR_PIN2);
+  lineSensor.sensor3 = digitalRead(SENSOR_PIN3);
+  lineSensor.sensor4 = digitalRead(SENSOR_PIN4);
+  lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
+  lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
+  lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
+  lineSensor.sensor8 = digitalRead(SENSOR_PIN8);
+  */
+  lineSensor.sensor8 = 1;
 
-  if (digitalRead(SENSOR_PIN8) == 0)
+  return lineSensor.sensorAll;
+}
+
+uint16_t lineBackSensorValue()
+{
+
+  struct
   {
-    sayac8_off = 0;
-    if (sayac8_on < 10)
+    union
     {
-      sayac8_on++;
+      struct
+      {
+        uint16_t sensorAll : 8;
+      };
+      struct
+      {
+        uint16_t sensor1 : 1;
+        uint16_t sensor2 : 1;
+        uint16_t sensor3 : 1;
+        uint16_t sensor4 : 1;
+        uint16_t sensor5 : 1;
+        uint16_t sensor6 : 1;
+        uint16_t sensor7 : 1;
+        uint16_t sensor8 : 1;
+      };
+    };
+  } lineSensor;
+
+  lineSensor.sensorAll = 0;
+
+  static int sayac1_on = 0;
+  static int sayac1_off = 0;
+
+  if (digitalRead(SENSOR_PIN_BACK_1) == 0)
+  {
+    sayac1_off = 0;
+    if (sayac1_on < 10)
+    {
+      sayac1_on++;
     }
   }
   else
   {
-    sayac8_on = 0;
-    if (sayac8_off < 10)
+    sayac1_on = 0;
+    if (sayac1_off < 10)
     {
-      sayac8_off++;
+      sayac1_off++;
     }
   }
 
-  if (sayac8_on >= 10)
+  if (sayac1_on >= 10)
   {
-    lineSensor.sensor8 = 0;
+    lineSensor.sensor1 = 0;
   }
 
-  if (sayac8_off >= 10)
+  if (sayac1_off >= 10)
   {
-    lineSensor.sensor8 = 1;
+    lineSensor.sensor1 = 1;
   }
 
-  static int sayac9_on = 0;
-  static int sayac9_off = 0;
+  static int sayac2_on = 0;
+  static int sayac2_off = 0;
 
-  if (digitalRead(SENSOR_PIN9) == 0)
+  if (digitalRead(SENSOR_PIN_BACK_2) == 0)
   {
-    sayac9_off = 0;
-    if (sayac9_on < 10)
+    sayac2_off = 0;
+    if (sayac2_on < 10)
     {
-      sayac9_on++;
-    }
-  }
-  else
-  {
-    sayac9_on = 0;
-    if (sayac9_off < 10)
-    {
-      sayac9_off++;
-    }
-  }
-
-  if (sayac9_on >= 10)
-  {
-    lineSensor.sensor9 = 0;
-  }
-
-  if (sayac9_off >= 10)
-  {
-    lineSensor.sensor9 = 1;
-  }
-
-  static int sayac10_on = 0;
-  static int sayac10_off = 0;
-
-  if (digitalRead(SENSOR_PIN10) == 0)
-  {
-    sayac10_off = 0;
-    if (sayac10_on < 10)
-    {
-      sayac10_on++;
+      sayac2_on++;
     }
   }
   else
   {
-    sayac10_on = 0;
-    if (sayac10_off < 10)
+    sayac2_on = 0;
+    if (sayac2_off < 10)
     {
-      sayac10_off++;
+      sayac2_off++;
     }
   }
 
-  if (sayac10_on >= 10)
+  if (sayac2_on >= 10)
   {
-    lineSensor.sensor10 = 0;
+    lineSensor.sensor2 = 0;
   }
 
-  if (sayac10_off >= 10)
+  if (sayac2_off >= 10)
   {
-    lineSensor.sensor10 = 1;
+    lineSensor.sensor2 = 1;
   }
 
-  static int sayac11_on = 0;
-  static int sayac11_off = 0;
+  static int sayac3_on = 0;
+  static int sayac3_off = 0;
 
-  if (digitalRead(SENSOR_PIN11) == 0)
+  if (digitalRead(SENSOR_PIN_BACK_3) == 0)
   {
-    sayac11_off = 0;
-    if (sayac11_on < 10)
+    sayac3_off = 0;
+    if (sayac3_on < 10)
     {
-      sayac11_on++;
-    }
-  }
-  else
-  {
-    sayac11_on = 0;
-    if (sayac11_off < 10)
-    {
-      sayac11_off++;
-    }
-  }
-
-  if (sayac11_on >= 10)
-  {
-    lineSensor.sensor11 = 0;
-  }
-
-  if (sayac11_off >= 10)
-  {
-    lineSensor.sensor11 = 1;
-  }
-
-  static int sayac12_on = 0;
-  static int sayac12_off = 0;
-
-  if (digitalRead(SENSOR_PIN12) == 0)
-  {
-    sayac12_off = 0;
-    if (sayac12_on < 10)
-    {
-      sayac12_on++;
+      sayac3_on++;
     }
   }
   else
   {
-    sayac12_on = 0;
-    if (sayac12_off < 10)
+    sayac3_on = 0;
+    if (sayac3_off < 10)
     {
-      sayac12_off++;
+      sayac3_off++;
     }
   }
 
-  if (sayac12_on >= 10)
+  if (sayac3_on >= 10)
   {
-    lineSensor.sensor12 = 0;
+    lineSensor.sensor3 = 0;
   }
 
-  if (sayac12_off >= 10)
+  if (sayac3_off >= 10)
   {
-    lineSensor.sensor12 = 1;
+    lineSensor.sensor3 = 1;
   }
 
-  static int sayac13_on = 0;
-  static int sayac13_off = 0;
+  static int sayac4_on = 0;
+  static int sayac4_off = 0;
 
-  if (digitalRead(SENSOR_PIN13) == 0)
+  if (digitalRead(SENSOR_PIN_BACK_4) == 0)
   {
-    sayac13_off = 0;
-    if (sayac13_on < 10)
+    sayac4_off = 0;
+    if (sayac4_on < 10)
     {
-      sayac13_on++;
-    }
-  }
-  else
-  {
-    sayac13_on = 0;
-    if (sayac13_off < 10)
-    {
-      sayac13_off++;
-    }
-  }
-
-  if (sayac13_on >= 10)
-  {
-    lineSensor.sensor13 = 0;
-  }
-
-  if (sayac13_off >= 10)
-  {
-    lineSensor.sensor13 = 1;
-  }
-
-  static int sayac14_on = 0;
-  static int sayac14_off = 0;
-
-  if (digitalRead(SENSOR_PIN14) == 0)
-  {
-    sayac14_off = 0;
-    if (sayac14_on < 10)
-    {
-      sayac14_on++;
+      sayac4_on++;
     }
   }
   else
   {
-    sayac14_on = 0;
-    if (sayac14_off < 10)
+    sayac4_on = 0;
+    if (sayac4_off < 10)
     {
-      sayac14_off++;
+      sayac4_off++;
     }
   }
 
-  if (sayac14_on >= 10)
+  if (sayac4_on >= 10)
   {
-    lineSensor.sensor14 = 0;
+    lineSensor.sensor4 = 0;
   }
 
-  if (sayac14_off >= 10)
+  if (sayac4_off >= 10)
   {
-    lineSensor.sensor14 = 1;
+    lineSensor.sensor4 = 1;
   }
 
-  static int sayac15_on = 0;
-  static int sayac15_off = 0;
+  static int sayac5_on = 0;
+  static int sayac5_off = 0;
 
-  if (digitalRead(SENSOR_PIN15) == 0)
+  if (digitalRead(SENSOR_PIN_BACK_5) == 0)
   {
-    sayac15_off = 0;
-    if (sayac15_on < 10)
+    sayac5_off = 0;
+    if (sayac5_on < 10)
     {
-      sayac15_on++;
+      sayac5_on++;
     }
   }
   else
   {
-    sayac15_on = 0;
-    if (sayac15_off < 10)
+    sayac5_on = 0;
+    if (sayac5_off < 10)
     {
-      sayac15_off++;
+      sayac5_off++;
     }
   }
 
-  if (sayac15_on >= 10)
+  if (sayac5_on >= 10)
   {
-    lineSensor.sensor15 = 0;
+    lineSensor.sensor5 = 0;
   }
 
-  if (sayac15_off >= 10)
+  if (sayac5_off >= 10)
   {
-    lineSensor.sensor15 = 1;
+    lineSensor.sensor5 = 1;
+  }
+
+  static int sayac6_on = 0;
+  static int sayac6_off = 0;
+
+  if (digitalRead(SENSOR_PIN_BACK_6) == 0)
+  {
+    sayac6_off = 0;
+    if (sayac6_on < 10)
+    {
+      sayac6_on++;
+    }
+  }
+  else
+  {
+    sayac6_on = 0;
+    if (sayac6_off < 10)
+    {
+      sayac6_off++;
+    }
+  }
+
+  if (sayac6_on >= 10)
+  {
+    lineSensor.sensor6 = 0;
+  }
+
+  if (sayac6_off >= 10)
+  {
+    lineSensor.sensor6 = 1;
+  }
+
+  static int sayac7_on = 0;
+  static int sayac7_off = 0;
+
+  if (digitalRead(SENSOR_PIN_BACK_7) == 0)
+  {
+    sayac7_off = 0;
+    if (sayac7_on < 10)
+    {
+      sayac7_on++;
+    }
+  }
+  else
+  {
+    sayac7_on = 0;
+    if (sayac7_off < 10)
+    {
+      sayac7_off++;
+    }
+  }
+
+  if (sayac7_on >= 10)
+  {
+    lineSensor.sensor7 = 0;
+  }
+
+  if (sayac7_off >= 10)
+  {
+    lineSensor.sensor7 = 1;
   }
 
   /*
@@ -1356,67 +1378,512 @@ uint16_t lineSensorValue()
   lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
   lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
   lineSensor.sensor8 = digitalRead(SENSOR_PIN8);
-  lineSensor.sensor9 = digitalRead(SENSOR_PIN9);
-  lineSensor.sensor10 = digitalRead(SENSOR_PIN10);
-  lineSensor.sensor11 = digitalRead(SENSOR_PIN11);
-  lineSensor.sensor12 = digitalRead(SENSOR_PIN12);
-  lineSensor.sensor13 = digitalRead(SENSOR_PIN13);
-  lineSensor.sensor14 = digitalRead(SENSOR_PIN14);
-  lineSensor.sensor15 = digitalRead(SENSOR_PIN15);
   */
-  lineSensor.sensor16 = 1;
+  lineSensor.sensor8 = 1;
 
   return lineSensor.sensorAll;
 }
 
-void sensorStaraigtEnabled()
+uint16_t lineRightSensorValue()
 {
-  newTime5 = millis();
-  if (newTime5 - oldTime5 > 1000)
-  {
-    if (sensorStraightStatus == 0)
-    {
-      digitalWrite(FRONT_SENSOR_EN, HIGH);
-      digitalWrite(BACK_SENSOR_EN, LOW);
-      digitalWrite(LEFT_SENSOR_EN, LOW);
-      digitalWrite(RIGT_SENSOR_EN, LOW);
-      sensorStraightStatus = 1;
-    }
-    else if (sensorStraightStatus == 1)
-    {
-      digitalWrite(FRONT_SENSOR_EN, LOW);
-      digitalWrite(BACK_SENSOR_EN, HIGH);
-      digitalWrite(LEFT_SENSOR_EN, LOW);
-      digitalWrite(RIGT_SENSOR_EN, LOW);
-      sensorStraightStatus = 0;
-    }
 
-    oldTime5 = newTime5;
+  struct
+  {
+    union
+    {
+      struct
+      {
+        uint16_t sensorAll : 8;
+      };
+      struct
+      {
+        uint16_t sensor1 : 1;
+        uint16_t sensor2 : 1;
+        uint16_t sensor3 : 1;
+        uint16_t sensor4 : 1;
+        uint16_t sensor5 : 1;
+        uint16_t sensor6 : 1;
+        uint16_t sensor7 : 1;
+        uint16_t sensor8 : 1;
+      };
+    };
+  } lineSensor;
+
+  lineSensor.sensorAll = 0;
+
+  static int sayac1_on = 0;
+  static int sayac1_off = 0;
+
+  if (digitalRead(SENSOR_PIN_RIGHT_1) == 0)
+  {
+    sayac1_off = 0;
+    if (sayac1_on < 10)
+    {
+      sayac1_on++;
+    }
   }
+  else
+  {
+    sayac1_on = 0;
+    if (sayac1_off < 10)
+    {
+      sayac1_off++;
+    }
+  }
+
+  if (sayac1_on >= 10)
+  {
+    lineSensor.sensor1 = 0;
+  }
+
+  if (sayac1_off >= 10)
+  {
+    lineSensor.sensor1 = 1;
+  }
+
+  static int sayac2_on = 0;
+  static int sayac2_off = 0;
+
+  if (digitalRead(SENSOR_PIN_RIGHT_2) == 0)
+  {
+    sayac2_off = 0;
+    if (sayac2_on < 10)
+    {
+      sayac2_on++;
+    }
+  }
+  else
+  {
+    sayac2_on = 0;
+    if (sayac2_off < 10)
+    {
+      sayac2_off++;
+    }
+  }
+
+  if (sayac2_on >= 10)
+  {
+    lineSensor.sensor2 = 0;
+  }
+
+  if (sayac2_off >= 10)
+  {
+    lineSensor.sensor2 = 1;
+  }
+
+  static int sayac3_on = 0;
+  static int sayac3_off = 0;
+
+  if (digitalRead(SENSOR_PIN_RIGHT_3) == 0)
+  {
+    sayac3_off = 0;
+    if (sayac3_on < 10)
+    {
+      sayac3_on++;
+    }
+  }
+  else
+  {
+    sayac3_on = 0;
+    if (sayac3_off < 10)
+    {
+      sayac3_off++;
+    }
+  }
+
+  if (sayac3_on >= 10)
+  {
+    lineSensor.sensor3 = 0;
+  }
+
+  if (sayac3_off >= 10)
+  {
+    lineSensor.sensor3 = 1;
+  }
+
+  static int sayac4_on = 0;
+  static int sayac4_off = 0;
+
+  if (digitalRead(SENSOR_PIN_RIGHT_4) == 0)
+  {
+    sayac4_off = 0;
+    if (sayac4_on < 10)
+    {
+      sayac4_on++;
+    }
+  }
+  else
+  {
+    sayac4_on = 0;
+    if (sayac4_off < 10)
+    {
+      sayac4_off++;
+    }
+  }
+
+  if (sayac4_on >= 10)
+  {
+    lineSensor.sensor4 = 0;
+  }
+
+  if (sayac4_off >= 10)
+  {
+    lineSensor.sensor4 = 1;
+  }
+
+  static int sayac5_on = 0;
+  static int sayac5_off = 0;
+
+  if (digitalRead(SENSOR_PIN_RIGHT_5) == 0)
+  {
+    sayac5_off = 0;
+    if (sayac5_on < 10)
+    {
+      sayac5_on++;
+    }
+  }
+  else
+  {
+    sayac5_on = 0;
+    if (sayac5_off < 10)
+    {
+      sayac5_off++;
+    }
+  }
+
+  if (sayac5_on >= 10)
+  {
+    lineSensor.sensor5 = 0;
+  }
+
+  if (sayac5_off >= 10)
+  {
+    lineSensor.sensor5 = 1;
+  }
+
+  static int sayac6_on = 0;
+  static int sayac6_off = 0;
+
+  if (digitalRead(SENSOR_PIN_RIGHT_6) == 0)
+  {
+    sayac6_off = 0;
+    if (sayac6_on < 10)
+    {
+      sayac6_on++;
+    }
+  }
+  else
+  {
+    sayac6_on = 0;
+    if (sayac6_off < 10)
+    {
+      sayac6_off++;
+    }
+  }
+
+  if (sayac6_on >= 10)
+  {
+    lineSensor.sensor6 = 0;
+  }
+
+  if (sayac6_off >= 10)
+  {
+    lineSensor.sensor6 = 1;
+  }
+
+  static int sayac7_on = 0;
+  static int sayac7_off = 0;
+
+  if (digitalRead(SENSOR_PIN_RIGHT_7) == 0)
+  {
+    sayac7_off = 0;
+    if (sayac7_on < 10)
+    {
+      sayac7_on++;
+    }
+  }
+  else
+  {
+    sayac7_on = 0;
+    if (sayac7_off < 10)
+    {
+      sayac7_off++;
+    }
+  }
+
+  if (sayac7_on >= 10)
+  {
+    lineSensor.sensor7 = 0;
+  }
+
+  if (sayac7_off >= 10)
+  {
+    lineSensor.sensor7 = 1;
+  }
+
+  /*
+  lineSensor.sensor1 = digitalRead(SENSOR_PIN1);
+  lineSensor.sensor2 = digitalRead(SENSOR_PIN2);
+  lineSensor.sensor3 = digitalRead(SENSOR_PIN3);
+  lineSensor.sensor4 = digitalRead(SENSOR_PIN4);
+  lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
+  lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
+  lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
+  lineSensor.sensor8 = digitalRead(SENSOR_PIN8);
+  */
+  lineSensor.sensor8 = 1;
+
+  return lineSensor.sensorAll;
 }
 
-void sensorLateralEnabled()
+uint16_t lineLeftSensorValue()
 {
-  newTime6 = millis();
-  if (newTime6 - oldTime6 > 1000)
-  {
-    if (sensorLateralStatus == 0)
-    {
-      digitalWrite(FRONT_SENSOR_EN, LOW);
-      digitalWrite(BACK_SENSOR_EN, LOW);
-      digitalWrite(LEFT_SENSOR_EN, HIGH);
-      digitalWrite(RIGT_SENSOR_EN, LOW);
-      sensorLateralStatus = 1;
-    }
-    else if (sensorLateralStatus == 1)
-    {
-      digitalWrite(FRONT_SENSOR_EN, LOW);
-      digitalWrite(BACK_SENSOR_EN, LOW);
-      digitalWrite(LEFT_SENSOR_EN, LOW);
-      digitalWrite(RIGT_SENSOR_EN, HIGH);
-      sensorLateralStatus = 0;
-    }
 
-    oldTime6 = newTime6;
+  struct
+  {
+    union
+    {
+      struct
+      {
+        uint16_t sensorAll : 8;
+      };
+      struct
+      {
+        uint16_t sensor1 : 1;
+        uint16_t sensor2 : 1;
+        uint16_t sensor3 : 1;
+        uint16_t sensor4 : 1;
+        uint16_t sensor5 : 1;
+        uint16_t sensor6 : 1;
+        uint16_t sensor7 : 1;
+        uint16_t sensor8 : 1;
+      };
+    };
+  } lineSensor;
+
+  lineSensor.sensorAll = 0;
+
+  static int sayac1_on = 0;
+  static int sayac1_off = 0;
+
+  if (digitalRead(SENSOR_PIN_LEFT_1) == 0)
+  {
+    sayac1_off = 0;
+    if (sayac1_on < 10)
+    {
+      sayac1_on++;
+    }
   }
+  else
+  {
+    sayac1_on = 0;
+    if (sayac1_off < 10)
+    {
+      sayac1_off++;
+    }
+  }
+
+  if (sayac1_on >= 10)
+  {
+    lineSensor.sensor1 = 0;
+  }
+
+  if (sayac1_off >= 10)
+  {
+    lineSensor.sensor1 = 1;
+  }
+
+  static int sayac2_on = 0;
+  static int sayac2_off = 0;
+
+  if (digitalRead(SENSOR_PIN_LEFT_2) == 0)
+  {
+    sayac2_off = 0;
+    if (sayac2_on < 10)
+    {
+      sayac2_on++;
+    }
+  }
+  else
+  {
+    sayac2_on = 0;
+    if (sayac2_off < 10)
+    {
+      sayac2_off++;
+    }
+  }
+
+  if (sayac2_on >= 10)
+  {
+    lineSensor.sensor2 = 0;
+  }
+
+  if (sayac2_off >= 10)
+  {
+    lineSensor.sensor2 = 1;
+  }
+
+  static int sayac3_on = 0;
+  static int sayac3_off = 0;
+
+  if (digitalRead(SENSOR_PIN_LEFT_3) == 0)
+  {
+    sayac3_off = 0;
+    if (sayac3_on < 10)
+    {
+      sayac3_on++;
+    }
+  }
+  else
+  {
+    sayac3_on = 0;
+    if (sayac3_off < 10)
+    {
+      sayac3_off++;
+    }
+  }
+
+  if (sayac3_on >= 10)
+  {
+    lineSensor.sensor3 = 0;
+  }
+
+  if (sayac3_off >= 10)
+  {
+    lineSensor.sensor3 = 1;
+  }
+
+  static int sayac4_on = 0;
+  static int sayac4_off = 0;
+
+  if (digitalRead(SENSOR_PIN_LEFT_4) == 0)
+  {
+    sayac4_off = 0;
+    if (sayac4_on < 10)
+    {
+      sayac4_on++;
+    }
+  }
+  else
+  {
+    sayac4_on = 0;
+    if (sayac4_off < 10)
+    {
+      sayac4_off++;
+    }
+  }
+
+  if (sayac4_on >= 10)
+  {
+    lineSensor.sensor4 = 0;
+  }
+
+  if (sayac4_off >= 10)
+  {
+    lineSensor.sensor4 = 1;
+  }
+
+  static int sayac5_on = 0;
+  static int sayac5_off = 0;
+
+  if (digitalRead(SENSOR_PIN_LEFT_5) == 0)
+  {
+    sayac5_off = 0;
+    if (sayac5_on < 10)
+    {
+      sayac5_on++;
+    }
+  }
+  else
+  {
+    sayac5_on = 0;
+    if (sayac5_off < 10)
+    {
+      sayac5_off++;
+    }
+  }
+
+  if (sayac5_on >= 10)
+  {
+    lineSensor.sensor5 = 0;
+  }
+
+  if (sayac5_off >= 10)
+  {
+    lineSensor.sensor5 = 1;
+  }
+
+  static int sayac6_on = 0;
+  static int sayac6_off = 0;
+
+  if (digitalRead(SENSOR_PIN_LEFT_6) == 0)
+  {
+    sayac6_off = 0;
+    if (sayac6_on < 10)
+    {
+      sayac6_on++;
+    }
+  }
+  else
+  {
+    sayac6_on = 0;
+    if (sayac6_off < 10)
+    {
+      sayac6_off++;
+    }
+  }
+
+  if (sayac6_on >= 10)
+  {
+    lineSensor.sensor6 = 0;
+  }
+
+  if (sayac6_off >= 10)
+  {
+    lineSensor.sensor6 = 1;
+  }
+
+  static int sayac7_on = 0;
+  static int sayac7_off = 0;
+
+  if (digitalRead(SENSOR_PIN_LEFT_7) == 0)
+  {
+    sayac7_off = 0;
+    if (sayac7_on < 10)
+    {
+      sayac7_on++;
+    }
+  }
+  else
+  {
+    sayac7_on = 0;
+    if (sayac7_off < 10)
+    {
+      sayac7_off++;
+    }
+  }
+
+  if (sayac7_on >= 10)
+  {
+    lineSensor.sensor7 = 0;
+  }
+
+  if (sayac7_off >= 10)
+  {
+    lineSensor.sensor7 = 1;
+  }
+
+  /*
+  lineSensor.sensor1 = digitalRead(SENSOR_PIN1);
+  lineSensor.sensor2 = digitalRead(SENSOR_PIN2);
+  lineSensor.sensor3 = digitalRead(SENSOR_PIN3);
+  lineSensor.sensor4 = digitalRead(SENSOR_PIN4);
+  lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
+  lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
+  lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
+  lineSensor.sensor8 = digitalRead(SENSOR_PIN8);
+  */
+  lineSensor.sensor8 = 1;
+
+  return lineSensor.sensorAll;
 }

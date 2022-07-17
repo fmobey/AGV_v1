@@ -18,34 +18,37 @@
 #define DDIR 11
 #define DDIRFW 9
 // LINE FOLLOWING SENSOR
-#define SENSOR_PIN_FRONT_1 A1
+#define SENSOR_PIN_RIGHT_1 14
+#define SENSOR_PIN_RIGHT_2 53
+#define SENSOR_PIN_RIGHT_3 51
+#define SENSOR_PIN_RIGHT_4 52
+#define SENSOR_PIN_RIGHT_5 50
+#define SENSOR_PIN_RIGHT_6 15
+#define SENSOR_PIN_RIGHT_7 16
+
+#define SENSOR_PIN_LEFT_1 42
+#define SENSOR_PIN_LEFT_2 40
+#define SENSOR_PIN_LEFT_3 38
+#define SENSOR_PIN_LEFT_4 36
+#define SENSOR_PIN_LEFT_5 34
+#define SENSOR_PIN_LEFT_6 47
+#define SENSOR_PIN_LEFT_7 49
+
+#define SENSOR_PIN_FRONT_1 A4
 #define SENSOR_PIN_FRONT_2 A2
-#define SENSOR_PIN_FRONT_3 A3
-#define SENSOR_PIN_FRONT_4 A4
-#define SENSOR_PIN_FRONT_5 A5
-#define SENSOR_PIN_FRONT_6 A6
-#define SENSOR_PIN_FRONT_7 A7
-#define SENSOR_PIN_BACK_1 A8
-#define SENSOR_PIN_BACK_2 A9
-#define SENSOR_PIN_BACK_3 A10
-#define SENSOR_PIN_BACK_4 A11
-#define SENSOR_PIN_BACK_5 A12
-#define SENSOR_PIN_BACK_6 A13
-#define SENSOR_PIN_BACK_7 32
-#define SENSOR_PIN_RIGHT_1 34
-#define SENSOR_PIN_RIGHT_2 36
-#define SENSOR_PIN_RIGHT_3 38
-#define SENSOR_PIN_RIGHT_4 40
-#define SENSOR_PIN_RIGHT_5 42
-#define SENSOR_PIN_RIGHT_6 50
-#define SENSOR_PIN_RIGHT_7 52
-#define SENSOR_PIN_LEFT_1 47
-#define SENSOR_PIN_LEFT_2 49
-#define SENSOR_PIN_LEFT_3 51
-#define SENSOR_PIN_LEFT_4 53
-#define SENSOR_PIN_LEFT_5 14
-#define SENSOR_PIN_LEFT_6 15
-#define SENSOR_PIN_LEFT_7 16
+#define SENSOR_PIN_FRONT_3 A5
+#define SENSOR_PIN_FRONT_4 A3
+#define SENSOR_PIN_FRONT_5 A1
+#define SENSOR_PIN_FRONT_6 A7
+#define SENSOR_PIN_FRONT_7 A6
+
+#define SENSOR_PIN_BACK_1 A13
+#define SENSOR_PIN_BACK_2 A10
+#define SENSOR_PIN_BACK_3 A11
+#define SENSOR_PIN_BACK_4 A9
+#define SENSOR_PIN_BACK_5 A8
+#define SENSOR_PIN_BACK_6 32
+#define SENSOR_PIN_BACK_7 A12
 // LINE FOLLOWING SENSOR ENABLE PIN
 
 // STANBY
@@ -196,12 +199,12 @@ void setup()
   // AMPERAGE PİNMODE
   pinMode(AMPERAGE_PIN, INPUT);
   // CONTROL BUTTON PİNMODE
-  pinMode(ILERI_PIN, INPUT);
-  pinMode(GERI_PIN, INPUT);
-  pinMode(SAGA_PIN, INPUT);
-  pinMode(SOLA_PIN, INPUT);
-  pinMode(SOLA_DON_PIN, INPUT);
-  pinMode(SAGA_DON_PIN, INPUT);
+  pinMode(ILERI_PIN, INPUT_PULLUP);
+  pinMode(GERI_PIN, INPUT_PULLUP);
+  pinMode(SAGA_PIN, INPUT_PULLUP);
+  pinMode(SOLA_PIN, INPUT_PULLUP);
+  pinMode(SOLA_DON_PIN, INPUT_PULLUP);
+  pinMode(SAGA_DON_PIN, INPUT_PULLUP);
   // ANALOG PİNMODE
   pinMode(ANALOG_PIN_BUTTON, INPUT);
   // MOTOR DİRECTİON PİNMODE
@@ -214,34 +217,34 @@ void setup()
   pinMode(CDIRFW, OUTPUT);
   pinMode(DDIRFW, OUTPUT);
   // LINE FOLLOWING SENSOR PİNMODE
-  pinMode(SENSOR_PIN_FRONT_1, INPUT);
-  pinMode(SENSOR_PIN_FRONT_2, INPUT);
-  pinMode(SENSOR_PIN_FRONT_3, INPUT);
-  pinMode(SENSOR_PIN_FRONT_4, INPUT);
-  pinMode(SENSOR_PIN_FRONT_5, INPUT);
-  pinMode(SENSOR_PIN_FRONT_6, INPUT);
-  pinMode(SENSOR_PIN_FRONT_7, INPUT);
-  pinMode(SENSOR_PIN_BACK_1, INPUT);
-  pinMode(SENSOR_PIN_BACK_2, INPUT);
-  pinMode(SENSOR_PIN_BACK_3, INPUT);
-  pinMode(SENSOR_PIN_BACK_4, INPUT);
-  pinMode(SENSOR_PIN_BACK_5, INPUT);
-  pinMode(SENSOR_PIN_BACK_6, INPUT);
-  pinMode(SENSOR_PIN_BACK_7, INPUT);
-  pinMode(SENSOR_PIN_RIGHT_1, INPUT);
-  pinMode(SENSOR_PIN_RIGHT_2, INPUT);
-  pinMode(SENSOR_PIN_RIGHT_3, INPUT);
-  pinMode(SENSOR_PIN_RIGHT_4, INPUT);
-  pinMode(SENSOR_PIN_RIGHT_5, INPUT);
-  pinMode(SENSOR_PIN_RIGHT_6, INPUT);
-  pinMode(SENSOR_PIN_RIGHT_7, INPUT);
-  pinMode(SENSOR_PIN_LEFT_1, INPUT);
-  pinMode(SENSOR_PIN_LEFT_2, INPUT);
-  pinMode(SENSOR_PIN_LEFT_3, INPUT);
-  pinMode(SENSOR_PIN_LEFT_4, INPUT);
-  pinMode(SENSOR_PIN_LEFT_5, INPUT);
-  pinMode(SENSOR_PIN_LEFT_6, INPUT);
-  pinMode(SENSOR_PIN_LEFT_7, INPUT);
+  pinMode(SENSOR_PIN_FRONT_1, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_FRONT_2, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_FRONT_3, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_FRONT_4, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_FRONT_5, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_FRONT_6, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_FRONT_7, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_BACK_1, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_BACK_2, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_BACK_3, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_BACK_4, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_BACK_5, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_BACK_6, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_BACK_7, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_RIGHT_1, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_RIGHT_2, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_RIGHT_3, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_RIGHT_4, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_RIGHT_5, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_RIGHT_6, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_RIGHT_7, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_LEFT_1, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_LEFT_2, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_LEFT_3, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_LEFT_4, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_LEFT_5, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_LEFT_6, INPUT_PULLUP);
+  pinMode(SENSOR_PIN_LEFT_7, INPUT_PULLUP);
 
   // LIDAR WARNING PİNMODE
   pinMode(WARN_LIDAR11, INPUT);
@@ -276,25 +279,32 @@ void loop()
   PwmStop(int pwm_value)
 
   */
-  digitalWrite(FRONT_SENSOR_EN, LOW);
-  digitalWrite(BACK_SENSOR_EN, LOW);
-  digitalWrite(LEFT_SENSOR_EN, LOW);
-  digitalWrite(RIGT_SENSOR_EN, HIGH);
+
   TIME_NOW4 = millis();
   if (TIME_NOW4 - adc_millis4 > 10)
   {
 
-    // Serial.println(lineFrontSensorValue(),BIN);
-    Serial.println("Front Sensor");
-    Serial.print(SensorFront1);
-    Serial.print(SensorFront2);
-    Serial.print(SensorFront3);
-    Serial.print(SensorFront4);
-    Serial.print(SensorFront5);
-    Serial.print(SensorFront6);
-    Serial.print(SensorFront7);
-    Serial.println();
-    Serial.println("Back Sensor");
+
+    
+    Serial.print("FRONT ");
+    Serial.print(lineFrontSensorValue(),BIN);
+    Serial.print("  BACK ");
+    Serial.print(lineBackSensorValue(),BIN);
+    Serial.print(" RIGHT ");
+    Serial.print(lineRightSensorValue(),BIN);
+    Serial.print(" LEFT ");
+    Serial.println(lineLeftSensorValue(),BIN);
+   // Serial.print(SensorFront1);
+   // Serial.print(SensorFront2);
+    //Serial.print(SensorFront3);
+    //Serial.print(SensorFront4);
+    //Serial.print(SensorFront5);
+   // Serial.print(SensorFront6);
+    //Serial.print(SensorFront7);
+    
+    /*
+    
+    Serial.print("  BACK ");
     Serial.print(SensorBack1);
     Serial.print(SensorBack2);
     Serial.print(SensorBack3);
@@ -302,8 +312,9 @@ void loop()
     Serial.print(SensorBack5);
     Serial.print(SensorBack6);
     Serial.print(SensorBack7);
-    Serial.println();
-    Serial.println("Right Sensor");
+  
+    
+    Serial.print("  SAG ");
     Serial.print(SensorRight1);
     Serial.print(SensorRight2);
     Serial.print(SensorRight3);
@@ -311,8 +322,8 @@ void loop()
     Serial.print(SensorRight5);
     Serial.print(SensorRight6);
     Serial.print(SensorRight7);
-    Serial.println();
-    Serial.println("Left Sensor");
+    
+    Serial.print("  LEFT ");
     Serial.print(SensorLeft1);
     Serial.print(SensorLeft2);
     Serial.print(SensorLeft3);
@@ -321,6 +332,7 @@ void loop()
     Serial.print(SensorLeft6);
     Serial.print(SensorLeft7);
     Serial.println();
+    */
 
     
     // panel buttonarının durumlarını okuyup gösteriyoruz
@@ -429,17 +441,21 @@ void loop()
 
   */
   rgbStatus(rgbState);
-  if (ANALOG_GIT_BUTTON >= 675 && ANALOG_GIT_BUTTON <= 690)
+  if (ANALOG_GIT_BUTTON >= 660 && ANALOG_GIT_BUTTON <= 680)
   {
+    //  Serial.println("ileri");
     followStationState = 1;
-  }
-  else if (ANALOG_GIT_BUTTON >= 320 && ANALOG_GIT_BUTTON <= 340)
-  {
-    followStationState = 2;
-  }
 
+  }
+  else if (ANALOG_GIT_BUTTON >= 310 && ANALOG_GIT_BUTTON <= 330)
+  {
+    // Serial.println("geri");
+    followStationState = 2;
+
+  }
   else
   {
+    followStationState = 0;
     Pwm(PWM_STOP);
   }
   //    oldTime = newTime;
@@ -447,20 +463,21 @@ void loop()
   //}
   if (followStationState == 1)
   {
-    if (lineFrontSensorValue() == 0b10001000)
+
+    if (lineFrontSensorValue() == 0b0001000)
     {
       rgbState = 2;
       RotateWheels(false, true, false, false, false, false);
       Pwm(PWM_START);
     }
 
-    if ((lineFrontSensorValue() & 0b01111000) >= 16 && (lineFrontSensorValue() & 0b01111000) <= 120)
+    if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120)
     { // 2
       rgbState = 2;
       RotateWheels(false, true, false, false, false, false);
       PwmStraigtRight(PWM_START);
     }
-    else if ((lineFrontSensorValue() & 0b0001111) <= 15 && (lineFrontSensorValue() & 0b0001111) > 0)
+    else if ((lineFrontSensorValue() & 0b001111) <= 15 && (lineFrontSensorValue() & 0b001111) > 0)
     {
       //     Serial.println("sag");
       rgbState = 2;
@@ -468,41 +485,68 @@ void loop()
       PwmStraigtLeft(PWM_START);
     }
 
-    if (lineFrontSensorValue() == 255 || lineFrontSensorValue() == 128)
+    if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0)
     {
       followStationState = 0;
       rgbState = 0;
     }
+
+// HEM SAG DA HEM SOLDA ALGILARSA HATA
+     if ((lineFrontSensorValue() & 0b01110000) >= 16 && (lineFrontSensorValue() & 0b00000111) >= 1)  
+    {
+      followStationState = 0;
+      rgbState = 0;
+    }
+    if(lineFrontSensorValue() == 127  && lineRightSensorValue() == 127 && lineLeftSensorValue() == 127)
+    {
+      followStationState = 0;
+      rgbState = 0;
+    }
+    {
+      followStationState = 0;
+      rgbState = 0;
+    }
+    
   }
+  
   if (followStationState == 2)
   {
-    if (lineBackSensorValue() == 0b10001000)
+    if (lineFrontSensorValue() == 0b0001000)
     {
       rgbState = 2;
       RotateWheels(true, false, false, false, false, false);
       Pwm(PWM_START);
     }
 
-    if ((lineBackSensorValue() & 0b01111000) >= 16 && (lineBackSensorValue() & 0b01111000) <= 120)
+    if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120)
     { // 2
       rgbState = 2;
       RotateWheels(true, false, false, false, false, false);
-      PwmStraigtLeft(PWM_START);
+       
+      PwmStraigtRight(PWM_START);
     }
-    else if ((lineBackSensorValue() & 0b0001111) <= 15 && (lineBackSensorValue() & 0b0001111) > 0)
+    else if ((lineFrontSensorValue() & 0b001111) <= 15 && (lineFrontSensorValue() & 0b001111) > 0)
     {
       //     Serial.println("sag");
       rgbState = 2;
-      RotateWheels(true, false, false, false, false, false);
-      PwmStraigtRight(PWM_START);
+         RotateWheels(true, false, false, false, false, false);
+      PwmStraigtLeft(PWM_START);
     }
 
-    if (lineBackSensorValue() == 255 || lineBackSensorValue() == 128)
+    if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0)
+    {
+      followStationState = 0;
+      rgbState = 0;
+    }
+
+// HEM SAG DA HEM SOLDA ALGILARSA HATA
+     if ((lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1)  
     {
       followStationState = 0;
       rgbState = 0;
     }
   }
+  
   /*
     if (WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH)
     {
@@ -889,7 +933,7 @@ uint16_t lineFrontSensorValue()
     {
       struct
       {
-        uint16_t sensorAll : 8;
+        uint16_t sensorAll : 7;
       };
       struct
       {
@@ -900,7 +944,6 @@ uint16_t lineFrontSensorValue()
         uint16_t sensor5 : 1;
         uint16_t sensor6 : 1;
         uint16_t sensor7 : 1;
-        uint16_t sensor8 : 1;
       };
     };
   } lineSensor;
@@ -1125,9 +1168,7 @@ uint16_t lineFrontSensorValue()
   lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
   lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
   lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
-  lineSensor.sensor8 = digitalRead(SENSOR_PIN8);
   */
-  lineSensor.sensor8 = 1;
 
   return lineSensor.sensorAll;
 }
@@ -1141,7 +1182,7 @@ uint16_t lineBackSensorValue()
     {
       struct
       {
-        uint16_t sensorAll : 8;
+        uint16_t sensorAll : 7;
       };
       struct
       {
@@ -1152,7 +1193,6 @@ uint16_t lineBackSensorValue()
         uint16_t sensor5 : 1;
         uint16_t sensor6 : 1;
         uint16_t sensor7 : 1;
-        uint16_t sensor8 : 1;
       };
     };
   } lineSensor;
@@ -1377,9 +1417,7 @@ uint16_t lineBackSensorValue()
   lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
   lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
   lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
-  lineSensor.sensor8 = digitalRead(SENSOR_PIN8);
   */
-  lineSensor.sensor8 = 1;
 
   return lineSensor.sensorAll;
 }
@@ -1393,7 +1431,7 @@ uint16_t lineRightSensorValue()
     {
       struct
       {
-        uint16_t sensorAll : 8;
+        uint16_t sensorAll : 7;
       };
       struct
       {
@@ -1404,7 +1442,6 @@ uint16_t lineRightSensorValue()
         uint16_t sensor5 : 1;
         uint16_t sensor6 : 1;
         uint16_t sensor7 : 1;
-        uint16_t sensor8 : 1;
       };
     };
   } lineSensor;
@@ -1629,9 +1666,7 @@ uint16_t lineRightSensorValue()
   lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
   lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
   lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
-  lineSensor.sensor8 = digitalRead(SENSOR_PIN8);
   */
-  lineSensor.sensor8 = 1;
 
   return lineSensor.sensorAll;
 }
@@ -1645,7 +1680,7 @@ uint16_t lineLeftSensorValue()
     {
       struct
       {
-        uint16_t sensorAll : 8;
+        uint16_t sensorAll : 7;
       };
       struct
       {
@@ -1656,7 +1691,6 @@ uint16_t lineLeftSensorValue()
         uint16_t sensor5 : 1;
         uint16_t sensor6 : 1;
         uint16_t sensor7 : 1;
-        uint16_t sensor8 : 1;
       };
     };
   } lineSensor;
@@ -1881,9 +1915,7 @@ uint16_t lineLeftSensorValue()
   lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
   lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
   lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
-  lineSensor.sensor8 = digitalRead(SENSOR_PIN8);
   */
-  lineSensor.sensor8 = 1;
 
   return lineSensor.sensorAll;
 }

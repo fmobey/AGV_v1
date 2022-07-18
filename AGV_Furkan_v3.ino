@@ -160,10 +160,15 @@ int SensorLeft6 = -1;
 int SensorLeft7 = -1;
 int rgbState = -1;
 int followStationState = -1;
+int followLateralState = -1;
+int followStopState = 0;
 int Warn_Lidar11 = -1;
 int Warn_Lidar12 = -1;
 int Warn_Lidar21 = -1;
 int Warn_Lidar22 = -1;
+
+int sayacStop=0;
+int sayacStop2=0;
 void setup()
 {
 
@@ -272,11 +277,11 @@ void setup()
 void loop()
 {
   /*
-  RotateWheels(bool ileri, bool geri, bool sag, bool sol, bool soldon, bool sagdon)
-  rgbController(bool white, bool red, bool green, bool blue, bool purple,bool cyan,bool yellow,bool stop){
-  LineFlowingEnable(bool front,bool back,bool right,bool left)
-  PwmStart(int pwm_value)
-  PwmStop(int pwm_value)
+    RotateWheels(bool ileri, bool geri, bool sag, bool sol, bool soldon, bool sagdon)
+    rgbController(bool white, bool red, bool green, bool blue, bool purple,bool cyan,bool yellow,bool stop){
+    LineFlowingEnable(bool front,bool back,bool right,bool left)
+    PwmStart(int pwm_value)
+    PwmStop(int pwm_value)
 
   */
 
@@ -285,56 +290,82 @@ void loop()
   {
 
 
-    
+
     Serial.print("FRONT ");
-    Serial.print(lineFrontSensorValue(),BIN);
+    for (int j = 6; j >= 0; j--) {
+            if (((lineFrontSensorValue() >> j) & 1)==1) {
+                Serial.print("1");
+            }else {
+                Serial.print("0");
+            }
+        }
     Serial.print("  BACK ");
-    Serial.print(lineBackSensorValue(),BIN);
+    for (int j = 6; j >= 0; j--) {
+            if (((lineBackSensorValue() >> j) & 1)==1) {
+                Serial.print("1");
+            }else {
+                Serial.print("0");
+            }
+        }
     Serial.print(" RIGHT ");
-    Serial.print(lineRightSensorValue(),BIN);
+    for (int j = 6; j >= 0; j--) {
+            if (((lineRightSensorValue() >> j) & 1)==1) {
+                Serial.print("1");
+            }else {
+                Serial.print("0");
+            }
+        }
     Serial.print(" LEFT ");
-    Serial.println(lineLeftSensorValue(),BIN);
-   // Serial.print(SensorFront1);
-   // Serial.print(SensorFront2);
+    for (int j = 6; j >= 0; j--) {
+            if (((lineLeftSensorValue() >> j) & 1)==1) {
+                Serial.print("1");
+            }else {
+                Serial.print("0");
+            }
+        }
+
+           Serial.println();
+    // Serial.print(SensorFront1);
+    // Serial.print(SensorFront2);
     //Serial.print(SensorFront3);
     //Serial.print(SensorFront4);
     //Serial.print(SensorFront5);
-   // Serial.print(SensorFront6);
+    // Serial.print(SensorFront6);
     //Serial.print(SensorFront7);
-    
+
     /*
-    
-    Serial.print("  BACK ");
-    Serial.print(SensorBack1);
-    Serial.print(SensorBack2);
-    Serial.print(SensorBack3);
-    Serial.print(SensorBack4);
-    Serial.print(SensorBack5);
-    Serial.print(SensorBack6);
-    Serial.print(SensorBack7);
-  
-    
-    Serial.print("  SAG ");
-    Serial.print(SensorRight1);
-    Serial.print(SensorRight2);
-    Serial.print(SensorRight3);
-    Serial.print(SensorRight4);
-    Serial.print(SensorRight5);
-    Serial.print(SensorRight6);
-    Serial.print(SensorRight7);
-    
-    Serial.print("  LEFT ");
-    Serial.print(SensorLeft1);
-    Serial.print(SensorLeft2);
-    Serial.print(SensorLeft3);
-    Serial.print(SensorLeft4);
-    Serial.print(SensorLeft5);
-    Serial.print(SensorLeft6);
-    Serial.print(SensorLeft7);
-    Serial.println();
+
+      Serial.print("  BACK ");
+      Serial.print(SensorBack1);
+      Serial.print(SensorBack2);
+      Serial.print(SensorBack3);
+      Serial.print(SensorBack4);
+      Serial.print(SensorBack5);
+      Serial.print(SensorBack6);
+      Serial.print(SensorBack7);
+
+
+      Serial.print("  SAG ");
+      Serial.print(SensorRight1);
+      Serial.print(SensorRight2);
+      Serial.print(SensorRight3);
+      Serial.print(SensorRight4);
+      Serial.print(SensorRight5);
+      Serial.print(SensorRight6);
+      Serial.print(SensorRight7);
+
+      Serial.print("  LEFT ");
+      Serial.print(SensorLeft1);
+      Serial.print(SensorLeft2);
+      Serial.print(SensorLeft3);
+      Serial.print(SensorLeft4);
+      Serial.print(SensorLeft5);
+      Serial.print(SensorLeft6);
+      Serial.print(SensorLeft7);
+      Serial.println();
     */
 
-    
+
     // panel buttonarının durumlarını okuyup gösteriyoruz
     ILERI_TRY = digitalRead(ILERI_PIN);
     GERI_TRY = digitalRead(GERI_PIN);
@@ -386,22 +417,22 @@ void loop()
   }
 
   /*
-  Senaryo:
-  1. Robotun ileri ve geri istasyon butonuna basıldığında
-   - robot ileriye doğru hareket edecek
-   - robot düz cizgi gördügünde duracak ve yanlardaki sensor aktif olacak cizgi bulana kadar devam edecek ve duracak
-   - yancizgilerde olduğu için yön kontrolü yapıp o yöne doğru hareket edecek
-   - aynı olay baştan başlayacak
-   - lidardan uzaklık okuyacak ve uzaklıkının küçük olduğu sürece hareket edecek
-  2. Analog kontrol kumandası +
-   - tamamen manuel olarak yön kontrolü yapacak +
-   - lidar devre dışı bırakılacak +
-  satusu 1 lidar uyarı geldğigin 0
+    Senaryo:
+    1. Robotun ileri ve geri istasyon butonuna basıldığında
+    - robot ileriye doğru hareket edecek
+    - robot düz cizgi gördügünde duracak ve yanlardaki sensor aktif olacak cizgi bulana kadar devam edecek ve duracak
+    - yancizgilerde olduğu için yön kontrolü yapıp o yöne doğru hareket edecek
+    - aynı olay baştan başlayacak
+    - lidardan uzaklık okuyacak ve uzaklıkının küçük olduğu sürece hareket edecek
+    2. Analog kontrol kumandası +
+    - tamamen manuel olarak yön kontrolü yapacak +
+    - lidar devre dışı bırakılacak +
+    satusu 1 lidar uyarı geldğigin 0
   */
   //   newTime = millis();
   // if(newTime-oldTime > 1) {
   /*
-  if (lineFrontSensorValue()==0b1000000010000000) {
+    if (lineFrontSensorValue()==0b1000000010000000) {
         if(WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH) {
           Pwm(PWM_STOP);
           rgbState=2;
@@ -445,6 +476,9 @@ void loop()
   {
     //  Serial.println("ileri");
     followStationState = 1;
+    if (followLateralState==2) {
+      followLateralState=3;
+    }
 
   }
   else if (ANALOG_GIT_BUTTON >= 310 && ANALOG_GIT_BUTTON <= 330)
@@ -455,23 +489,71 @@ void loop()
   }
   else
   {
+    if (followLateralState==1) {
+      followLateralState=2;
+    }
+    followStopState=0;
     followStationState = 0;
     Pwm(PWM_STOP);
   }
   //    oldTime = newTime;
 
   //}
-  if (followStationState == 1)
+
+  if (followLateralState == 3 && followStationState == 1 ) {
+
+    if (lineRightSensorValue() == 127 || lineRightSensorValue() == 0)
+    {
+      followStationState = 0;
+      rgbState = 0;
+      followLateralState=0;
+    } else  if ((lineRightSensorValue() & 0b1110000) >= 16 && (lineRightSensorValue() & 0b0000111) >= 1)  {
+  //    followStationState = 0;
+   //   rgbState = 0;
+     // followLateralState=0;
+    } else if (lineRightSensorValue() == 0b0001000) {
+       RotateWheels(false, false, false, true, false, false);
+      rgbState = 3;
+      Pwm(PWM_START);
+    } else if ((lineRightSensorValue() & 0b1111000) >= 16 && (lineRightSensorValue() & 0b1111000) <= 120)
+    { // 2
+     rgbState = 2;
+     RotateWheels(false, false, false, true, false, false);
+     PwmLateralRight(PWM_START);
+    }
+    else if ((lineRightSensorValue() & 0b001111) <= 15 && (lineRightSensorValue() & 0b001111) > 0)
+    {
+      //   Serial.println("sag");
+      rgbState = 2;
+      RotateWheels(false, false, false, true, false, false);
+      PwmLateralLeft(PWM_START);
+    } else {
+    //  followStationState = 0;
+      //rgbState = 0;
+      //followLateralState=0;
+    }
+
+  } else if (followStationState == 1 && followStopState==0)
   {
 
-    if (lineFrontSensorValue() == 0b0001000)
+    if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0)
     {
+      followStationState = 0;
+      rgbState = 0;
+    } else  if ((lineFrontSensorValue() & 0b1110000) >= 16 && (lineFrontSensorValue() & 0b0000111) >= 1)  {
+      followStationState = 0;
+      rgbState = 0;
+
+      if (lineRightSensorValue()  > 0 && lineLeftSensorValue() == 0) {
+        followLateralState = 1;
+      }
+
+
+    } else if (lineFrontSensorValue() == 0b0001000) {
       rgbState = 2;
       RotateWheels(false, true, false, false, false, false);
       Pwm(PWM_START);
-    }
-
-    if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120)
+    } else if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120)
     { // 2
       rgbState = 2;
       RotateWheels(false, true, false, false, false, false);
@@ -483,70 +565,60 @@ void loop()
       rgbState = 2;
       RotateWheels(false, true, false, false, false, false);
       PwmStraigtLeft(PWM_START);
-    }
-
-    if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0)
-    {
+    } else {
       followStationState = 0;
       rgbState = 0;
     }
 
-// HEM SAG DA HEM SOLDA ALGILARSA HATA
-     if ((lineFrontSensorValue() & 0b01110000) >= 16 && (lineFrontSensorValue() & 0b00000111) >= 1)  
-    {
-      followStationState = 0;
-      rgbState = 0;
+    if (sayacStop==0) {
+           if (lineRightSensorValue()  > 0 && lineLeftSensorValue() > 0) {
+        sayacStop=5000;
+        followStopState = 1;
+      }
     }
-    if(lineFrontSensorValue() == 127  && lineRightSensorValue() == 127 && lineLeftSensorValue() == 127)
-    {
-      followStationState = 0;
-      rgbState = 0;
-    }
-    {
-      followStationState = 0;
-      rgbState = 0;
-    }
-    
+
+  if (sayacStop>0) {
+    sayacStop--;
   }
-  
-  if (followStationState == 2)
+      
+  } else if (followStationState == 2)
   {
-    if (lineFrontSensorValue() == 0b0001000)
+    if (lineBackSensorValue() == 0b0001000)
     {
       rgbState = 2;
       RotateWheels(true, false, false, false, false, false);
       Pwm(PWM_START);
     }
 
-    if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120)
+    if ((lineBackSensorValue() & 0b1111000) >= 16 && (lineBackSensorValue() & 0b1111000) <= 120)
     { // 2
       rgbState = 2;
       RotateWheels(true, false, false, false, false, false);
-       
+
       PwmStraigtRight(PWM_START);
     }
-    else if ((lineFrontSensorValue() & 0b001111) <= 15 && (lineFrontSensorValue() & 0b001111) > 0)
+    else if ((lineBackSensorValue() & 0b001111) <= 15 && (lineBackSensorValue() & 0b001111) > 0)
     {
       //     Serial.println("sag");
       rgbState = 2;
-         RotateWheels(true, false, false, false, false, false);
+      RotateWheels(true, false, false, false, false, false);
       PwmStraigtLeft(PWM_START);
     }
 
-    if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0)
+    if (lineBackSensorValue() == 127 || lineBackSensorValue() == 0)
     {
       followStationState = 0;
       rgbState = 0;
     }
 
-// HEM SAG DA HEM SOLDA ALGILARSA HATA
-     if ((lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1)  
+    // HEM SAG DA HEM SOLDA ALGILARSA HATA
+    if ((lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1)
     {
       followStationState = 0;
       rgbState = 0;
     }
   }
-  
+
   /*
     if (WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH)
     {
@@ -554,19 +626,18 @@ void loop()
       rgbState = 1;
     }
   */
-  if (followStationState == 0)
+  if (followStationState == 0 ||  followStopState == 1)
   {
     Pwm(PWM_STOP);
   }
 
   if (SAGA_DON == LOW)
-
   {
     RotateWheels(false, false, false, true, false, false);
     rgbState = 3;
     Pwm(PWM_START);
     buzzerFlipFlop();
-    // Serial.println("SAGA");
+   //  Serial.println("SAGA");
   }
   else if (GERI_TRY == LOW)
   {
@@ -956,7 +1027,7 @@ uint16_t lineFrontSensorValue()
   if (digitalRead(SENSOR_PIN_FRONT_1) == 0)
   {
     sayac1_off = 0;
-    if (sayac1_on < 10)
+    if (sayac1_on < 100)
     {
       sayac1_on++;
     }
@@ -964,18 +1035,18 @@ uint16_t lineFrontSensorValue()
   else
   {
     sayac1_on = 0;
-    if (sayac1_off < 10)
+    if (sayac1_off < 100)
     {
       sayac1_off++;
     }
   }
 
-  if (sayac1_on >= 10)
+  if (sayac1_on >= 100)
   {
     lineSensor.sensor1 = 0;
   }
 
-  if (sayac1_off >= 10)
+  if (sayac1_off >= 100)
   {
     lineSensor.sensor1 = 1;
   }
@@ -986,7 +1057,7 @@ uint16_t lineFrontSensorValue()
   if (digitalRead(SENSOR_PIN_FRONT_2) == 0)
   {
     sayac2_off = 0;
-    if (sayac2_on < 10)
+    if (sayac2_on < 100)
     {
       sayac2_on++;
     }
@@ -994,18 +1065,18 @@ uint16_t lineFrontSensorValue()
   else
   {
     sayac2_on = 0;
-    if (sayac2_off < 10)
+    if (sayac2_off < 100)
     {
       sayac2_off++;
     }
   }
 
-  if (sayac2_on >= 10)
+  if (sayac2_on >= 100)
   {
     lineSensor.sensor2 = 0;
   }
 
-  if (sayac2_off >= 10)
+  if (sayac2_off >= 100)
   {
     lineSensor.sensor2 = 1;
   }
@@ -1016,7 +1087,7 @@ uint16_t lineFrontSensorValue()
   if (digitalRead(SENSOR_PIN_FRONT_3) == 0)
   {
     sayac3_off = 0;
-    if (sayac3_on < 10)
+    if (sayac3_on < 100)
     {
       sayac3_on++;
     }
@@ -1024,18 +1095,18 @@ uint16_t lineFrontSensorValue()
   else
   {
     sayac3_on = 0;
-    if (sayac3_off < 10)
+    if (sayac3_off < 100)
     {
       sayac3_off++;
     }
   }
 
-  if (sayac3_on >= 10)
+  if (sayac3_on >= 100)
   {
     lineSensor.sensor3 = 0;
   }
 
-  if (sayac3_off >= 10)
+  if (sayac3_off >= 100)
   {
     lineSensor.sensor3 = 1;
   }
@@ -1046,7 +1117,7 @@ uint16_t lineFrontSensorValue()
   if (digitalRead(SENSOR_PIN_FRONT_4) == 0)
   {
     sayac4_off = 0;
-    if (sayac4_on < 10)
+    if (sayac4_on < 100)
     {
       sayac4_on++;
     }
@@ -1054,18 +1125,18 @@ uint16_t lineFrontSensorValue()
   else
   {
     sayac4_on = 0;
-    if (sayac4_off < 10)
+    if (sayac4_off < 100)
     {
       sayac4_off++;
     }
   }
 
-  if (sayac4_on >= 10)
+  if (sayac4_on >= 100)
   {
     lineSensor.sensor4 = 0;
   }
 
-  if (sayac4_off >= 10)
+  if (sayac4_off >= 100)
   {
     lineSensor.sensor4 = 1;
   }
@@ -1076,7 +1147,7 @@ uint16_t lineFrontSensorValue()
   if (digitalRead(SENSOR_PIN_FRONT_5) == 0)
   {
     sayac5_off = 0;
-    if (sayac5_on < 10)
+    if (sayac5_on < 100)
     {
       sayac5_on++;
     }
@@ -1084,18 +1155,18 @@ uint16_t lineFrontSensorValue()
   else
   {
     sayac5_on = 0;
-    if (sayac5_off < 10)
+    if (sayac5_off < 100)
     {
       sayac5_off++;
     }
   }
 
-  if (sayac5_on >= 10)
+  if (sayac5_on >= 100)
   {
     lineSensor.sensor5 = 0;
   }
 
-  if (sayac5_off >= 10)
+  if (sayac5_off >= 100)
   {
     lineSensor.sensor5 = 1;
   }
@@ -1106,7 +1177,7 @@ uint16_t lineFrontSensorValue()
   if (digitalRead(SENSOR_PIN_FRONT_6) == 0)
   {
     sayac6_off = 0;
-    if (sayac6_on < 10)
+    if (sayac6_on < 100)
     {
       sayac6_on++;
     }
@@ -1114,18 +1185,18 @@ uint16_t lineFrontSensorValue()
   else
   {
     sayac6_on = 0;
-    if (sayac6_off < 10)
+    if (sayac6_off < 100)
     {
       sayac6_off++;
     }
   }
 
-  if (sayac6_on >= 10)
+  if (sayac6_on >= 100)
   {
     lineSensor.sensor6 = 0;
   }
 
-  if (sayac6_off >= 10)
+  if (sayac6_off >= 100)
   {
     lineSensor.sensor6 = 1;
   }
@@ -1136,7 +1207,7 @@ uint16_t lineFrontSensorValue()
   if (digitalRead(SENSOR_PIN_FRONT_7) == 0)
   {
     sayac7_off = 0;
-    if (sayac7_on < 10)
+    if (sayac7_on < 100)
     {
       sayac7_on++;
     }
@@ -1144,30 +1215,30 @@ uint16_t lineFrontSensorValue()
   else
   {
     sayac7_on = 0;
-    if (sayac7_off < 10)
+    if (sayac7_off < 100)
     {
       sayac7_off++;
     }
   }
 
-  if (sayac7_on >= 10)
+  if (sayac7_on >= 100)
   {
     lineSensor.sensor7 = 0;
   }
 
-  if (sayac7_off >= 10)
+  if (sayac7_off >= 100)
   {
     lineSensor.sensor7 = 1;
   }
 
   /*
-  lineSensor.sensor1 = digitalRead(SENSOR_PIN1);
-  lineSensor.sensor2 = digitalRead(SENSOR_PIN2);
-  lineSensor.sensor3 = digitalRead(SENSOR_PIN3);
-  lineSensor.sensor4 = digitalRead(SENSOR_PIN4);
-  lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
-  lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
-  lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
+    lineSensor.sensor1 = digitalRead(SENSOR_PIN1);
+    lineSensor.sensor2 = digitalRead(SENSOR_PIN2);
+    lineSensor.sensor3 = digitalRead(SENSOR_PIN3);
+    lineSensor.sensor4 = digitalRead(SENSOR_PIN4);
+    lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
+    lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
+    lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
   */
 
   return lineSensor.sensorAll;
@@ -1205,7 +1276,7 @@ uint16_t lineBackSensorValue()
   if (digitalRead(SENSOR_PIN_BACK_1) == 0)
   {
     sayac1_off = 0;
-    if (sayac1_on < 10)
+    if (sayac1_on < 100)
     {
       sayac1_on++;
     }
@@ -1213,18 +1284,18 @@ uint16_t lineBackSensorValue()
   else
   {
     sayac1_on = 0;
-    if (sayac1_off < 10)
+    if (sayac1_off < 100)
     {
       sayac1_off++;
     }
   }
 
-  if (sayac1_on >= 10)
+  if (sayac1_on >= 100)
   {
     lineSensor.sensor1 = 0;
   }
 
-  if (sayac1_off >= 10)
+  if (sayac1_off >= 100)
   {
     lineSensor.sensor1 = 1;
   }
@@ -1235,7 +1306,7 @@ uint16_t lineBackSensorValue()
   if (digitalRead(SENSOR_PIN_BACK_2) == 0)
   {
     sayac2_off = 0;
-    if (sayac2_on < 10)
+    if (sayac2_on < 100)
     {
       sayac2_on++;
     }
@@ -1243,18 +1314,18 @@ uint16_t lineBackSensorValue()
   else
   {
     sayac2_on = 0;
-    if (sayac2_off < 10)
+    if (sayac2_off < 100)
     {
       sayac2_off++;
     }
   }
 
-  if (sayac2_on >= 10)
+  if (sayac2_on >= 100)
   {
     lineSensor.sensor2 = 0;
   }
 
-  if (sayac2_off >= 10)
+  if (sayac2_off >= 100)
   {
     lineSensor.sensor2 = 1;
   }
@@ -1265,7 +1336,7 @@ uint16_t lineBackSensorValue()
   if (digitalRead(SENSOR_PIN_BACK_3) == 0)
   {
     sayac3_off = 0;
-    if (sayac3_on < 10)
+    if (sayac3_on < 100)
     {
       sayac3_on++;
     }
@@ -1273,18 +1344,18 @@ uint16_t lineBackSensorValue()
   else
   {
     sayac3_on = 0;
-    if (sayac3_off < 10)
+    if (sayac3_off < 100)
     {
       sayac3_off++;
     }
   }
 
-  if (sayac3_on >= 10)
+  if (sayac3_on >= 100)
   {
     lineSensor.sensor3 = 0;
   }
 
-  if (sayac3_off >= 10)
+  if (sayac3_off >= 100)
   {
     lineSensor.sensor3 = 1;
   }
@@ -1295,7 +1366,7 @@ uint16_t lineBackSensorValue()
   if (digitalRead(SENSOR_PIN_BACK_4) == 0)
   {
     sayac4_off = 0;
-    if (sayac4_on < 10)
+    if (sayac4_on < 100)
     {
       sayac4_on++;
     }
@@ -1303,18 +1374,18 @@ uint16_t lineBackSensorValue()
   else
   {
     sayac4_on = 0;
-    if (sayac4_off < 10)
+    if (sayac4_off < 100)
     {
       sayac4_off++;
     }
   }
 
-  if (sayac4_on >= 10)
+  if (sayac4_on >= 100)
   {
     lineSensor.sensor4 = 0;
   }
 
-  if (sayac4_off >= 10)
+  if (sayac4_off >= 100)
   {
     lineSensor.sensor4 = 1;
   }
@@ -1325,7 +1396,7 @@ uint16_t lineBackSensorValue()
   if (digitalRead(SENSOR_PIN_BACK_5) == 0)
   {
     sayac5_off = 0;
-    if (sayac5_on < 10)
+    if (sayac5_on < 100)
     {
       sayac5_on++;
     }
@@ -1333,18 +1404,18 @@ uint16_t lineBackSensorValue()
   else
   {
     sayac5_on = 0;
-    if (sayac5_off < 10)
+    if (sayac5_off < 100)
     {
       sayac5_off++;
     }
   }
 
-  if (sayac5_on >= 10)
+  if (sayac5_on >= 100)
   {
     lineSensor.sensor5 = 0;
   }
 
-  if (sayac5_off >= 10)
+  if (sayac5_off >= 100)
   {
     lineSensor.sensor5 = 1;
   }
@@ -1355,7 +1426,7 @@ uint16_t lineBackSensorValue()
   if (digitalRead(SENSOR_PIN_BACK_6) == 0)
   {
     sayac6_off = 0;
-    if (sayac6_on < 10)
+    if (sayac6_on < 100)
     {
       sayac6_on++;
     }
@@ -1363,18 +1434,18 @@ uint16_t lineBackSensorValue()
   else
   {
     sayac6_on = 0;
-    if (sayac6_off < 10)
+    if (sayac6_off < 100)
     {
       sayac6_off++;
     }
   }
 
-  if (sayac6_on >= 10)
+  if (sayac6_on >= 100)
   {
     lineSensor.sensor6 = 0;
   }
 
-  if (sayac6_off >= 10)
+  if (sayac6_off >= 100)
   {
     lineSensor.sensor6 = 1;
   }
@@ -1385,7 +1456,7 @@ uint16_t lineBackSensorValue()
   if (digitalRead(SENSOR_PIN_BACK_7) == 0)
   {
     sayac7_off = 0;
-    if (sayac7_on < 10)
+    if (sayac7_on < 100)
     {
       sayac7_on++;
     }
@@ -1393,30 +1464,30 @@ uint16_t lineBackSensorValue()
   else
   {
     sayac7_on = 0;
-    if (sayac7_off < 10)
+    if (sayac7_off < 100)
     {
       sayac7_off++;
     }
   }
 
-  if (sayac7_on >= 10)
+  if (sayac7_on >= 100)
   {
     lineSensor.sensor7 = 0;
   }
 
-  if (sayac7_off >= 10)
+  if (sayac7_off >= 100)
   {
     lineSensor.sensor7 = 1;
   }
 
   /*
-  lineSensor.sensor1 = digitalRead(SENSOR_PIN1);
-  lineSensor.sensor2 = digitalRead(SENSOR_PIN2);
-  lineSensor.sensor3 = digitalRead(SENSOR_PIN3);
-  lineSensor.sensor4 = digitalRead(SENSOR_PIN4);
-  lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
-  lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
-  lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
+    lineSensor.sensor1 = digitalRead(SENSOR_PIN1);
+    lineSensor.sensor2 = digitalRead(SENSOR_PIN2);
+    lineSensor.sensor3 = digitalRead(SENSOR_PIN3);
+    lineSensor.sensor4 = digitalRead(SENSOR_PIN4);
+    lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
+    lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
+    lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
   */
 
   return lineSensor.sensorAll;
@@ -1454,7 +1525,7 @@ uint16_t lineRightSensorValue()
   if (digitalRead(SENSOR_PIN_RIGHT_1) == 0)
   {
     sayac1_off = 0;
-    if (sayac1_on < 10)
+    if (sayac1_on < 100)
     {
       sayac1_on++;
     }
@@ -1462,18 +1533,18 @@ uint16_t lineRightSensorValue()
   else
   {
     sayac1_on = 0;
-    if (sayac1_off < 10)
+    if (sayac1_off < 100)
     {
       sayac1_off++;
     }
   }
 
-  if (sayac1_on >= 10)
+  if (sayac1_on >= 100)
   {
     lineSensor.sensor1 = 0;
   }
 
-  if (sayac1_off >= 10)
+  if (sayac1_off >= 100)
   {
     lineSensor.sensor1 = 1;
   }
@@ -1484,7 +1555,7 @@ uint16_t lineRightSensorValue()
   if (digitalRead(SENSOR_PIN_RIGHT_2) == 0)
   {
     sayac2_off = 0;
-    if (sayac2_on < 10)
+    if (sayac2_on < 100)
     {
       sayac2_on++;
     }
@@ -1492,18 +1563,18 @@ uint16_t lineRightSensorValue()
   else
   {
     sayac2_on = 0;
-    if (sayac2_off < 10)
+    if (sayac2_off < 100)
     {
       sayac2_off++;
     }
   }
 
-  if (sayac2_on >= 10)
+  if (sayac2_on >= 100)
   {
     lineSensor.sensor2 = 0;
   }
 
-  if (sayac2_off >= 10)
+  if (sayac2_off >= 100)
   {
     lineSensor.sensor2 = 1;
   }
@@ -1514,7 +1585,7 @@ uint16_t lineRightSensorValue()
   if (digitalRead(SENSOR_PIN_RIGHT_3) == 0)
   {
     sayac3_off = 0;
-    if (sayac3_on < 10)
+    if (sayac3_on < 100)
     {
       sayac3_on++;
     }
@@ -1522,18 +1593,18 @@ uint16_t lineRightSensorValue()
   else
   {
     sayac3_on = 0;
-    if (sayac3_off < 10)
+    if (sayac3_off < 100)
     {
       sayac3_off++;
     }
   }
 
-  if (sayac3_on >= 10)
+  if (sayac3_on >= 100)
   {
     lineSensor.sensor3 = 0;
   }
 
-  if (sayac3_off >= 10)
+  if (sayac3_off >= 100)
   {
     lineSensor.sensor3 = 1;
   }
@@ -1544,7 +1615,7 @@ uint16_t lineRightSensorValue()
   if (digitalRead(SENSOR_PIN_RIGHT_4) == 0)
   {
     sayac4_off = 0;
-    if (sayac4_on < 10)
+    if (sayac4_on < 100)
     {
       sayac4_on++;
     }
@@ -1552,18 +1623,18 @@ uint16_t lineRightSensorValue()
   else
   {
     sayac4_on = 0;
-    if (sayac4_off < 10)
+    if (sayac4_off < 100)
     {
       sayac4_off++;
     }
   }
 
-  if (sayac4_on >= 10)
+  if (sayac4_on >= 100)
   {
     lineSensor.sensor4 = 0;
   }
 
-  if (sayac4_off >= 10)
+  if (sayac4_off >= 100)
   {
     lineSensor.sensor4 = 1;
   }
@@ -1574,7 +1645,7 @@ uint16_t lineRightSensorValue()
   if (digitalRead(SENSOR_PIN_RIGHT_5) == 0)
   {
     sayac5_off = 0;
-    if (sayac5_on < 10)
+    if (sayac5_on < 100)
     {
       sayac5_on++;
     }
@@ -1582,18 +1653,18 @@ uint16_t lineRightSensorValue()
   else
   {
     sayac5_on = 0;
-    if (sayac5_off < 10)
+    if (sayac5_off < 100)
     {
       sayac5_off++;
     }
   }
 
-  if (sayac5_on >= 10)
+  if (sayac5_on >= 100)
   {
     lineSensor.sensor5 = 0;
   }
 
-  if (sayac5_off >= 10)
+  if (sayac5_off >= 100)
   {
     lineSensor.sensor5 = 1;
   }
@@ -1604,7 +1675,7 @@ uint16_t lineRightSensorValue()
   if (digitalRead(SENSOR_PIN_RIGHT_6) == 0)
   {
     sayac6_off = 0;
-    if (sayac6_on < 10)
+    if (sayac6_on < 100)
     {
       sayac6_on++;
     }
@@ -1612,18 +1683,18 @@ uint16_t lineRightSensorValue()
   else
   {
     sayac6_on = 0;
-    if (sayac6_off < 10)
+    if (sayac6_off < 100)
     {
       sayac6_off++;
     }
   }
 
-  if (sayac6_on >= 10)
+  if (sayac6_on >= 100)
   {
     lineSensor.sensor6 = 0;
   }
 
-  if (sayac6_off >= 10)
+  if (sayac6_off >= 100)
   {
     lineSensor.sensor6 = 1;
   }
@@ -1634,7 +1705,7 @@ uint16_t lineRightSensorValue()
   if (digitalRead(SENSOR_PIN_RIGHT_7) == 0)
   {
     sayac7_off = 0;
-    if (sayac7_on < 10)
+    if (sayac7_on < 100)
     {
       sayac7_on++;
     }
@@ -1642,30 +1713,30 @@ uint16_t lineRightSensorValue()
   else
   {
     sayac7_on = 0;
-    if (sayac7_off < 10)
+    if (sayac7_off < 100)
     {
       sayac7_off++;
     }
   }
 
-  if (sayac7_on >= 10)
+  if (sayac7_on >= 100)
   {
     lineSensor.sensor7 = 0;
   }
 
-  if (sayac7_off >= 10)
+  if (sayac7_off >= 100)
   {
     lineSensor.sensor7 = 1;
   }
 
   /*
-  lineSensor.sensor1 = digitalRead(SENSOR_PIN1);
-  lineSensor.sensor2 = digitalRead(SENSOR_PIN2);
-  lineSensor.sensor3 = digitalRead(SENSOR_PIN3);
-  lineSensor.sensor4 = digitalRead(SENSOR_PIN4);
-  lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
-  lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
-  lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
+    lineSensor.sensor1 = digitalRead(SENSOR_PIN1);
+    lineSensor.sensor2 = digitalRead(SENSOR_PIN2);
+    lineSensor.sensor3 = digitalRead(SENSOR_PIN3);
+    lineSensor.sensor4 = digitalRead(SENSOR_PIN4);
+    lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
+    lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
+    lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
   */
 
   return lineSensor.sensorAll;
@@ -1703,7 +1774,7 @@ uint16_t lineLeftSensorValue()
   if (digitalRead(SENSOR_PIN_LEFT_1) == 0)
   {
     sayac1_off = 0;
-    if (sayac1_on < 10)
+    if (sayac1_on < 100)
     {
       sayac1_on++;
     }
@@ -1711,18 +1782,18 @@ uint16_t lineLeftSensorValue()
   else
   {
     sayac1_on = 0;
-    if (sayac1_off < 10)
+    if (sayac1_off < 100)
     {
       sayac1_off++;
     }
   }
 
-  if (sayac1_on >= 10)
+  if (sayac1_on >= 100)
   {
     lineSensor.sensor1 = 0;
   }
 
-  if (sayac1_off >= 10)
+  if (sayac1_off >= 100)
   {
     lineSensor.sensor1 = 1;
   }
@@ -1733,7 +1804,7 @@ uint16_t lineLeftSensorValue()
   if (digitalRead(SENSOR_PIN_LEFT_2) == 0)
   {
     sayac2_off = 0;
-    if (sayac2_on < 10)
+    if (sayac2_on < 100)
     {
       sayac2_on++;
     }
@@ -1741,18 +1812,18 @@ uint16_t lineLeftSensorValue()
   else
   {
     sayac2_on = 0;
-    if (sayac2_off < 10)
+    if (sayac2_off < 100)
     {
       sayac2_off++;
     }
   }
 
-  if (sayac2_on >= 10)
+  if (sayac2_on >= 100)
   {
     lineSensor.sensor2 = 0;
   }
 
-  if (sayac2_off >= 10)
+  if (sayac2_off >= 100)
   {
     lineSensor.sensor2 = 1;
   }
@@ -1763,7 +1834,7 @@ uint16_t lineLeftSensorValue()
   if (digitalRead(SENSOR_PIN_LEFT_3) == 0)
   {
     sayac3_off = 0;
-    if (sayac3_on < 10)
+    if (sayac3_on < 100)
     {
       sayac3_on++;
     }
@@ -1771,18 +1842,18 @@ uint16_t lineLeftSensorValue()
   else
   {
     sayac3_on = 0;
-    if (sayac3_off < 10)
+    if (sayac3_off < 100)
     {
       sayac3_off++;
     }
   }
 
-  if (sayac3_on >= 10)
+  if (sayac3_on >= 100)
   {
     lineSensor.sensor3 = 0;
   }
 
-  if (sayac3_off >= 10)
+  if (sayac3_off >= 100)
   {
     lineSensor.sensor3 = 1;
   }
@@ -1793,7 +1864,7 @@ uint16_t lineLeftSensorValue()
   if (digitalRead(SENSOR_PIN_LEFT_4) == 0)
   {
     sayac4_off = 0;
-    if (sayac4_on < 10)
+    if (sayac4_on < 100)
     {
       sayac4_on++;
     }
@@ -1801,18 +1872,18 @@ uint16_t lineLeftSensorValue()
   else
   {
     sayac4_on = 0;
-    if (sayac4_off < 10)
+    if (sayac4_off < 100)
     {
       sayac4_off++;
     }
   }
 
-  if (sayac4_on >= 10)
+  if (sayac4_on >= 100)
   {
     lineSensor.sensor4 = 0;
   }
 
-  if (sayac4_off >= 10)
+  if (sayac4_off >= 100)
   {
     lineSensor.sensor4 = 1;
   }
@@ -1823,7 +1894,7 @@ uint16_t lineLeftSensorValue()
   if (digitalRead(SENSOR_PIN_LEFT_5) == 0)
   {
     sayac5_off = 0;
-    if (sayac5_on < 10)
+    if (sayac5_on < 100)
     {
       sayac5_on++;
     }
@@ -1831,18 +1902,18 @@ uint16_t lineLeftSensorValue()
   else
   {
     sayac5_on = 0;
-    if (sayac5_off < 10)
+    if (sayac5_off < 100)
     {
       sayac5_off++;
     }
   }
 
-  if (sayac5_on >= 10)
+  if (sayac5_on >= 100)
   {
     lineSensor.sensor5 = 0;
   }
 
-  if (sayac5_off >= 10)
+  if (sayac5_off >= 100)
   {
     lineSensor.sensor5 = 1;
   }
@@ -1853,7 +1924,7 @@ uint16_t lineLeftSensorValue()
   if (digitalRead(SENSOR_PIN_LEFT_6) == 0)
   {
     sayac6_off = 0;
-    if (sayac6_on < 10)
+    if (sayac6_on < 100)
     {
       sayac6_on++;
     }
@@ -1861,18 +1932,18 @@ uint16_t lineLeftSensorValue()
   else
   {
     sayac6_on = 0;
-    if (sayac6_off < 10)
+    if (sayac6_off < 100)
     {
       sayac6_off++;
     }
   }
 
-  if (sayac6_on >= 10)
+  if (sayac6_on >= 100)
   {
     lineSensor.sensor6 = 0;
   }
 
-  if (sayac6_off >= 10)
+  if (sayac6_off >= 100)
   {
     lineSensor.sensor6 = 1;
   }
@@ -1883,7 +1954,7 @@ uint16_t lineLeftSensorValue()
   if (digitalRead(SENSOR_PIN_LEFT_7) == 0)
   {
     sayac7_off = 0;
-    if (sayac7_on < 10)
+    if (sayac7_on < 100)
     {
       sayac7_on++;
     }
@@ -1891,30 +1962,30 @@ uint16_t lineLeftSensorValue()
   else
   {
     sayac7_on = 0;
-    if (sayac7_off < 10)
+    if (sayac7_off < 100)
     {
       sayac7_off++;
     }
   }
 
-  if (sayac7_on >= 10)
+  if (sayac7_on >= 100)
   {
     lineSensor.sensor7 = 0;
   }
 
-  if (sayac7_off >= 10)
+  if (sayac7_off >= 100)
   {
     lineSensor.sensor7 = 1;
   }
 
   /*
-  lineSensor.sensor1 = digitalRead(SENSOR_PIN1);
-  lineSensor.sensor2 = digitalRead(SENSOR_PIN2);
-  lineSensor.sensor3 = digitalRead(SENSOR_PIN3);
-  lineSensor.sensor4 = digitalRead(SENSOR_PIN4);
-  lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
-  lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
-  lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
+    lineSensor.sensor1 = digitalRead(SENSOR_PIN1);
+    lineSensor.sensor2 = digitalRead(SENSOR_PIN2);
+    lineSensor.sensor3 = digitalRead(SENSOR_PIN3);
+    lineSensor.sensor4 = digitalRead(SENSOR_PIN4);
+    lineSensor.sensor5 = digitalRead(SENSOR_PIN5);
+    lineSensor.sensor6 = digitalRead(SENSOR_PIN6);
+    lineSensor.sensor7 = digitalRead(SENSOR_PIN7);
   */
 
   return lineSensor.sensorAll;

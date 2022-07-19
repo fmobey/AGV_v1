@@ -471,14 +471,14 @@ void loop()
 
 
   */
-    if (amparageRead() > 0 && amparageRead() < 4)
+    if (amparageRead() > 3)
     {
       Serial.print("AMPARAGE: ");
       Serial.println(mparageRead());
       chargeStatus = 1;
       rgbState = 9;
     }
-    else
+    else if (amparageRead() < 3)
     {
       chargeStatus = 0;
     }

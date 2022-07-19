@@ -64,7 +64,7 @@
 #define ANALOG_PIN_BUTTON A0
 // BATTERY
 #define VBATTADC 14
-#define BATTERY_AVARAGE_READ_COUNT 10
+#define BATTERY_AVARAGE_READ_COUNT 16
 // AMPERAGE PIN
 #define AMPERAGE_PIN A15
 // RGB
@@ -103,7 +103,7 @@ int buzzerCount = 0;
 #define LEFT_SENSOR 3
 int sensorStraightStatus = 0;
 int sensorLateralStatus = 0;
-
+int chargeStatus = -1;
 long TIME_NOW = 0;
 long TIME_NOW1 = 0;
 long TIME_NOW2 = 0;
@@ -167,8 +167,8 @@ int Warn_Lidar12 = -1;
 int Warn_Lidar21 = -1;
 int Warn_Lidar22 = -1;
 
-int sayacStop=0;
-int sayacStop2=0;
+int sayacStop = 0;
+int sayacStop2 = 0;
 void setup()
 {
 
@@ -289,49 +289,49 @@ void loop()
   if (TIME_NOW4 - adc_millis4 > 10)
   {
 
+    /*
 
-
-    Serial.print("FRONT ");
-    for (int j = 6; j >= 0; j--) {
-            if (((lineFrontSensorValue() >> j) & 1)==1) {
-                Serial.print("1");
-            }else {
-                Serial.print("0");
+        Serial.print("FRONT ");
+        for (int j = 6; j >= 0; j--) {
+                if (((lineFrontSensorValue() >> j) & 1)==1) {
+                    Serial.print("1");
+                }else {
+                    Serial.print("0");
+                }
             }
-        }
-    Serial.print("  BACK ");
-    for (int j = 6; j >= 0; j--) {
-            if (((lineBackSensorValue() >> j) & 1)==1) {
-                Serial.print("1");
-            }else {
-                Serial.print("0");
+        Serial.print("  BACK ");
+        for (int j = 6; j >= 0; j--) {
+                if (((lineBackSensorValue() >> j) & 1)==1) {
+                    Serial.print("1");
+                }else {
+                    Serial.print("0");
+                }
             }
-        }
-    Serial.print(" RIGHT ");
-    for (int j = 6; j >= 0; j--) {
-            if (((lineRightSensorValue() >> j) & 1)==1) {
-                Serial.print("1");
-            }else {
-                Serial.print("0");
+        Serial.print(" RIGHT ");
+        for (int j = 6; j >= 0; j--) {
+                if (((lineRightSensorValue() >> j) & 1)==1) {
+                    Serial.print("1");
+                }else {
+                    Serial.print("0");
+                }
             }
-        }
-    Serial.print(" LEFT ");
-    for (int j = 6; j >= 0; j--) {
-            if (((lineLeftSensorValue() >> j) & 1)==1) {
-                Serial.print("1");
-            }else {
-                Serial.print("0");
+        Serial.print(" LEFT ");
+        for (int j = 6; j >= 0; j--) {
+                if (((lineLeftSensorValue() >> j) & 1)==1) {
+                    Serial.print("1");
+                }else {
+                    Serial.print("0");
+                }
             }
-        }
-
-           Serial.println();
+    */
+    // Serial.println();
     // Serial.print(SensorFront1);
     // Serial.print(SensorFront2);
-    //Serial.print(SensorFront3);
-    //Serial.print(SensorFront4);
-    //Serial.print(SensorFront5);
+    // Serial.print(SensorFront3);
+    // Serial.print(SensorFront4);
+    // Serial.print(SensorFront5);
     // Serial.print(SensorFront6);
-    //Serial.print(SensorFront7);
+    // Serial.print(SensorFront7);
 
     /*
 
@@ -471,226 +471,257 @@ void loop()
 
 
   */
+    if (amparageRead() > 0 && amparageRead() < 4)
+    {
+      Serial.print("AMPARAGE: ");
+      Serial.println(mparageRead());
+      chargeStatus = 1;
+      rgbState = 9;
+    }
+    else
+    {
+      chargeStatus = 0;
+    }
   rgbStatus(rgbState);
   if (ANALOG_GIT_BUTTON >= 660 && ANALOG_GIT_BUTTON <= 680)
   {
     //  Serial.println("ileri");
     followStationState = 1;
-    if (followLateralState==2) {
-      followLateralState=3;
+    if (followLateralState == 2)
+    {
+      followLateralState = 3;
     }
-
   }
   else if (ANALOG_GIT_BUTTON >= 310 && ANALOG_GIT_BUTTON <= 330)
   {
     // Serial.println("geri");
     followStationState = 2;
-
   }
   else
   {
-    if (followLateralState==1) {
-      followLateralState=2;
+    if (followLateralState == 1)
+    {
+      followLateralState = 2;
     }
-    followStopState=0;
+    followStopState = 0;
     followStationState = 0;
     Pwm(PWM_STOP);
   }
   //    oldTime = newTime;
 
   //}
+  if (chargeStatus == 0)
+  {
 
-  if (followLateralState == 3 && followStationState == 1 ) {
-
-    if (lineRightSensorValue() == 127 || lineRightSensorValue() == 0)
+    if (followLateralState == 3 && followStationState == 1)
     {
-      followStationState = 0;
-      rgbState = 0;
-      followLateralState=0;
-    } else  if ((lineRightSensorValue() & 0b1110000) >= 16 && (lineRightSensorValue() & 0b0000111) >= 1)  {
-  //    followStationState = 0;
-   //   rgbState = 0;
-     // followLateralState=0;
-    } else if (lineRightSensorValue() == 0b0001000) {
-       RotateWheels(false, false, false, true, false, false);
+
+      if (lineRightSensorValue() == 127 || lineRightSensorValue() == 0)
+      {
+        followStationState = 0;
+        rgbState = 0;
+        followLateralState = 0;
+      }
+      else if ((lineRightSensorValue() & 0b1110000) >= 16 && (lineRightSensorValue() & 0b0000111) >= 1)
+      {
+        //    followStationState = 0;
+        //   rgbState = 0;
+        // followLateralState=0;
+      }
+      else if (lineRightSensorValue() == 0b0001000)
+      {
+        RotateWheels(false, false, false, true, false, false);
+        rgbState = 3;
+        Pwm(PWM_START);
+      }
+      else if ((lineRightSensorValue() & 0b1111000) >= 16 && (lineRightSensorValue() & 0b1111000) <= 120)
+      { // 2
+        rgbState = 2;
+        RotateWheels(false, false, false, true, false, false);
+        PwmLateralRight(PWM_START);
+      }
+      else if ((lineRightSensorValue() & 0b001111) <= 15 && (lineRightSensorValue() & 0b001111) > 0)
+      {
+        //     Serial.println("sag");
+        rgbState = 2;
+        RotateWheels(false, false, false, true, false, false);
+        PwmLateralLeft(PWM_START);
+      }
+      else
+      {
+        //  followStationState = 0;
+        // rgbState = 0;
+        // followLateralState=0;
+      }
+    }
+    else if (followStationState == 1 && followStopState == 0)
+    {
+
+      if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0)
+      {
+        followStationState = 0;
+        rgbState = 0;
+      }
+      else if ((lineFrontSensorValue() & 0b1110000) >= 16 && (lineFrontSensorValue() & 0b0000111) >= 1)
+      {
+        followStationState = 0;
+        rgbState = 0;
+
+        if (lineRightSensorValue() > 0 && lineLeftSensorValue() == 0)
+        {
+          followLateralState = 1;
+        }
+      }
+      else if (lineFrontSensorValue() == 0b0001000)
+      {
+        rgbState = 2;
+        RotateWheels(false, true, false, false, false, false);
+        Pwm(PWM_START);
+      }
+      else if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120)
+      { // 2
+        rgbState = 2;
+        RotateWheels(false, true, false, false, false, false);
+        PwmStraigtRight(PWM_START);
+      }
+      else if ((lineFrontSensorValue() & 0b001111) <= 15 && (lineFrontSensorValue() & 0b001111) > 0)
+      {
+        //     Serial.println("sag");
+        rgbState = 2;
+        RotateWheels(false, true, false, false, false, false);
+        PwmStraigtLeft(PWM_START);
+      }
+      else
+      {
+        followStationState = 0;
+        rgbState = 0;
+      }
+
+      if (sayacStop == 0)
+      {
+        if (lineRightSensorValue() > 0 && lineLeftSensorValue() > 0)
+        {
+          sayacStop = 5000;
+          followStopState = 1;
+        }
+      }
+
+      if (sayacStop > 0)
+      {
+        sayacStop--;
+      }
+    }
+    else if (followStationState == 2)
+    {
+      if (lineBackSensorValue() == 0b0001000)
+      {
+        rgbState = 2;
+        RotateWheels(true, false, false, false, false, false);
+        Pwm(PWM_START);
+      }
+
+      if ((lineBackSensorValue() & 0b1111000) >= 16 && (lineBackSensorValue() & 0b1111000) <= 120)
+      { // 2
+        rgbState = 2;
+        RotateWheels(true, false, false, false, false, false);
+
+        PwmStraigtRight(PWM_START);
+      }
+      else if ((lineBackSensorValue() & 0b001111) <= 15 && (lineBackSensorValue() & 0b001111) > 0)
+      {
+        //     Serial.println("sag");
+        rgbState = 2;
+        RotateWheels(true, false, false, false, false, false);
+        PwmStraigtLeft(PWM_START);
+      }
+
+      if (lineBackSensorValue() == 127 || lineBackSensorValue() == 0)
+      {
+        followStationState = 0;
+        rgbState = 0;
+      }
+
+      // HEM SAG DA HEM SOLDA ALGILARSA HATA
+      if ((lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1)
+      {
+        followStationState = 0;
+        rgbState = 0;
+      }
+    }
+
+    /*
+      if (WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH)
+      {
+        followStationState = 0;
+        rgbState = 1;
+      }
+    */
+    if (followStationState == 0 || followStopState == 1)
+    {
+      Pwm(PWM_STOP);
+    }
+
+    if (SAGA_DON == LOW)
+    {
+      RotateWheels(false, false, false, true, false, false);
       rgbState = 3;
       Pwm(PWM_START);
-    } else if ((lineRightSensorValue() & 0b1111000) >= 16 && (lineRightSensorValue() & 0b1111000) <= 120)
-    { // 2
-     rgbState = 2;
-     RotateWheels(false, false, false, true, false, false);
-     PwmLateralRight(PWM_START);
+      buzzerFlipFlop();
+      //  Serial.println("SAGA");
     }
-    else if ((lineRightSensorValue() & 0b001111) <= 15 && (lineRightSensorValue() & 0b001111) > 0)
+    else if (GERI_TRY == LOW)
     {
-      //   Serial.println("sag");
-      rgbState = 2;
-      RotateWheels(false, false, false, true, false, false);
-      PwmLateralLeft(PWM_START);
-    } else {
-    //  followStationState = 0;
-      //rgbState = 0;
-      //followLateralState=0;
-    }
-
-  } else if (followStationState == 1 && followStopState==0)
-  {
-
-    if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0)
-    {
-      followStationState = 0;
-      rgbState = 0;
-    } else  if ((lineFrontSensorValue() & 0b1110000) >= 16 && (lineFrontSensorValue() & 0b0000111) >= 1)  {
-      followStationState = 0;
-      rgbState = 0;
-
-      if (lineRightSensorValue()  > 0 && lineLeftSensorValue() == 0) {
-        followLateralState = 1;
-      }
-
-
-    } else if (lineFrontSensorValue() == 0b0001000) {
-      rgbState = 2;
-      RotateWheels(false, true, false, false, false, false);
+      RotateWheels(true, false, false, false, false, false);
+      rgbState = 4;
       Pwm(PWM_START);
-    } else if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120)
-    { // 2
-      rgbState = 2;
-      RotateWheels(false, true, false, false, false, false);
-      PwmStraigtRight(PWM_START);
-    }
-    else if ((lineFrontSensorValue() & 0b001111) <= 15 && (lineFrontSensorValue() & 0b001111) > 0)
-    {
-      //     Serial.println("sag");
-      rgbState = 2;
-      RotateWheels(false, true, false, false, false, false);
-      PwmStraigtLeft(PWM_START);
-    } else {
-      followStationState = 0;
-      rgbState = 0;
-    }
+      buzzerFlipFlop();
 
-    if (sayacStop==0) {
-           if (lineRightSensorValue()  > 0 && lineLeftSensorValue() > 0) {
-        sayacStop=5000;
-        followStopState = 1;
-      }
+      // Serial.println("GERI");
     }
-
-  if (sayacStop>0) {
-    sayacStop--;
-  }
-      
-  } else if (followStationState == 2)
-  {
-    if (lineBackSensorValue() == 0b0001000)
+    else if (ILERI_TRY == LOW)
     {
-      rgbState = 2;
-      RotateWheels(true, false, false, false, false, false);
+      RotateWheels(false, true, false, false, false, false);
+      rgbState = 5;
       Pwm(PWM_START);
-    }
+      buzzerFlipFlop();
 
-    if ((lineBackSensorValue() & 0b1111000) >= 16 && (lineBackSensorValue() & 0b1111000) <= 120)
-    { // 2
-      rgbState = 2;
-      RotateWheels(true, false, false, false, false, false);
-
-      PwmStraigtRight(PWM_START);
+      // Serial.println("ILERI");
     }
-    else if ((lineBackSensorValue() & 0b001111) <= 15 && (lineBackSensorValue() & 0b001111) > 0)
+    else if (SOLA_DON == LOW)
     {
-      //     Serial.println("sag");
-      rgbState = 2;
-      RotateWheels(true, false, false, false, false, false);
-      PwmStraigtLeft(PWM_START);
-    }
-
-    if (lineBackSensorValue() == 127 || lineBackSensorValue() == 0)
-    {
-      followStationState = 0;
-      rgbState = 0;
-    }
-
-    // HEM SAG DA HEM SOLDA ALGILARSA HATA
-    if ((lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1)
-    {
-      followStationState = 0;
-      rgbState = 0;
-    }
-  }
-
-  /*
-    if (WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH)
-    {
-      followStationState = 0;
+      RotateWheels(false, false, true, false, false, false);
       rgbState = 1;
+      Pwm(PWM_START);
+      buzzerFlipFlop();
+
+      // Serial.println("SOLA");
     }
-  */
-  if (followStationState == 0 ||  followStopState == 1)
-  {
-    Pwm(PWM_STOP);
-  }
+    else if (SAGA_TRY == LOW)
 
-  if (SAGA_DON == LOW)
-  {
-    RotateWheels(false, false, false, true, false, false);
-    rgbState = 3;
-    Pwm(PWM_START);
-    buzzerFlipFlop();
-   //  Serial.println("SAGA");
-  }
-  else if (GERI_TRY == LOW)
-  {
-    RotateWheels(true, false, false, false, false, false);
-    rgbState = 4;
-    Pwm(PWM_START);
-    buzzerFlipFlop();
+    {
+      RotateWheels(false, false, false, false, true, false);
+      rgbState = 3;
+      Pwm(PWM_START);
+      buzzerFlipFlop();
 
-    // Serial.println("GERI");
-  }
-  else if (ILERI_TRY == LOW)
-  {
-    RotateWheels(false, true, false, false, false, false);
-    rgbState = 5;
-    Pwm(PWM_START);
-    buzzerFlipFlop();
+      // Serial.println("SOLA_DON");
+    }
+    else if (SOLA_TRY == LOW)
 
-    // Serial.println("ILERI");
-  }
-  else if (SOLA_DON == LOW)
-  {
-    RotateWheels(false, false, true, false, false, false);
-    rgbState = 1;
-    Pwm(PWM_START);
-    buzzerFlipFlop();
+    {
+      RotateWheels(false, false, false, false, false, true);
+      rgbState = 2;
+      Pwm(PWM_START);
+      buzzerFlipFlop();
 
-    // Serial.println("SOLA");
-  }
-  else if (SAGA_TRY == LOW)
-
-  {
-    RotateWheels(false, false, false, false, true, false);
-    rgbState = 3;
-    Pwm(PWM_START);
-    buzzerFlipFlop();
-
-    // Serial.println("SOLA_DON");
-  }
-  else if (SOLA_TRY == LOW)
-
-  {
-    RotateWheels(false, false, false, false, false, true);
-    rgbState = 2;
-    Pwm(PWM_START);
-    buzzerFlipFlop();
-
-    // Serial.println("SAGA_DON");
-  }
-  else
-  {
-    // RotateWheels(false, false, false, false, false, false);
-    // rgbController(true, false, false, false,false,false,false,false);
-    // PwmStop(PWM_STOP);
+      // Serial.println("SAGA_DON");
+    }
+    else
+    {
+      // RotateWheels(false, false, false, false, false, false);
+      // rgbController(true, false, false, false,false,false,false,false);
+      // PwmStop(PWM_STOP);
+    }
   }
 }
 
@@ -773,6 +804,10 @@ void rgbStatus(int rgbState)
   else if (rgbState == 8)
   {
     rgbController(false, false, false, false, false, false, false, true);
+  }
+  else if (rgbState == 9)
+  {
+    chargerRgbStatus();
   }
 }
 
@@ -882,7 +917,7 @@ float vBattRead()
     adc_value += analogRead(VBATTADC);
   }
   adc_value = adc_value / BATTERY_AVARAGE_READ_COUNT;
-  float Vbatt = (adc_value * 5) / 1024;
+  float Vbatt = (adc_value * 0.11809);
   return Vbatt;
 }
 
@@ -894,10 +929,59 @@ float amparageRead()
     adc_value += analogRead(AMPERAGE_PIN);
   }
   adc_value = adc_value / BATTERY_AVARAGE_READ_COUNT;
-  float Vbatt = (adc_value * 5) / 1024;
+  float Vbatt = (adc_value * 0.01782);
   return Vbatt;
 }
+void chargerRgbStatus()
+{
+  newTime6 = millis();
+  static int i = 0;
+  static int artirFlag = 0;
+  int amp = 30;
+  if (amparageRead() > 20)
+  {
+    amp = 20;
+  }
+  else if (amparageRead() > 15 && amparageRead() < 20)
+  {
+    amp = 50;
+  }
+  else if (amparageRead() > 10 && amparageRead() < 15)
+  {
+    amp = 80;
+  }
+  else if (amparageRead() > 0 && amparageRead() < 10)
+  {
+    amp = 110;
+  }
 
+  if (newTime6 - oldTime6 > amp)
+  {
+
+    if (i == 0)
+    {
+      artirFlag = 1;
+    }
+
+    if (i == 30)
+    {
+      artirFlag = 0;
+    }
+
+    if (artirFlag == 1)
+    {
+      i++;
+    }
+    else
+    {
+      i--;
+    }
+    analogWrite(RED_PIN, i);
+    analogWrite(GREEN_PIN, i);
+    analogWrite(BLUE_PIN, i);
+    oldTime6 = newTime6;
+  }
+}
 void rgbController(bool white, bool red, bool green, bool blue, bool purple, bool cyan, bool yellow, bool stop)
 {
   newTime1 = millis();

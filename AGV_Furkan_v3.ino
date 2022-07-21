@@ -162,6 +162,7 @@ int rgbState = -1;
 int followStationState = -1;
 int followLateralState = -1;
 int followStopState = 0;
+int buzzerStateLoop = -1;
 int Warn_Lidar11 = -1;
 int Warn_Lidar12 = -1;
 int Warn_Lidar21 = -1;
@@ -284,7 +285,9 @@ void loop()
     PwmStop(int pwm_value)
 
   */
+  rgbStatus(rgbState);
 
+  buzzerFlipFlop(buzzerStateLoop);
   TIME_NOW4 = millis();
   if (TIME_NOW4 - adc_millis4 > 10)
   {
@@ -364,7 +367,6 @@ void loop()
       Serial.print(SensorLeft7);
       Serial.println();
     */
-
 
     // panel buttonarının durumlarını okuyup gösteriyoruz
     ILERI_TRY = digitalRead(ILERI_PIN);
@@ -471,18 +473,19 @@ void loop()
 
 
   */
-    if (amparageRead() > 3)
-    {
-      Serial.print("AMPARAGE: ");
-      Serial.println(mparageRead());
-      chargeStatus = 1;
-      rgbState = 9;
-    }
-    else if (amparageRead() < 3)
-    {
-      chargeStatus = 0;
-    }
-  rgbStatus(rgbState);
+  if (amparageRead() > 3)
+  {
+    Serial.print("AMPARAGE: ");
+    Serial.println(amparageRead());
+    chargeStatus = 1;
+    rgbState = 9;
+    buzzerStateLoop = 1;
+  }
+  else if (amparageRead() < 3)
+  {
+    chargeStatus = 0;
+    rgbState = 8;
+  }
   if (ANALOG_GIT_BUTTON >= 660 && ANALOG_GIT_BUTTON <= 680)
   {
     //  Serial.println("ileri");
@@ -512,7 +515,17 @@ void loop()
   //}
   if (chargeStatus == 0)
   {
+    rgbStatus(rgbState);
 
+    if (digitalRead(WARN_LIDAR11) == HIGH || digitalRead(WARN_LIDAR21) == HIGH)
+    {
+      rgbController(false, true, false, false, false, false, false, false);
+      buzzerStateLoop = 2; //  rgbState = 2;
+    }
+    else
+    {
+      buzzerStateLoop = 1;
+    }
     if (followLateralState == 3 && followStationState == 1)
     {
 
@@ -666,7 +679,7 @@ void loop()
       RotateWheels(false, false, false, true, false, false);
       rgbState = 3;
       Pwm(PWM_START);
-      buzzerFlipFlop();
+      buzzerStateLoop = 3;
       //  Serial.println("SAGA");
     }
     else if (GERI_TRY == LOW)
@@ -674,7 +687,7 @@ void loop()
       RotateWheels(true, false, false, false, false, false);
       rgbState = 4;
       Pwm(PWM_START);
-      buzzerFlipFlop();
+      buzzerStateLoop = 3;
 
       // Serial.println("GERI");
     }
@@ -683,7 +696,7 @@ void loop()
       RotateWheels(false, true, false, false, false, false);
       rgbState = 5;
       Pwm(PWM_START);
-      buzzerFlipFlop();
+      buzzerStateLoop = 3;
 
       // Serial.println("ILERI");
     }
@@ -692,7 +705,7 @@ void loop()
       RotateWheels(false, false, true, false, false, false);
       rgbState = 1;
       Pwm(PWM_START);
-      buzzerFlipFlop();
+      buzzerStateLoop = 3;
 
       // Serial.println("SOLA");
     }
@@ -702,7 +715,7 @@ void loop()
       RotateWheels(false, false, false, false, true, false);
       rgbState = 3;
       Pwm(PWM_START);
-      buzzerFlipFlop();
+      buzzerStateLoop = 3;
 
       // Serial.println("SOLA_DON");
     }
@@ -712,7 +725,7 @@ void loop()
       RotateWheels(false, false, false, false, false, true);
       rgbState = 2;
       Pwm(PWM_START);
-      buzzerFlipFlop();
+      buzzerStateLoop = 3;
 
       // Serial.println("SAGA_DON");
     }
@@ -940,19 +953,19 @@ void chargerRgbStatus()
   int amp = 30;
   if (amparageRead() > 20)
   {
-    amp = 20;
+    amp = 4;
   }
   else if (amparageRead() > 15 && amparageRead() < 20)
   {
-    amp = 50;
+    amp = 10;
   }
   else if (amparageRead() > 10 && amparageRead() < 15)
   {
-    amp = 80;
+    amp = 25;
   }
   else if (amparageRead() > 0 && amparageRead() < 10)
   {
-    amp = 110;
+    amp = 50;
   }
 
   if (newTime6 - oldTime6 > amp)
@@ -963,7 +976,7 @@ void chargerRgbStatus()
       artirFlag = 1;
     }
 
-    if (i == 30)
+    if (i == 20)
     {
       artirFlag = 0;
     }
@@ -1060,21 +1073,46 @@ void rgbController(bool white, bool red, bool green, bool blue, bool purple, boo
   }
 }
 
-void buzzerFlipFlop()
+void buzzerFlipFlop(int buzzerStatus)
 {
   newTime3 = millis();
-  if (newTime3 - oldTime3 > 1000)
+  static int i = 0;
+  static int artirFlag = 0;
+
+  if (newTime3 - oldTime3 > 20)
   {
-    if (buzzerCount == 0)
+    if (buzzerStatus == 1)
     {
-      digitalWrite(BUZZER_PIN, HIGH);
-      buzzerCount = 1;
+      analogWrite(BUZZER_PIN, 0);
     }
-    else if (buzzerCount == 1)
+    else if (buzzerStatus == 2)
     {
-      digitalWrite(BUZZER_PIN, LOW);
-      buzzerCount = 0;
+      analogWrite(BUZZER_PIN, 10);
     }
+    else if (buzzerStatus == 3)
+    {
+      if (i == 0)
+      {
+        artirFlag = 1;
+      }
+
+      if (i == 15)
+      {
+        artirFlag = 0;
+      }
+
+      if (artirFlag == 1)
+      {
+        i++;
+      }
+      else
+      {
+        i--;
+      }
+
+      analogWrite(BUZZER_PIN, i);
+    }
+
     oldTime3 = newTime3;
   }
 }

@@ -288,7 +288,10 @@ void loop()
   TIME_NOW4 = millis();
   if (TIME_NOW4 - adc_millis4 > 10)
   {
-    Serial.print("FRONT ");
+
+    Serial.print(agvDirection);
+
+    Serial.print("  FRONT ");
     for (int j = 6; j >= 0; j--)
     {
       if (((lineFrontSensorValue() >> j) & 1) == 1)

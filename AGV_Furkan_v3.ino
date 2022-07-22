@@ -281,14 +281,7 @@ void setup()
 
 void loop()
 {
-  /*
-    RotateWheels(bool ileri, bool geri, bool sag, bool sol, bool soldon, bool sagdon)
-    rgbController(bool white, bool red, bool green, bool blue, bool purple,bool cyan,bool yellow,bool stop){
-    LineFlowingEnable(bool front,bool back,bool right,bool left)
-    PwmStart(int pwm_value)
-    PwmStop(int pwm_value)
 
-  */
   rgbStatus(rgbState);
 
   buzzerFlipFlop(buzzerStateLoop);

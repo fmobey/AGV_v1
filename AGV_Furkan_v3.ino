@@ -161,6 +161,7 @@ int SensorLeft7 = -1;
 int rgbState = -1;
 int followStationState = -1;
 int followLateralState = -1;
+int followLateralState2 = -1;
 int followStopState = 0;
 int buzzerStateLoop = -1;
 int Warn_Lidar11 = -1;
@@ -170,6 +171,9 @@ int Warn_Lidar22 = -1;
 
 int sayacStop = 0;
 int sayacStop2 = 0;
+int agvDirection=-1;
+
+unsigned long sayacmsduraklama=0;
 void setup()
 {
 
@@ -291,9 +295,6 @@ void loop()
   TIME_NOW4 = millis();
   if (TIME_NOW4 - adc_millis4 > 10)
   {
-
-    /*
-
         Serial.print("FRONT ");
         for (int j = 6; j >= 0; j--) {
                 if (((lineFrontSensorValue() >> j) & 1)==1) {
@@ -326,47 +327,9 @@ void loop()
                     Serial.print("0");
                 }
             }
-    */
-    // Serial.println();
-    // Serial.print(SensorFront1);
-    // Serial.print(SensorFront2);
-    // Serial.print(SensorFront3);
-    // Serial.print(SensorFront4);
-    // Serial.print(SensorFront5);
-    // Serial.print(SensorFront6);
-    // Serial.print(SensorFront7);
-
-    /*
-
-      Serial.print("  BACK ");
-      Serial.print(SensorBack1);
-      Serial.print(SensorBack2);
-      Serial.print(SensorBack3);
-      Serial.print(SensorBack4);
-      Serial.print(SensorBack5);
-      Serial.print(SensorBack6);
-      Serial.print(SensorBack7);
-
-
-      Serial.print("  SAG ");
-      Serial.print(SensorRight1);
-      Serial.print(SensorRight2);
-      Serial.print(SensorRight3);
-      Serial.print(SensorRight4);
-      Serial.print(SensorRight5);
-      Serial.print(SensorRight6);
-      Serial.print(SensorRight7);
-
-      Serial.print("  LEFT ");
-      Serial.print(SensorLeft1);
-      Serial.print(SensorLeft2);
-      Serial.print(SensorLeft3);
-      Serial.print(SensorLeft4);
-      Serial.print(SensorLeft5);
-      Serial.print(SensorLeft6);
-      Serial.print(SensorLeft7);
-      Serial.println();
-    */
+    
+     Serial.println();
+     
 
     // panel buttonarının durumlarını okuyup gösteriyoruz
     ILERI_TRY = digitalRead(ILERI_PIN);
@@ -418,261 +381,116 @@ void loop()
     // lcdMessages();
   }
 
-  /*
-    Senaryo:
-    1. Robotun ileri ve geri istasyon butonuna basıldığında
-    - robot ileriye doğru hareket edecek
-    - robot düz cizgi gördügünde duracak ve yanlardaki sensor aktif olacak cizgi bulana kadar devam edecek ve duracak
-    - yancizgilerde olduğu için yön kontrolü yapıp o yöne doğru hareket edecek
-    - aynı olay baştan başlayacak
-    - lidardan uzaklık okuyacak ve uzaklıkının küçük olduğu sürece hareket edecek
-    2. Analog kontrol kumandası +
-    - tamamen manuel olarak yön kontrolü yapacak +
-    - lidar devre dışı bırakılacak +
-    satusu 1 lidar uyarı geldğigin 0
-  */
-  //   newTime = millis();
-  // if(newTime-oldTime > 1) {
-  /*
-    if (lineFrontSensorValue()==0b1000000010000000) {
-        if(WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH) {
-          Pwm(PWM_STOP);
-          rgbState=2;
-          break;
-       }else {
-          RotateWheels(false, true, false, false, false, false);
-          Pwm(PWM_START);
-       }
-        }
-          if ((lineFrontSensorValue() & 0b0111111110000000)>=256 && (lineFrontSensorValue() & 0b0111111110000000)<=32640) {  // 2
-       //     Serial.println("sol");
-       if(WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH) {
-          Pwm(PWM_STOP);
-          rgbState=2;
-          break;
-       }else {
-          RotateWheels(false, true, false, false, false, false);
-          PwmStraigtRight(PWM_START);
-       }
-        }else if ((lineFrontSensorValue() & 0b0000000001111111)<=127 && (lineFrontSensorValue() & 0b0000000001111111)>0 ) {
-         //     Serial.println("sag");
-        if(WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH) {
-          Pwm(PWM_STOP);
-          rgbState=2;
-          break;
-       }else {
-          RotateWheels(false, true, false, false, false, false);
-          PwmStraigtLeft(PWM_START);
-       }
-        }
 
-
-        if (lineFrontSensorValue()==65535 || lineFrontSensorValue()==32768) {
-          PwmStop(PWM_STOP);
-        }
-
-
-  */
-  if (amparageRead() > 3)
+ if (ANALOG_GIT_BUTTON >= 660 && ANALOG_GIT_BUTTON <= 680)  // ileri
   {
-    Serial.print("AMPARAGE: ");
-    Serial.println(amparageRead());
-    chargeStatus = 1;
-    rgbState = 9;
-    buzzerStateLoop = 1;
-  }
-  else if (amparageRead() < 3)
-  {
-    chargeStatus = 0;
-    rgbState = 8;
-  }
-  if (ANALOG_GIT_BUTTON >= 660 && ANALOG_GIT_BUTTON <= 680)
-  {
-    //  Serial.println("ileri");
-    followStationState = 1;
-    if (followLateralState == 2)
-    {
-      followLateralState = 3;
+    if (agvDirection == 0) {
+      agvDirection = 1;  // ILERI
     }
-  }
-  else if (ANALOG_GIT_BUTTON >= 310 && ANALOG_GIT_BUTTON <= 330)
+
+    if (agvDirection==8) {
+        agvDirection=1;
+    }
+
+    if (agvDirection==8) {
+        sayacmsduraklama=1000;// 1000ms 
+        agvDirection=1;
+    }
+
+  } else if (ANALOG_GIT_BUTTON >= 310 && ANALOG_GIT_BUTTON <= 330)  // geri
   {
-    // Serial.println("geri");
-    followStationState = 2;
+    if (agvDirection == 0) {
+      agvDirection = 2;  // GERI
+    }
+  } else {
+
+      if (agvDirection==7) {
+          agvDirection=8;
+      }else if (agvDirection!=8){
+        agvDirection = 0;
+      }
+
   }
-  else
-  {
-    if (followLateralState == 1)
-    {
-      followLateralState = 2;
-    }
-    followStopState = 0;
-    followStationState = 0;
-    Pwm(PWM_STOP);
-  }
-  //    oldTime = newTime;
 
-  //}
-  if (chargeStatus == 0)
-  {
-    rgbStatus(rgbState);
 
-    if (digitalRead(WARN_LIDAR11) == HIGH || digitalRead(WARN_LIDAR21) == HIGH)
-    {
-      rgbController(false, true, false, false, false, false, false, false);
-      buzzerStateLoop = 2; //  rgbState = 2;
-    }
-    else
-    {
-      buzzerStateLoop = 1;
-    }
-    if (followLateralState == 3 && followStationState == 1)
-    {
 
-      if (lineRightSensorValue() == 127 || lineRightSensorValue() == 0)
-      {
-        followStationState = 0;
-        rgbState = 0;
-        followLateralState = 0;
-      }
-      else if ((lineRightSensorValue() & 0b1110000) >= 16 && (lineRightSensorValue() & 0b0000111) >= 1)
-      {
-        //    followStationState = 0;
-        //   rgbState = 0;
-        // followLateralState=0;
-      }
-      else if (lineRightSensorValue() == 0b0001000)
-      {
-        RotateWheels(false, false, false, true, false, false);
-        rgbState = 3;
-        Pwm(PWM_START);
-      }
-      else if ((lineRightSensorValue() & 0b1111000) >= 16 && (lineRightSensorValue() & 0b1111000) <= 120)
-      { // 2
-        rgbState = 2;
-        RotateWheels(false, false, false, true, false, false);
-        PwmLateralRight(PWM_START);
-      }
-      else if ((lineRightSensorValue() & 0b001111) <= 15 && (lineRightSensorValue() & 0b001111) > 0)
-      {
-        //     Serial.println("sag");
-        rgbState = 2;
-        RotateWheels(false, false, false, true, false, false);
-        PwmLateralLeft(PWM_START);
-      }
-      else
-      {
-        //  followStationState = 0;
-        // rgbState = 0;
-        // followLateralState=0;
-      }
-    }
-    else if (followStationState == 1 && followStopState == 0)
-    {
 
-      if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0)
+    if (lineFrontSensorValue() == 0b0001000)
       {
-        followStationState = 0;
-        rgbState = 0;
+        agvDirection=1;
       }
-      else if ((lineFrontSensorValue() & 0b1110000) >= 16 && (lineFrontSensorValue() & 0b0000111) >= 1)
-      {
-        followStationState = 0;
-        rgbState = 0;
 
-        if (lineRightSensorValue() > 0 && lineLeftSensorValue() == 0)
+    if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120)
+      { 
+        agvDirection=3;
+      }
+
+    if ((lineFrontSensorValue() & 0b001111) <= 15 && (lineFrontSensorValue() & 0b001111) > 0)
+      {
+        agvDirection=4;
+      }
+
+    if (agvDirection == 1 || agvDirection == 2) {  // ileri ve geri giderken
+      if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0 || lineBackSensorValue() == 127 || lineBackSensorValue() == 0)  // ön ve arka sensor full veya hiçbir deger görmezse stop
+      {
+        agvDirection = 0;
+      }
+
+      if (lineRightSensorValue() > 0 && lineLeftSensorValue() > 0 && sayacmsduraklama==0)  // hem sag hem sol sensorde deger okunursa 
         {
-          followLateralState = 1;
-        }
-      }
-      else if (lineFrontSensorValue() == 0b0001000)
-      {
-        rgbState = 2;
-        RotateWheels(false, true, false, false, false, false);
-        Pwm(PWM_START);
-      }
-      else if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120)
-      { // 2
-        rgbState = 2;
-        RotateWheels(false, true, false, false, false, false);
-        PwmStraigtRight(PWM_START);
-      }
-      else if ((lineFrontSensorValue() & 0b001111) <= 15 && (lineFrontSensorValue() & 0b001111) > 0)
-      {
-        //     Serial.println("sag");
-        rgbState = 2;
-        RotateWheels(false, true, false, false, false, false);
-        PwmStraigtLeft(PWM_START);
-      }
-      else
-      {
-        followStationState = 0;
-        rgbState = 0;
-      }
-
-      if (sayacStop == 0)
-      {
-        if (lineRightSensorValue() > 0 && lineLeftSensorValue() > 0)
-        {
-          sayacStop = 5000;
-          followStopState = 1;
-        }
-      }
-
-      if (sayacStop > 0)
-      {
-        sayacStop--;
-      }
-    }
-    else if (followStationState == 2)
-    {
-      if (lineBackSensorValue() == 0b0001000)
-      {
-        rgbState = 2;
-        RotateWheels(true, false, false, false, false, false);
-        Pwm(PWM_START);
-      }
-
-      if ((lineBackSensorValue() & 0b1111000) >= 16 && (lineBackSensorValue() & 0b1111000) <= 120)
-      { // 2
-        rgbState = 2;
-        RotateWheels(true, false, false, false, false, false);
-
-        PwmStraigtRight(PWM_START);
-      }
-      else if ((lineBackSensorValue() & 0b001111) <= 15 && (lineBackSensorValue() & 0b001111) > 0)
-      {
-        //     Serial.println("sag");
-        rgbState = 2;
-        RotateWheels(true, false, false, false, false, false);
-        PwmStraigtLeft(PWM_START);
-      }
-
-      if (lineBackSensorValue() == 127 || lineBackSensorValue() == 0)
-      {
-        followStationState = 0;
-        rgbState = 0;
-      }
-
-      // HEM SAG DA HEM SOLDA ALGILARSA HATA
-      if ((lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1)
-      {
-        followStationState = 0;
-        rgbState = 0;
-      }
+        agvDirection=7; // duraklama
+        sayacmsduraklama=5000;
+        }      
     }
 
-    /*
-      if (WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH)
-      {
-        followStationState = 0;
-        rgbState = 1;
-      }
-    */
-    if (followStationState == 0 || followStopState == 1)
-    {
-      Pwm(PWM_STOP);
+        
+    if (sayacmsduraklama>0) {
+      sayacmsduraklama-=1;  
     }
+    
+  
+
+  switch (agvDirection) {
+    case 0:  // stop
+      break;
+    case 1:  // ileri
+            RotateWheels(false, true, false, false, false, false);
+            Pwm(PWM_START);
+      break;
+    case 2:  // geri
+      break;
+    case 3:  // ileri saga git
+      break;
+    case 4:  // ileri sola git
+      break;
+    case 5:  // ileri saga manevra
+            RotateWheels(false, true, false, false, false, false);
+            PwmStraigtRight(PWM_START);
+      break;
+    case 6:  // ileri sola manevra
+            RotateWheels(false, true, false, false, false, false);
+            PwmStraigtLeft(PWM_START);
+      break;
+    case 7:  // ileri duraklama stop
+      break;
+    case 8:  // ileri duraklama bekleme 
+      break;
+    case 9:  // geri duraklama stop
+      break;
+    case 10: // geri duraklama bekleme
+      break;
+    case 11: // saga duraklama stop
+      break;
+    case 12: // saga duraklama bekleme
+      break;
+    case 13: // sola duraklama stop
+      break;
+    case 14: // sola duraklama bekleme
+      break;
+    default:
+      break;
+  }
+
 
     if (SAGA_DON == LOW)
     {
@@ -736,7 +554,7 @@ void loop()
       // PwmStop(PWM_STOP);
     }
   }
-}
+
 
 void PwmStraigtRight(int pwm_value)
 {
@@ -780,7 +598,7 @@ void timer_standby()
 {
   if (TIME_NOW2 - oldTime2 > 600000)
   {
-    /*   */
+   digitalWrite(STANBY_PIN, HIGH);
   }
 }
 
@@ -951,19 +769,19 @@ void chargerRgbStatus()
   static int i = 0;
   static int artirFlag = 0;
   int amp = 30;
-  if (amparageRead() > 20)
+  if (amparageRead() >= 20)
   {
     amp = 4;
   }
-  else if (amparageRead() > 15 && amparageRead() < 20)
+  else if (amparageRead() >= 15 && amparageRead() < 20)
   {
     amp = 10;
   }
-  else if (amparageRead() > 10 && amparageRead() < 15)
+  else if (amparageRead() >= 10 && amparageRead() < 15)
   {
     amp = 25;
   }
-  else if (amparageRead() > 0 && amparageRead() < 10)
+  else if (amparageRead() >= 0 && amparageRead() < 10)
   {
     amp = 50;
   }

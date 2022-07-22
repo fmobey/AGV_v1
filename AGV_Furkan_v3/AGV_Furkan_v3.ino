@@ -597,11 +597,11 @@ void loop()
     {
       agvDirection = 15; // ara durak detect
     }
-    else if ((lineLeftensorValue() & 0b1111000) >= 16 && (lineLeftensorValue() & 0b1111000) <= 120) // ileri sagli git
+    else if ((lineLeftSensorValue() & 0b1111000) >= 16 && (lineLeftSensorValue() & 0b1111000) <= 120) // ileri sagli git
     {
       PwmLateralLeft(PWM_START);
     }
-    else if ((lineLeftensorValue() & 0b001111) <= 15 && (lineLeftensorValue() & 0b001111) > 0) // ileri sollu git
+    else if ((lineLeftSensorValue() & 0b001111) <= 15 && (lineLeftSensorValue() & 0b001111) > 0) // ileri sollu git
     {
       PwmLateralRight(PWM_START);
     }

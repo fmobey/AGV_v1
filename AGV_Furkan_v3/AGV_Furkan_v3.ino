@@ -391,6 +391,31 @@ void loop()
 
   if (ANALOG_GIT_BUTTON >= 660 && ANALOG_GIT_BUTTON <= 680) // ileri
   {
+
+    if (agvDirection == 16)
+    {
+      sayacmsduraklama = 5000;
+      agvDirection = 4; // sola
+    }
+
+    if (agvDirection == 14)
+    {
+      sayacmsduraklama = 5000;
+      agvDirection = 4; // sola
+    }
+
+    if (agvDirection == 12)
+    { // saga stop ready
+      sayacmsduraklama = 5000;
+      agvDirection = 3;
+    }
+
+    if (agvDirection == 6)
+    {
+      sayacmsduraklama = 5000;
+      agvDirection = 1;
+    }
+
     if (agvDirection == 0)
     {
       agvDirection = 1; // ILERI
@@ -409,6 +434,12 @@ void loop()
   }
   else if (ANALOG_GIT_BUTTON >= 310 && ANALOG_GIT_BUTTON <= 330) // geri
   {
+    if (agvDirection == 8)
+    {
+      sayacmsduraklama = 5000;
+      agvDirection = 2;
+    }
+
     if (agvDirection == 0)
     {
       agvDirection = 2; // GERI
@@ -417,29 +448,30 @@ void loop()
   else
   {
 
+    if (agvDirection == 15)
+    {
+      agvDirection = 16;
+    }
+
+    if (agvDirection == 13)
+    {
+      agvDirection = 14;
+    }
+
+    if (agvDirection == 11)
+    { // ileri stop saga
+      agvDirection = 12;
+    }
+
+    if (agvDirection == 5)
+    {
+      agvDirection = 6;
+    }
+
     if (agvDirection == 7)
     {
       agvDirection = 8;
     }
-    else if (agvDirection != 8)
-    {
-      agvDirection = 0;
-    }
-  }
-
-  if (lineFrontSensorValue() == 0b0001000)
-  {
-  
-  }
-
-  if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120)
-  {
-    agvDirection = 3;
-  }
-
-  if ((lineFrontSensorValue() & 0b001111) <= 15 && (lineFrontSensorValue() & 0b001111) > 0)
-  {
-    agvDirection = 4;
   }
 
   if (agvDirection == 1 || agvDirection == 2)
@@ -448,11 +480,13 @@ void loop()
     {
       agvDirection = 0;
     }
+  }
 
-    if (lineRightSensorValue() > 0 && lineLeftSensorValue() > 0 && sayacmsduraklama == 0) // hem sag hem sol sensorde deger okunursa
+  if (agvDirection == 3 || agvDirection == 4)
+  {
+    if (lineLeftSensorValue() == 127 || lineLeftSensorValue() == 0 || lineRightSensorValue() == 127 || lineRightSensorValue() == 0) // sag ve sol sensor full veya hiçbir deger görmezse stop
     {
-      agvDirection = 7; // duraklama
-      sayacmsduraklama = 5000;
+      agvDirection = 0;
     }
   }
 
@@ -466,46 +500,154 @@ void loop()
   switch (agvDirection)
   {
   case 0: // stop
-    Pwm(PWM_START);
+    Pwm(PWM_STOP);
     break;
   case 1: // ileri
-    RotateWheels(false, true, false, false, false, false);
-    Pwm(PWM_START);
+    RotateWheels(true, false, false, false, false, false);
+    if ((lineFrontSensorValue() & 0b1110000) >= 16 && (lineFrontSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() == 0 && lineLeftSensorValue() > 0)
+    {
+      agvDirection = 13; // sola
+    }
+    else if ((lineFrontSensorValue() & 0b1110000) >= 16 && (lineFrontSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() > 0 && lineLeftSensorValue() == 0)
+    {
+      agvDirection = 11; // saga
+    }
+    else if (lineRightSensorValue() > 0 && lineLeftSensorValue() > 0 && sayacmsduraklama == 0) // hem sag hem sol sensorde deger okunursa
+    {
+      agvDirection = 5; // ara durak detect
+    }
+    else if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120) // ileri sollu git
+    {
+      PwmStraigtLeft(PWM_START);
+    }
+    else if ((lineFrontSensorValue() & 0b001111) <= 15 && (lineFrontSensorValue() & 0b001111) > 0) // ileri sagli git
+    {
+      PwmStraigtRight(PWM_START);
+    }
+    else
+    {
+      Pwm(PWM_START);
+    }
+
     break;
   case 2: // geri
-    RotateWheels(true, false, false, false, false, false);
-    Pwm(PWM_START);
+    RotateWheels(false, true, false, false, false, false);
+    if ((lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() == 0 && lineLeftSensorValue() > 0)
+    {
+      agvDirection = 11; // sola
+    }
+    else if ((lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() > 0 && lineLeftSensorValue() == 0)
+    {
+      agvDirection = 13; // saga
+    }
+    else if (lineRightSensorValue() > 0 && lineLeftSensorValue() > 0 && sayacmsduraklama == 0) // hem sag hem sol sensorde deger okunursa
+    {
+      agvDirection = 7;
+    }
+    else if ((lineBackSensorValue() & 0b1111000) >= 16 && (lineBackSensorValue() & 0b1111000) <= 120) // ileri sagli git
+    {
+      PwmStraigtRight(PWM_START);
+    }
+    else if ((lineBackSensorValue() & 0b001111) <= 15 && (lineBackSensorValue() & 0b001111) > 0) // ileri sollu git
+    {
+      PwmStraigtLeft(PWM_START);
+    }
+    else
+    {
+      Pwm(PWM_START);
+    }
     break;
   case 3: // saga git
     RotateWheels(false, false, false, true, false, false);
-    Pwm(PWM_START);
+    if ((lineRightSensorValue() & 0b1110000) >= 16 && (lineRightSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() > 0 && lineBackSensorValue() == 0)
+    {
+      agvDirection = 1; // ileri
+    }
+    else if ((lineRightSensorValue() & 0b1110000) >= 16 && (lineRightSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() == 0 && lineBackSensorValue() > 0)
+    {
+      agvDirection = 2; // geri
+    }
+    else if ((lineRightSensorValue() & 0b1111000) >= 16 && (lineRightSensorValue() & 0b1111000) <= 120) // ileri sagli git
+    {
+      PwmLateralRight(PWM_START);
+    }
+    else if ((lineRightSensorValue() & 0b001111) <= 15 && (lineRightSensorValue() & 0b001111) > 0) // ileri sollu git
+    {
+      PwmLateralLeft(PWM_START);
+    }
+    else
+    {
+      Pwm(PWM_START);
+    }
     break;
   case 4: // sola git
     RotateWheels(false, false, true, false, false, false);
-    Pwm(PWM_START);
+    if ((lineLeftSensorValue() & 0b1110000) >= 16 && (lineLeftSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() == 0 && lineBackSensorValue() > 0)
+    {
+      agvDirection = 2; // geri
+    }
+    else if ((lineLeftSensorValue() & 0b1110000) >= 16 && (lineLeftSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() > 0 && lineBackSensorValue() == 0)
+    {
+      agvDirection = 1; // ileri
+    }
+    else if (lineFrontSensorValue() > 0 && lineBackSensorValue() > 0 && sayacmsduraklama == 0) // hem sag hem sol sensorde deger okunursa
+    {
+      agvDirection = 15; // ara durak detect
+    }
+    else if ((lineLeftensorValue() & 0b1111000) >= 16 && (lineLeftensorValue() & 0b1111000) <= 120) // ileri sagli git
+    {
+      PwmLateralLeft(PWM_START);
+    }
+    else if ((lineLeftensorValue() & 0b001111) <= 15 && (lineLeftensorValue() & 0b001111) > 0) // ileri sollu git
+    {
+      PwmLateralRight(PWM_START);
+    }
+    else
+    {
+      Pwm(PWM_START);
+    }
     break;
-  case 5: // sağ sağlı
-    RotateWheels(false, false, false, true, false, false);
-    PwmLateralLeft(PWM_START);
-    break;
-  case 6: // sağ sollu
-    RotateWheels(false, false, false, true, false, false);
-    PwmLateralRight(PWM_START);
-    break;
-  case 7: // sol sağlı
-    RotateWheels(false, false, true, false, false, false);
-    PwmLateralRight(PWM_START);
-    break;
-  case 8: // sol sollu
-    RotateWheels(false, false, true, false, false, false);
-    PwmLateralLeft(PWM_START);
-    break;
-  case 9: // bekleme stop
+  case 5: // ileri bekleme stop
     Pwm(PWM_STOP);
     break;
-  case 10: // Bekleme Ready
+  case 6: // ileri Bekleme Ready
     Pwm(PWM_STOP);
+    break;
+  case 7: // geri bekleme stop
+    Pwm(PWM_STOP);
+    break;
+  case 8: // geri Bekleme Ready
+    Pwm(PWM_STOP);
+    break;
+  case 9: // sag bekleme stop
+    Pwm(PWM_STOP);
+    break;
+  case 10: // sag Bekleme Ready
+    Pwm(PWM_STOP);
+    break;
+  case 15: // sol bekleme stop
+    Pwm(PWM_STOP);
+    break;
+  case 16: // sol bekleme ready
+    Pwm(PWM_STOP);
+    break;
+  case 11: // ileri stop saga
+    Pwm(PWM_STOP);
+    break;
+  case 12: // ileri stop saga ready
+    Pwm(PWM_STOP);
+    break;
+  case 13: // ileri stop sola
+    Pwm(PWM_STOP);
+    break;
+  case 14: // ileri stop sola ready
+    Pwm(PWM_STOP);
+    break;
+  case 17:
+
+    break;
   default:
+    Pwm(PWM_STOP);
     break;
   }
 

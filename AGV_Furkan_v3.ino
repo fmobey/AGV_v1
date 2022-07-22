@@ -441,7 +441,7 @@ void loop()
       sayacmsduraklama-=1;  
     }
     
-  
+  //hello
 
   switch (agvDirection) {
     case 0:  // stop

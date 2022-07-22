@@ -1,11 +1,6 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
-<<<<<<< HEAD
-=======
-// test
-
->>>>>>> 4d35d801f227ceffea99722e722ae2ff9451bb8d
 // A MOTOR
 #define APWM 12
 #define ADIR 10
@@ -434,11 +429,7 @@ void loop()
 
   if (lineFrontSensorValue() == 0b0001000)
   {
-<<<<<<< HEAD
-    agvDirection = 1;
-=======
-
->>>>>>> 4d35d801f227ceffea99722e722ae2ff9451bb8d
+  
   }
 
   if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120)
@@ -470,25 +461,18 @@ void loop()
     sayacmsduraklama -= 1;
   }
 
-<<<<<<< HEAD
   // hello
 
   switch (agvDirection)
   {
   case 0: // stop
     Pwm(PWM_START);
-=======
-  switch (agvDirection)
-  {
-  case 0: // stop
->>>>>>> 4d35d801f227ceffea99722e722ae2ff9451bb8d
     break;
   case 1: // ileri
     RotateWheels(false, true, false, false, false, false);
     Pwm(PWM_START);
     break;
   case 2: // geri
-<<<<<<< HEAD
     RotateWheels(true, false, false, false, false, false);
     Pwm(PWM_START);
     break;
@@ -521,37 +505,6 @@ void loop()
     break;
   case 10: // Bekleme Ready
     Pwm(PWM_STOP);
-=======
-    break;
-  case 3: // ileri saga git
-    break;
-  case 4: // ileri sola git
-    break;
-  case 5: // ileri saga manevra
-    RotateWheels(false, true, false, false, false, false);
-    PwmStraigtRight(PWM_START);
-    break;
-  case 6: // ileri sola manevra
-    RotateWheels(false, true, false, false, false, false);
-    PwmStraigtLeft(PWM_START);
-    break;
-  case 7: // ileri duraklama stop
-    break;
-  case 8: // ileri duraklama bekleme
-    break;
-  case 9: // geri duraklama stop
-    break;
-  case 10: // geri duraklama bekleme
-    break;
-  case 11: // saga duraklama stop
-    break;
-  case 12: // saga duraklama bekleme
-    break;
-  case 13: // sola duraklama stop
-    break;
-  case 14: // sola duraklama bekleme
-    break;
->>>>>>> 4d35d801f227ceffea99722e722ae2ff9451bb8d
   default:
     break;
   }

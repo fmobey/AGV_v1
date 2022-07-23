@@ -171,7 +171,7 @@ int Warn_Lidar22 = -1;
 
 int sayacStop = 0;
 int sayacStop2 = 0;
-int agvDirection = -1;
+int agvDirection = 0;
 
 unsigned long sayacmsduraklama = 0;
 void setup()
@@ -352,35 +352,35 @@ void loop()
     // istasyon butonunun durumlarını okuyup gösteriyoruz
     ANALOG_GIT_BUTTON = analogRead(ANALOG_PIN_BUTTON);
     // Sensor Pinlerini durumlarını okuyup gösteriyoruz
-    SensorFront1 = digitalRead(SENSOR_PIN_FRONT_1);
-    SensorFront2 = digitalRead(SENSOR_PIN_FRONT_2);
-    SensorFront3 = digitalRead(SENSOR_PIN_FRONT_3);
-    SensorFront4 = digitalRead(SENSOR_PIN_FRONT_4);
-    SensorFront5 = digitalRead(SENSOR_PIN_FRONT_5);
-    SensorFront6 = digitalRead(SENSOR_PIN_FRONT_6);
-    SensorFront7 = digitalRead(SENSOR_PIN_FRONT_7);
-    SensorBack1 = digitalRead(SENSOR_PIN_BACK_1);
-    SensorBack2 = digitalRead(SENSOR_PIN_BACK_2);
-    SensorBack3 = digitalRead(SENSOR_PIN_BACK_3);
-    SensorBack4 = digitalRead(SENSOR_PIN_BACK_4);
-    SensorBack5 = digitalRead(SENSOR_PIN_BACK_5);
-    SensorBack6 = digitalRead(SENSOR_PIN_BACK_6);
-    SensorBack7 = digitalRead(SENSOR_PIN_BACK_7);
-    SensorRight1 = digitalRead(SENSOR_PIN_RIGHT_1);
-    SensorRight2 = digitalRead(SENSOR_PIN_RIGHT_2);
-    SensorRight3 = digitalRead(SENSOR_PIN_RIGHT_3);
-    SensorRight4 = digitalRead(SENSOR_PIN_RIGHT_4);
-    SensorRight5 = digitalRead(SENSOR_PIN_RIGHT_5);
-    SensorRight6 = digitalRead(SENSOR_PIN_RIGHT_6);
-    SensorRight7 = digitalRead(SENSOR_PIN_RIGHT_7);
-    SensorLeft1 = digitalRead(SENSOR_PIN_LEFT_1);
-    SensorLeft2 = digitalRead(SENSOR_PIN_LEFT_2);
-    SensorLeft3 = digitalRead(SENSOR_PIN_LEFT_3);
-    SensorLeft4 = digitalRead(SENSOR_PIN_LEFT_4);
-    SensorLeft5 = digitalRead(SENSOR_PIN_LEFT_5);
-    SensorLeft6 = digitalRead(SENSOR_PIN_LEFT_6);
-    SensorLeft7 = digitalRead(SENSOR_PIN_LEFT_7);
-
+    /*     SensorFront1 = digitalRead(SENSOR_PIN_FRONT_1);
+        SensorFront2 = digitalRead(SENSOR_PIN_FRONT_2);
+        SensorFront3 = digitalRead(SENSOR_PIN_FRONT_3);
+        SensorFront4 = digitalRead(SENSOR_PIN_FRONT_4);
+        SensorFront5 = digitalRead(SENSOR_PIN_FRONT_5);
+        SensorFront6 = digitalRead(SENSOR_PIN_FRONT_6);
+        SensorFront7 = digitalRead(SENSOR_PIN_FRONT_7);
+        SensorBack1 = digitalRead(SENSOR_PIN_BACK_1);
+        SensorBack2 = digitalRead(SENSOR_PIN_BACK_2);
+        SensorBack3 = digitalRead(SENSOR_PIN_BACK_3);
+        SensorBack4 = digitalRead(SENSOR_PIN_BACK_4);
+        SensorBack5 = digitalRead(SENSOR_PIN_BACK_5);
+        SensorBack6 = digitalRead(SENSOR_PIN_BACK_6);
+        SensorBack7 = digitalRead(SENSOR_PIN_BACK_7);
+        SensorRight1 = digitalRead(SENSOR_PIN_RIGHT_1);
+        SensorRight2 = digitalRead(SENSOR_PIN_RIGHT_2);
+        SensorRight3 = digitalRead(SENSOR_PIN_RIGHT_3);
+        SensorRight4 = digitalRead(SENSOR_PIN_RIGHT_4);
+        SensorRight5 = digitalRead(SENSOR_PIN_RIGHT_5);
+        SensorRight6 = digitalRead(SENSOR_PIN_RIGHT_6);
+        SensorRight7 = digitalRead(SENSOR_PIN_RIGHT_7);
+        SensorLeft1 = digitalRead(SENSOR_PIN_LEFT_1);
+        SensorLeft2 = digitalRead(SENSOR_PIN_LEFT_2);
+        SensorLeft3 = digitalRead(SENSOR_PIN_LEFT_3);
+        SensorLeft4 = digitalRead(SENSOR_PIN_LEFT_4);
+        SensorLeft5 = digitalRead(SENSOR_PIN_LEFT_5);
+        SensorLeft6 = digitalRead(SENSOR_PIN_LEFT_6);
+        SensorLeft7 = digitalRead(SENSOR_PIN_LEFT_7);
+     */
     // Lidar Warning Pinlerini durumlarını okuyup gösteriyoruz
     Warn_Lidar11 = digitalRead(WARN_LIDAR11);
     Warn_Lidar12 = digitalRead(WARN_LIDAR12);
@@ -391,332 +391,401 @@ void loop()
     adc_millis4 = TIME_NOW4;
     // lcdMessages();
   }
-
-  if (ANALOG_GIT_BUTTON >= 660 && ANALOG_GIT_BUTTON <= 680) // ileri
+      /*
+      if (WARN_LIDAR11 == HIGH || WARN_LIDAR12 == HIGH || WARN_LIDAR21 == HIGH || WARN_LIDAR22 == HIGH)
+      {
+        followStationState = 0;
+        rgbState = 1;
+      }
+    */
+  if (amparageRead() > 3)
   {
-
-    if (agvDirection == 16)
-    {
-      sayacmsduraklama = 5000;
-      agvDirection = 4; // sola
-    }
-
-    if (agvDirection == 14)
-    {
-      sayacmsduraklama = 5000;
-      agvDirection = 4; // sola
-    }
-
-    if (agvDirection == 12)
-    { // saga stop ready
-      sayacmsduraklama = 5000;
-      agvDirection = 3;
-    }
-
-    if (agvDirection == 6)
-    {
-      sayacmsduraklama = 5000;
-      agvDirection = 1;
-    }
-
-    if (agvDirection == 0)
-    {
-      agvDirection = 1; // ILERI
-    }
-
-    if (agvDirection == 8)
-    {
-      agvDirection = 1;
-    }
-
-    if (agvDirection == 8)
-    {
-      sayacmsduraklama = 1000; // 1000ms
-      agvDirection = 1;
-    }
+    Serial.print("AMPARAGE: ");
+    Serial.println(amparageRead());
+    chargeStatus = 1;
+    rgbState = 9;
+    buzzerStateLoop = 1;
   }
-  else if (ANALOG_GIT_BUTTON >= 310 && ANALOG_GIT_BUTTON <= 330) // geri
+  else if (amparageRead() < 3)
   {
-    if (agvDirection == 8)
-    {
-      sayacmsduraklama = 5000;
-      agvDirection = 2;
-    }
-
-    if (agvDirection == 0)
-    {
-      agvDirection = 2; // GERI
-    }
+    chargeStatus = 0;
+    rgbState = 8;
   }
-  else
+  if (chargeStatus == 0)
   {
+    if (ANALOG_GIT_BUTTON >= 660 && ANALOG_GIT_BUTTON <= 680) // ileri
+    {
 
-    if (agvDirection == 15)
-    {
-      agvDirection = 16;
-    }
+      if (agvDirection == 16)
+      {
+        sayacmsduraklama = 5000;
+        agvDirection = 4; // sola
+      }
 
-    if (agvDirection == 13)
-    {
-      agvDirection = 14;
-    }
+      if (agvDirection == 14)
+      {
+        sayacmsduraklama = 5000;
+        agvDirection = 4; // sola
+      }
 
-    if (agvDirection == 11)
-    { // ileri stop saga
-      agvDirection = 12;
-    }
+      if (agvDirection == 12)
+      { // saga stop ready
+        sayacmsduraklama = 5000;
+        agvDirection = 3;
+      }
 
-    if (agvDirection == 5)
-    {
-      agvDirection = 6;
-    }
+      if (agvDirection == 6)
+      {
+        sayacmsduraklama = 5000;
+        agvDirection = 1;
+      }
 
-    if (agvDirection == 7)
-    {
-      agvDirection = 8;
-    }
-  }
+      if (agvDirection == 0)
+      {
+        agvDirection = 1; // ILERI
+      }
 
-  if (agvDirection == 1 || agvDirection == 2)
-  {                                                                                                                                 // ileri ve geri giderken
-    if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0 || lineBackSensorValue() == 127 || lineBackSensorValue() == 0) // ön ve arka sensor full veya hiçbir deger görmezse stop
-    {
-      agvDirection = 0;
-    }
-  }
+      if (agvDirection == 8)
+      {
+        agvDirection = 1;
+      }
 
-  if (agvDirection == 3 || agvDirection == 4)
-  {
-    if (lineLeftSensorValue() == 127 || lineLeftSensorValue() == 0 || lineRightSensorValue() == 127 || lineRightSensorValue() == 0) // sag ve sol sensor full veya hiçbir deger görmezse stop
-    {
-      agvDirection = 0;
+      if (agvDirection == 8)
+      {
+        sayacmsduraklama = 1000; // 1000ms
+        agvDirection = 1;
+      }
     }
-  }
+    else if (ANALOG_GIT_BUTTON >= 310 && ANALOG_GIT_BUTTON <= 330) // geri
+    {
+      if (agvDirection == 8)
+      {
+        sayacmsduraklama = 5000;
+        agvDirection = 2;
+      }
 
-  if (sayacmsduraklama > 0)
-  {
-    sayacmsduraklama -= 1;
-  }
-
-  // hello
-
-  switch (agvDirection)
-  {
-  case 0: // stop
-    Pwm(PWM_STOP);
-    break;
-  case 1: // ileri
-    RotateWheels(true, false, false, false, false, false);
-    if ((lineFrontSensorValue() & 0b1110000) >= 16 && (lineFrontSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() == 0 && lineLeftSensorValue() > 0)
-    {
-      agvDirection = 13; // sola
-    }
-    else if ((lineFrontSensorValue() & 0b1110000) >= 16 && (lineFrontSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() > 0 && lineLeftSensorValue() == 0)
-    {
-      agvDirection = 11; // saga
-    }
-    else if (lineRightSensorValue() > 0 && lineLeftSensorValue() > 0 && sayacmsduraklama == 0) // hem sag hem sol sensorde deger okunursa
-    {
-      agvDirection = 5; // ara durak detect
-    }
-    else if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120) // ileri sollu git
-    {
-      PwmStraigtLeft(PWM_START);
-    }
-    else if ((lineFrontSensorValue() & 0b001111) <= 15 && (lineFrontSensorValue() & 0b001111) > 0) // ileri sagli git
-    {
-      PwmStraigtRight(PWM_START);
+      if (agvDirection == 0)
+      {
+        agvDirection = 2; // GERI
+      }
     }
     else
     {
-      Pwm(PWM_START);
+
+      if (agvDirection == 15)
+      {
+        agvDirection = 16;
+      }
+
+      if (agvDirection == 13)
+      {
+        agvDirection = 14;
+      }
+
+      if (agvDirection == 11)
+      { // ileri stop saga
+        agvDirection = 12;
+      }
+
+      if (agvDirection == 5)
+      {
+        agvDirection = 6;
+      }
+
+      if (agvDirection == 7)
+      {
+        agvDirection = 8;
+      }
     }
 
-    break;
-  case 2: // geri
-    RotateWheels(false, true, false, false, false, false);
-    if ((lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() == 0 && lineLeftSensorValue() > 0)
-    {
-      agvDirection = 11; // sola
+    if (agvDirection == 1 || agvDirection == 2)
+    {                                                                                                                                 // ileri ve geri giderken
+      if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0 || lineBackSensorValue() == 127 || lineBackSensorValue() == 0) // ön ve arka sensor full veya hiçbir deger görmezse stop
+      {
+        agvDirection = 0;
+      }
     }
-    else if ((lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() > 0 && lineLeftSensorValue() == 0)
+
+    if (agvDirection == 3 || agvDirection == 4)
     {
-      agvDirection = 13; // saga
+      if (lineLeftSensorValue() == 127 || lineLeftSensorValue() == 0 || lineRightSensorValue() == 127 || lineRightSensorValue() == 0) // sag ve sol sensor full veya hiçbir deger görmezse stop
+      {
+        agvDirection = 0;
+      }
     }
-    else if (lineRightSensorValue() > 0 && lineLeftSensorValue() > 0 && sayacmsduraklama == 0) // hem sag hem sol sensorde deger okunursa
+
+    if (sayacmsduraklama > 0)
     {
-      agvDirection = 7;
+      sayacmsduraklama -= 1;
     }
-    else if ((lineBackSensorValue() & 0b1111000) >= 16 && (lineBackSensorValue() & 0b1111000) <= 120) // ileri sagli git
+
+    switch (agvDirection)
     {
-      PwmStraigtRight(PWM_START);
+    case 0: // stop
+      Pwm(PWM_STOP);
+      rgbController(false, false, false, false, false, false, false, true);
+      buzzerStateLoop = 1;
+      break;
+    case 1: // ileri
+      rgbController(false, true, false, false, false, false, false, false);
+      buzzerStateLoop = 3;
+      RotateWheels(true, false, false, false, false, false);
+      if ((lineFrontSensorValue() & 0b1110000) >= 16 && (lineFrontSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() == 0 && lineLeftSensorValue() > 0)
+      {
+        agvDirection = 13; // sola
+      }
+      else if ((lineFrontSensorValue() & 0b1110000) >= 16 && (lineFrontSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() > 0 && lineLeftSensorValue() == 0)
+      {
+        agvDirection = 11; // saga
+      }
+      else if (lineRightSensorValue() > 0 && lineLeftSensorValue() > 0 && sayacmsduraklama == 0) // hem sag hem sol sensorde deger okunursa
+      {
+        agvDirection = 5; // ara durak detect
+      }
+      else if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120) // ileri sollu git
+      {
+        PwmStraigtLeft(PWM_START);
+      }
+      else if ((lineFrontSensorValue() & 0b001111) <= 15 && (lineFrontSensorValue() & 0b001111) > 0) // ileri sagli git
+      {
+        PwmStraigtRight(PWM_START);
+      }
+      else
+      {
+        Pwm(PWM_START);
+      }
+
+      break;
+    case 2: // geri
+      RotateWheels(false, true, false, false, false, false);
+      rgbController(false, false, false, true, false, false, false, false);
+      buzzerStateLoop = 3;
+      if ((lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() == 0 && lineLeftSensorValue() > 0)
+      {
+        agvDirection = 11; // sola
+      }
+      else if ((lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() > 0 && lineLeftSensorValue() == 0)
+      {
+        agvDirection = 13; // saga
+      }
+      else if (lineRightSensorValue() > 0 && lineLeftSensorValue() > 0 && sayacmsduraklama == 0) // hem sag hem sol sensorde deger okunursa
+      {
+        agvDirection = 7;
+      }
+      else if ((lineBackSensorValue() & 0b1111000) >= 16 && (lineBackSensorValue() & 0b1111000) <= 120) // ileri sagli git
+      {
+        PwmStraigtRight(PWM_START);
+      }
+      else if ((lineBackSensorValue() & 0b001111) <= 15 && (lineBackSensorValue() & 0b001111) > 0) // ileri sollu git
+      {
+        PwmStraigtLeft(PWM_START);
+      }
+      else
+      {
+        Pwm(PWM_START);
+      }
+      break;
+    case 3: // saga git
+      RotateWheels(false, false, false, true, false, false);
+      rgbController(false, false, false, true, false, false, false, false);
+      buzzerStateLoop = 3;
+      if ((lineRightSensorValue() & 0b1110000) >= 16 && (lineRightSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() > 0 && lineBackSensorValue() == 0)
+      {
+        agvDirection = 1; // ileri
+      }
+      else if ((lineRightSensorValue() & 0b1110000) >= 16 && (lineRightSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() == 0 && lineBackSensorValue() > 0)
+      {
+        agvDirection = 2; // geri
+      }
+      else if ((lineRightSensorValue() & 0b1111000) >= 16 && (lineRightSensorValue() & 0b1111000) <= 120) // ileri sagli git
+      {
+        PwmLateralRight(PWM_START);
+      }
+      else if ((lineRightSensorValue() & 0b001111) <= 15 && (lineRightSensorValue() & 0b001111) > 0) // ileri sollu git
+      {
+        PwmLateralLeft(PWM_START);
+      }
+      else
+      {
+        Pwm(PWM_START);
+      }
+      break;
+    case 4: // sola git
+      RotateWheels(false, false, true, false, false, false);
+      rgbController(false, false, false, false, true, false, false, false);
+      buzzerStateLoop = 3;
+
+      if ((lineLeftSensorValue() & 0b1110000) >= 16 && (lineLeftSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() == 0 && lineBackSensorValue() > 0)
+      {
+        agvDirection = 2; // geri
+      }
+      else if ((lineLeftSensorValue() & 0b1110000) >= 16 && (lineLeftSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() > 0 && lineBackSensorValue() == 0)
+      {
+        agvDirection = 1; // ileri
+      }
+      else if (lineFrontSensorValue() > 0 && lineBackSensorValue() > 0 && sayacmsduraklama == 0) // hem sag hem sol sensorde deger okunursa
+      {
+        agvDirection = 15; // ara durak detect
+      }
+      else if ((lineLeftSensorValue() & 0b1111000) >= 16 && (lineLeftSensorValue() & 0b1111000) <= 120) // ileri sagli git
+      {
+        PwmLateralLeft(PWM_START);
+      }
+      else if ((lineLeftSensorValue() & 0b001111) <= 15 && (lineLeftSensorValue() & 0b001111) > 0) // ileri sollu git
+      {
+        PwmLateralRight(PWM_START);
+      }
+      else
+      {
+        Pwm(PWM_START);
+      }
+      break;
+    case 5: // ileri bekleme stop
+      rgbController(false, false, true, false, false, false, false, false);
+      Pwm(PWM_STOP);
+      buzzerStateLoop = 1;
+
+      break;
+    case 6: // ileri Bekleme Ready
+      rgbController(false, false, true, false, false, false, false, false);
+      buzzerStateLoop = 1;
+
+      Pwm(PWM_STOP);
+      break;
+    case 7: // geri bekleme stop
+      rgbController(false, false, true, false, false, false, false, false);
+      buzzerStateLoop = 1;
+
+      Pwm(PWM_STOP);
+      break;
+    case 8: // geri Bekleme Ready
+      rgbController(false, false, true, false, false, false, false, false);
+      buzzerStateLoop = 1;
+
+      Pwm(PWM_STOP);
+      break;
+    case 9: // sag bekleme stop
+      rgbController(false, false, true, false, false, false, false, false);
+      buzzerStateLoop = 1;
+
+      Pwm(PWM_STOP);
+      break;
+    case 10: // sag Bekleme Ready
+      rgbController(false, false, true, false, false, false, false, false);
+      buzzerStateLoop = 1;
+
+      Pwm(PWM_STOP);
+      break;
+    case 15: // sol bekleme stop
+      rgbController(false, false, true, false, false, false, false, false);
+      buzzerStateLoop = 1;
+
+      Pwm(PWM_STOP);
+      break;
+    case 16: // sol bekleme ready
+      rgbController(false, false, true, false, false, false, false, false);
+      buzzerStateLoop = 1;
+
+      Pwm(PWM_STOP);
+      break;
+    case 11: // ileri stop saga
+      rgbController(false, false, true, false, false, false, false, false);
+      buzzerStateLoop = 1;
+
+      Pwm(PWM_STOP);
+      break;
+    case 12: // ileri stop saga ready
+      rgbController(false, false, true, false, false, false, false, false);
+      buzzerStateLoop = 1;
+
+      Pwm(PWM_STOP);
+      break;
+    case 13: // ileri stop sola
+      rgbController(false, false, true, false, false, false, false, false);
+      buzzerStateLoop = 1;
+
+      Pwm(PWM_STOP);
+      break;
+    case 14: // ileri stop sola ready
+      rgbController(false, false, true, false, false, false, false, false);
+      buzzerStateLoop = 1;
+
+      Pwm(PWM_STOP);
+      break;
+    case 17:
+
+      break;
+    default:
+      rgbController(false, false, false, false, false, false, false, true);
+      buzzerStateLoop = 1;
+
+      Pwm(PWM_STOP);
+      break;
     }
-    else if ((lineBackSensorValue() & 0b001111) <= 15 && (lineBackSensorValue() & 0b001111) > 0) // ileri sollu git
+
+    if (SAGA_DON == LOW)
     {
-      PwmStraigtLeft(PWM_START);
+      RotateWheels(false, false, false, true, false, false);
+      rgbState = 3;
+      Pwm(PWM_START);
+      buzzerStateLoop = 3;
+      //  Serial.println("SAGA");
+    }
+    else if (GERI_TRY == LOW)
+    {
+      RotateWheels(true, false, false, false, false, false);
+      rgbState = 4;
+      Pwm(PWM_START);
+      buzzerStateLoop = 3;
+
+      // Serial.println("GERI");
+    }
+    else if (ILERI_TRY == LOW)
+    {
+      RotateWheels(false, true, false, false, false, false);
+      rgbState = 5;
+      Pwm(PWM_START);
+      buzzerStateLoop = 3;
+
+      // Serial.println("ILERI");
+    }
+    else if (SOLA_DON == LOW)
+    {
+      RotateWheels(false, false, true, false, false, false);
+      rgbState = 1;
+      Pwm(PWM_START);
+      buzzerStateLoop = 3;
+
+      // Serial.println("SOLA");
+    }
+    else if (SAGA_TRY == LOW)
+
+    {
+      RotateWheels(false, false, false, false, true, false);
+      rgbState = 3;
+      Pwm(PWM_START);
+      buzzerStateLoop = 3;
+
+      // Serial.println("SOLA_DON");
+    }
+    else if (SOLA_TRY == LOW)
+
+    {
+      RotateWheels(false, false, false, false, false, true);
+      rgbState = 2;
+      Pwm(PWM_START);
+      buzzerStateLoop = 3;
+
+      // Serial.println("SAGA_DON");
     }
     else
     {
-      Pwm(PWM_START);
+      // RotateWheels(false, false, false, false, false, false);
+      // rgbController(true, false, false, false,false,false,false,false);
+      // PwmStop(PWM_STOP);
     }
-    break;
-  case 3: // saga git
-    RotateWheels(false, false, false, true, false, false);
-    if ((lineRightSensorValue() & 0b1110000) >= 16 && (lineRightSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() > 0 && lineBackSensorValue() == 0)
-    {
-      agvDirection = 1; // ileri
-    }
-    else if ((lineRightSensorValue() & 0b1110000) >= 16 && (lineRightSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() == 0 && lineBackSensorValue() > 0)
-    {
-      agvDirection = 2; // geri
-    }
-    else if ((lineRightSensorValue() & 0b1111000) >= 16 && (lineRightSensorValue() & 0b1111000) <= 120) // ileri sagli git
-    {
-      PwmLateralRight(PWM_START);
-    }
-    else if ((lineRightSensorValue() & 0b001111) <= 15 && (lineRightSensorValue() & 0b001111) > 0) // ileri sollu git
-    {
-      PwmLateralLeft(PWM_START);
-    }
-    else
-    {
-      Pwm(PWM_START);
-    }
-    break;
-  case 4: // sola git
-    RotateWheels(false, false, true, false, false, false);
-    if ((lineLeftSensorValue() & 0b1110000) >= 16 && (lineLeftSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() == 0 && lineBackSensorValue() > 0)
-    {
-      agvDirection = 2; // geri
-    }
-    else if ((lineLeftSensorValue() & 0b1110000) >= 16 && (lineLeftSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() > 0 && lineBackSensorValue() == 0)
-    {
-      agvDirection = 1; // ileri
-    }
-    else if (lineFrontSensorValue() > 0 && lineBackSensorValue() > 0 && sayacmsduraklama == 0) // hem sag hem sol sensorde deger okunursa
-    {
-      agvDirection = 15; // ara durak detect
-    }
-    else if ((lineLeftSensorValue() & 0b1111000) >= 16 && (lineLeftSensorValue() & 0b1111000) <= 120) // ileri sagli git
-    {
-      PwmLateralLeft(PWM_START);
-    }
-    else if ((lineLeftSensorValue() & 0b001111) <= 15 && (lineLeftSensorValue() & 0b001111) > 0) // ileri sollu git
-    {
-      PwmLateralRight(PWM_START);
-    }
-    else
-    {
-      Pwm(PWM_START);
-    }
-    break;
-  case 5: // ileri bekleme stop
-    Pwm(PWM_STOP);
-    break;
-  case 6: // ileri Bekleme Ready
-    Pwm(PWM_STOP);
-    break;
-  case 7: // geri bekleme stop
-    Pwm(PWM_STOP);
-    break;
-  case 8: // geri Bekleme Ready
-    Pwm(PWM_STOP);
-    break;
-  case 9: // sag bekleme stop
-    Pwm(PWM_STOP);
-    break;
-  case 10: // sag Bekleme Ready
-    Pwm(PWM_STOP);
-    break;
-  case 15: // sol bekleme stop
-    Pwm(PWM_STOP);
-    break;
-  case 16: // sol bekleme ready
-    Pwm(PWM_STOP);
-    break;
-  case 11: // ileri stop saga
-    Pwm(PWM_STOP);
-    break;
-  case 12: // ileri stop saga ready
-    Pwm(PWM_STOP);
-    break;
-  case 13: // ileri stop sola
-    Pwm(PWM_STOP);
-    break;
-  case 14: // ileri stop sola ready
-    Pwm(PWM_STOP);
-    break;
-  case 17:
-
-    break;
-  default:
-    Pwm(PWM_STOP);
-    break;
-  }
-
-  if (SAGA_DON == LOW)
-  {
-    RotateWheels(false, false, false, true, false, false);
-    rgbState = 3;
-    Pwm(PWM_START);
-    buzzerStateLoop = 3;
-    //  Serial.println("SAGA");
-  }
-  else if (GERI_TRY == LOW)
-  {
-    RotateWheels(true, false, false, false, false, false);
-    rgbState = 4;
-    Pwm(PWM_START);
-    buzzerStateLoop = 3;
-
-    // Serial.println("GERI");
-  }
-  else if (ILERI_TRY == LOW)
-  {
-    RotateWheels(false, true, false, false, false, false);
-    rgbState = 5;
-    Pwm(PWM_START);
-    buzzerStateLoop = 3;
-
-    // Serial.println("ILERI");
-  }
-  else if (SOLA_DON == LOW)
-  {
-    RotateWheels(false, false, true, false, false, false);
-    rgbState = 1;
-    Pwm(PWM_START);
-    buzzerStateLoop = 3;
-
-    // Serial.println("SOLA");
-  }
-  else if (SAGA_TRY == LOW)
-
-  {
-    RotateWheels(false, false, false, false, true, false);
-    rgbState = 3;
-    Pwm(PWM_START);
-    buzzerStateLoop = 3;
-
-    // Serial.println("SOLA_DON");
-  }
-  else if (SOLA_TRY == LOW)
-
-  {
-    RotateWheels(false, false, false, false, false, true);
-    rgbState = 2;
-    Pwm(PWM_START);
-    buzzerStateLoop = 3;
-
-    // Serial.println("SAGA_DON");
-  }
-  else
-  {
-    // RotateWheels(false, false, false, false, false, false);
-    // rgbController(true, false, false, false,false,false,false,false);
-    // PwmStop(PWM_STOP);
   }
 }
-
 void PwmStraigtRight(int pwm_value)
 {
   analogWrite(APWM, pwm_value);
@@ -1052,7 +1121,7 @@ void rgbController(bool white, bool red, bool green, bool blue, bool purple, boo
   }
 }
 
-void buzzerFlipFlop(int buzzerStatus)
+void buzzerFlipFlop(int buzzerStatus) // 0 = off 2 = on 3 = flipflop
 {
   newTime3 = millis();
   static int i = 0;

@@ -560,7 +560,7 @@ void loop()
       Pwm(PWM_START);
     }
     break;
-  case 3: // saga gittt
+  case 3: // saga git
     RotateWheels(false, false, false, true, false, false);
     if ((lineRightSensorValue() & 0b1110000) >= 16 && (lineRightSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() > 0 && lineBackSensorValue() == 0)
     {

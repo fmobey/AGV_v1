@@ -18,37 +18,37 @@
 #define DDIR 11
 #define DDIRFW 9
 // LINE FOLLOWING SENSOR
-#define SENSOR_PIN_RIGHT_1 14
-#define SENSOR_PIN_RIGHT_2 53
-#define SENSOR_PIN_RIGHT_3 51
-#define SENSOR_PIN_RIGHT_4 52
-#define SENSOR_PIN_RIGHT_5 50
-#define SENSOR_PIN_RIGHT_6 15
-#define SENSOR_PIN_RIGHT_7 16
+#define SENSOR_PIN_RIGHT_1 A6
+#define SENSOR_PIN_RIGHT_2 A7
+#define SENSOR_PIN_RIGHT_3 A1
+#define SENSOR_PIN_RIGHT_4 A3
+#define SENSOR_PIN_RIGHT_5 A5
+#define SENSOR_PIN_RIGHT_6 A2
+#define SENSOR_PIN_RIGHT_7 A4
 
-#define SENSOR_PIN_LEFT_1 42
-#define SENSOR_PIN_LEFT_2 40
-#define SENSOR_PIN_LEFT_3 38
-#define SENSOR_PIN_LEFT_4 36
-#define SENSOR_PIN_LEFT_5 34
-#define SENSOR_PIN_LEFT_6 47
-#define SENSOR_PIN_LEFT_7 49
+#define SENSOR_PIN_LEFT_1 A12
+#define SENSOR_PIN_LEFT_2 32
+#define SENSOR_PIN_LEFT_3 A8
+#define SENSOR_PIN_LEFT_4 A9
+#define SENSOR_PIN_LEFT_5 A11
+#define SENSOR_PIN_LEFT_6 A10
+#define SENSOR_PIN_LEFT_7 A13
 
-#define SENSOR_PIN_FRONT_1 A4
-#define SENSOR_PIN_FRONT_2 A2
-#define SENSOR_PIN_FRONT_3 A5
-#define SENSOR_PIN_FRONT_4 A3
-#define SENSOR_PIN_FRONT_5 A1
-#define SENSOR_PIN_FRONT_6 A7
-#define SENSOR_PIN_FRONT_7 A6
+#define SENSOR_PIN_FRONT_1 16
+#define SENSOR_PIN_FRONT_2 15
+#define SENSOR_PIN_FRONT_3 50
+#define SENSOR_PIN_FRONT_4 52 
+#define SENSOR_PIN_FRONT_5 51
+#define SENSOR_PIN_FRONT_6 53
+#define SENSOR_PIN_FRONT_7 14
 
-#define SENSOR_PIN_BACK_1 A13
-#define SENSOR_PIN_BACK_2 A10
-#define SENSOR_PIN_BACK_3 A11
-#define SENSOR_PIN_BACK_4 A9
-#define SENSOR_PIN_BACK_5 A8
-#define SENSOR_PIN_BACK_6 32
-#define SENSOR_PIN_BACK_7 A12
+#define SENSOR_PIN_BACK_1 49
+#define SENSOR_PIN_BACK_2 47
+#define SENSOR_PIN_BACK_3 34
+#define SENSOR_PIN_BACK_4 36 
+#define SENSOR_PIN_BACK_5 38
+#define SENSOR_PIN_BACK_6 40
+#define SENSOR_PIN_BACK_7 42
 // LINE FOLLOWING SENSOR ENABLE PIN
 
 // STANBY
@@ -418,25 +418,25 @@ void loop()
 
       if (agvDirection == 16)
       {
-        sayacmsduraklama = 5000;
+        sayacmsduraklama = 2500;
         agvDirection = 4; // sola
       }
 
       if (agvDirection == 14)
       {
-        sayacmsduraklama = 5000;
+        sayacmsduraklama = 2500;
         agvDirection = 4; // sola
       }
 
       if (agvDirection == 12)
       { // saga stop ready
-        sayacmsduraklama = 5000;
+        sayacmsduraklama = 2500;
         agvDirection = 3;
       }
 
       if (agvDirection == 6)
       {
-        sayacmsduraklama = 5000;
+        sayacmsduraklama = 2500;
         agvDirection = 1;
       }
 
@@ -460,7 +460,7 @@ void loop()
     {
       if (agvDirection == 8)
       {
-        sayacmsduraklama = 5000;
+        sayacmsduraklama = 2500;
         agvDirection = 2;
       }
 
@@ -472,47 +472,38 @@ void loop()
     else
     {
 
+
       if (agvDirection == 15)
       {
         agvDirection = 16;
       }
-
-      if (agvDirection == 13)
+      else if (agvDirection == 13)
       {
         agvDirection = 14;
       }
-
-      if (agvDirection == 11)
+      else if (agvDirection == 11)
       { // ileri stop saga
         agvDirection = 12;
       }
-
-      if (agvDirection == 5)
+      else if (agvDirection == 5)
       {
         agvDirection = 6;
       }
-
-      if (agvDirection == 7)
+      else if (agvDirection == 7)
       {
         agvDirection = 8;
       }
+
+      
+      if (agvDirection==15 || agvDirection==16 || agvDirection==13 || agvDirection==14 
+      || agvDirection==11 || agvDirection==12 || agvDirection==5 || agvDirection==6 || agvDirection==7 || agvDirection==8) {
+
+      }else {
+         agvDirection=0;
+      }
+
     }
 
-    if (agvDirection == 1 || agvDirection == 2)
-    {                                                                                                                                 // ileri ve geri giderken
-      if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0 || lineBackSensorValue() == 127 || lineBackSensorValue() == 0) // ön ve arka sensor full veya hiçbir deger görmezse stop
-      {
-        agvDirection = 0;
-      }
-    }
-
-    if (agvDirection == 3 || agvDirection == 4)
-    {
-      if (lineLeftSensorValue() == 127 || lineLeftSensorValue() == 0 || lineRightSensorValue() == 127 || lineRightSensorValue() == 0) // sag ve sol sensor full veya hiçbir deger görmezse stop
-      {
-        agvDirection = 0;
-      }
-    }
 
     if (sayacmsduraklama > 0)
     {
@@ -530,6 +521,12 @@ void loop()
       rgbController(false, true, false, false, false, false, false, false);
       buzzerStateLoop = 3;
       RotateWheels(true, false, false, false, false, false);
+
+      if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0 || lineBackSensorValue() == 127 || lineBackSensorValue() == 0) // ön ve arka sensor full veya hiçbir deger görmezse stop
+      {
+          agvDirection = 0;
+      }
+
       if ((lineFrontSensorValue() & 0b1110000) >= 16 && (lineFrontSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() == 0 && lineLeftSensorValue() > 0)
       {
         agvDirection = 13; // sola
@@ -560,6 +557,12 @@ void loop()
       RotateWheels(false, true, false, false, false, false);
       rgbController(false, false, false, true, false, false, false, false);
       buzzerStateLoop = 3;
+
+           if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0 || lineBackSensorValue() == 127 || lineBackSensorValue() == 0) // ön ve arka sensor full veya hiçbir deger görmezse stop
+      {
+          agvDirection = 0;
+      }
+
       if ((lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() == 0 && lineLeftSensorValue() > 0)
       {
         agvDirection = 11; // sola
@@ -589,6 +592,12 @@ void loop()
       RotateWheels(false, false, false, true, false, false);
       rgbController(false, false, false, true, false, false, false, false);
       buzzerStateLoop = 3;
+
+    if ( lineRightSensorValue() == 127 || lineRightSensorValue() == 0) // sag ve sol sensor full veya hiçbir deger görmezse stop
+      {
+          agvDirection = 0;
+      }
+
       if ((lineRightSensorValue() & 0b1110000) >= 16 && (lineRightSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() > 0 && lineBackSensorValue() == 0)
       {
         agvDirection = 1; // ileri
@@ -615,6 +624,11 @@ void loop()
       rgbController(false, false, false, false, true, false, false, false);
       buzzerStateLoop = 3;
 
+          if (lineLeftSensorValue() == 127 || lineLeftSensorValue() == 0 || lineRightSensorValue() == 127 || lineRightSensorValue() == 0) // sag ve sol sensor full veya hiçbir deger görmezse stop
+      {
+          agvDirection = 0;
+      }
+
       if ((lineLeftSensorValue() & 0b1110000) >= 16 && (lineLeftSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() == 0 && lineBackSensorValue() > 0)
       {
         agvDirection = 2; // geri
@@ -629,11 +643,11 @@ void loop()
       }
       else if ((lineLeftSensorValue() & 0b1111000) >= 16 && (lineLeftSensorValue() & 0b1111000) <= 120) // ileri sagli git
       {
-        PwmLateralLeft(PWM_START);
+        PwmLateralRight(PWM_START);
       }
       else if ((lineLeftSensorValue() & 0b001111) <= 15 && (lineLeftSensorValue() & 0b001111) > 0) // ileri sollu git
       {
-        PwmLateralRight(PWM_START);
+        PwmLateralLeft(PWM_START);
       }
       else
       {

@@ -420,15 +420,16 @@ void loop()
     if (ANALOG_GIT_BUTTON >= 660 && ANALOG_GIT_BUTTON <= 680) // ileri
     {
 
-      if (pre_agvDirection != agvDirection)
+      if (pre_agvDirection != agvDirection || agvDirectionWait == 2)
       {
         sayacmsduraklama = 5000;
         pre_agvDirection = agvDirection;
+        agvDirectionWait = 0;
       }
 
       agvDirectionStart = 0;
 
-      if (agvDirectionStart == 0 && sayacmsduraklama == 0)
+      if (agvDirectionStart == 0 && sayacmsduraklama == 0 && agvDirection == 0)
       {
 
         // baslangic durumu algila
@@ -453,7 +454,10 @@ void loop()
           agvDirection = 0;
         }
 
-        agvDirectionStart = 1;
+        if (agvDirectionWait == 0)
+        {
+          agvDirectionStart = 1;
+        }
       }
 
       if (agvDirection == 1)
@@ -468,7 +472,6 @@ void loop()
         {
           // bekleme algilama
           agvDirectionWait = 1;
-          agvDirection = 5;
         }
       }
       else if (agvDirection == 2)
@@ -483,7 +486,6 @@ void loop()
         {
           // bekleme algilama
           agvDirectionWait = 1;
-          agvDirection = 5;
         }
       }
       else if (agvDirection == 3)
@@ -498,7 +500,6 @@ void loop()
         {
           // bekleme algilama
           agvDirectionWait = 1;
-          agvDirection = 5;
         }
       }
       else if (agvDirection == 4)
@@ -513,7 +514,6 @@ void loop()
         {
           // bekleme algilama
           agvDirectionWait = 1;
-          agvDirection = 5;
         }
       }
     }
@@ -522,7 +522,12 @@ void loop()
     }
     else
     {
+      if (agvDirectionWait == 1)
+      {
+        agvDirectionWait = 2;
+      }
       agvDirectionStart = 0;
+      agvDirection = 0;
     }
 
     if (sayacmsduraklama > 0)

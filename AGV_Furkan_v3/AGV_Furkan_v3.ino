@@ -593,7 +593,7 @@ void loop()
       rgbController(false, false, false, true, false, false, false, false);
       buzzerStateLoop = 3;
 
-    if ( lineRightSensorValue() == 127 || lineRightSensorValue() == 0) // sag ve sol sensor full veya hiçbir deger görmezse stop
+      if ( lineRightSensorValue() == 127 || lineRightSensorValue() == 0) // sag ve sol sensor full veya hiçbir deger görmezse stop
       {
           agvDirection = 0;
       }
@@ -654,85 +654,20 @@ void loop()
         Pwm(PWM_START);
       }
       break;
-    case 5: // ileri bekleme stop
+    case 5: //  Bekleme stop
       rgbController(false, false, true, false, false, false, false, false);
       Pwm(PWM_STOP);
       buzzerStateLoop = 1;
 
       break;
-    case 6: // ileri Bekleme Ready
+    case 6: // Bekleme Ready
       rgbController(false, false, true, false, false, false, false, false);
       buzzerStateLoop = 1;
-
       Pwm(PWM_STOP);
-      break;
-    case 7: // geri bekleme stop
-      rgbController(false, false, true, false, false, false, false, false);
-      buzzerStateLoop = 1;
-
-      Pwm(PWM_STOP);
-      break;
-    case 8: // geri Bekleme Ready
-      rgbController(false, false, true, false, false, false, false, false);
-      buzzerStateLoop = 1;
-
-      Pwm(PWM_STOP);
-      break;
-    case 9: // sag bekleme stop
-      rgbController(false, false, true, false, false, false, false, false);
-      buzzerStateLoop = 1;
-
-      Pwm(PWM_STOP);
-      break;
-    case 10: // sag Bekleme Ready
-      rgbController(false, false, true, false, false, false, false, false);
-      buzzerStateLoop = 1;
-
-      Pwm(PWM_STOP);
-      break;
-    case 15: // sol bekleme stop
-      rgbController(false, false, true, false, false, false, false, false);
-      buzzerStateLoop = 1;
-
-      Pwm(PWM_STOP);
-      break;
-    case 16: // sol bekleme ready
-      rgbController(false, false, true, false, false, false, false, false);
-      buzzerStateLoop = 1;
-
-      Pwm(PWM_STOP);
-      break;
-    case 11: // ileri stop saga
-      rgbController(false, false, true, false, false, false, false, false);
-      buzzerStateLoop = 1;
-
-      Pwm(PWM_STOP);
-      break;
-    case 12: // ileri stop saga ready
-      rgbController(false, false, true, false, false, false, false, false);
-      buzzerStateLoop = 1;
-
-      Pwm(PWM_STOP);
-      break;
-    case 13: // ileri stop sola
-      rgbController(false, false, true, false, false, false, false, false);
-      buzzerStateLoop = 1;
-
-      Pwm(PWM_STOP);
-      break;
-    case 14: // ileri stop sola ready
-      rgbController(false, false, true, false, false, false, false, false);
-      buzzerStateLoop = 1;
-
-      Pwm(PWM_STOP);
-      break;
-    case 17:
-
       break;
     default:
       rgbController(false, false, false, false, false, false, false, true);
       buzzerStateLoop = 1;
-
       Pwm(PWM_STOP);
       break;
     }

@@ -172,6 +172,9 @@ int Warn_Lidar22 = -1;
 int sayacStop = 0;
 int sayacStop2 = 0;
 int agvDirection = 0;
+int agvDirectionStart = 0;
+int pre_agvDirection = -1;
+int agvDirectionWait = 0;
 
 unsigned long sayacmsduraklama = 0;
 void setup()
@@ -414,44 +417,118 @@ void loop()
   if (chargeStatus == 0)
   {
 
-
-
-
     if (ANALOG_GIT_BUTTON >= 660 && ANALOG_GIT_BUTTON <= 680) // ileri
     {
 
+      if (pre_agvDirection != agvDirection)
+      {
+        sayacmsduraklama = 5000;
+        pre_agvDirection = agvDirection;
+      }
+
+      agvDirectionStart = 0;
+
+      if (agvDirectionStart == 0 && sayacmsduraklama == 0)
+      {
+
+        // baslangic durumu algila
+
+        if (lineFrontSensorValue() > 0 && lineBackSensorValue() > 0 && lineLeftSensorValue() == 0 && lineRightSensorValue() == 0)
+        {
+          // ileri git
+          agvDirection = 1;
+        }
+        else if (lineFrontSensorValue() == 127 && lineBackSensorValue() > 0 && lineLeftSensorValue() == 0 && lineRightSensorValue() > 0)
+        {
+          // saga git
+          agvDirection = 3;
+        }
+        else if (lineFrontSensorValue() == 127 && lineBackSensorValue() > 0 && lineLeftSensorValue() > 0 && lineRightSensorValue() == 0)
+        {
+          // sola git
+          agvDirection = 4;
+        }
+        else
+        {
+          agvDirection = 0;
+        }
+
+        agvDirectionStart = 1;
+      }
+
+      if (agvDirection == 1)
+      {
+        // ileri
+        if (lineFrontSensorValue() == 0 || (lineFrontSensorValue() & 0b1110000) >= 16 && (lineFrontSensorValue() & 0b0000111) >= 1)
+        {
+          // stop çizgisi algilama
+          agvDirection = 0;
+        }
+        else if (lineFrontSensorValue() > 0 && lineBackSensorValue() > 0 && lineLeftSensorValue() > 0 && lineRightSensorValue() > 0)
+        {
+          // bekleme algilama
+          agvDirectionWait = 1;
+          agvDirection = 5;
+        }
+      }
+      else if (agvDirection == 2)
+      {
+        // geri
+        if (lineBackSensorValue() == 0 || (lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1)
+        {
+          // stop çizgisi algilama
+          agvDirection = 0;
+        }
+        else if (lineFrontSensorValue() > 0 && lineBackSensorValue() > 0 && lineLeftSensorValue() > 0 && lineRightSensorValue() > 0)
+        {
+          // bekleme algilama
+          agvDirectionWait = 1;
+          agvDirection = 5;
+        }
+      }
+      else if (agvDirection == 3)
+      {
+        // saga
+        if (lineRightSensorValue() == 0 || (lineRightSensorValue() & 0b1110000) >= 16 && (lineRightSensorValue() & 0b0000111) >= 1)
+        {
+          // stop çizgisi algilama
+          agvDirection = 0;
+        }
+        else if (lineRightSensorValue() > 0 && lineLeftSensorValue() > 0 && lineFrontSensorValue() > 0 && lineFrontSensorValue() > 0)
+        {
+          // bekleme algilama
+          agvDirectionWait = 1;
+          agvDirection = 5;
+        }
+      }
+      else if (agvDirection == 4)
+      {
+        // sola
+        if (lineLeftSensorValue() == 0 || (lineLeftSensorValue() & 0b1110000) >= 16 && (lineLeftSensorValue() & 0b0000111) >= 1)
+        {
+          // stop çizgisi algilama
+          agvDirection = 0;
+        }
+        else if (lineRightSensorValue() > 0 && lineLeftSensorValue() > 0 && lineFrontSensorValue() > 0 && lineFrontSensorValue() > 0)
+        {
+          // bekleme algilama
+          agvDirectionWait = 1;
+          agvDirection = 5;
+        }
+      }
     }
     else if (ANALOG_GIT_BUTTON >= 310 && ANALOG_GIT_BUTTON <= 330) // geri
     {
-
     }
     else
     {
-
-      if (agvDirection==5) {  // bekleme durumu stop
-           agvDirection = 6;  // bekleme durumu ready
-      }else if {
-        
-      }
-
+      agvDirectionStart = 0;
     }
-
-
-
-
 
     if (sayacmsduraklama > 0)
     {
       sayacmsduraklama -= 1;
     }
-
-
-
-
-
-
-
-
 
     switch (agvDirection)
     {
@@ -465,23 +542,7 @@ void loop()
       buzzerStateLoop = 3;
       RotateWheels(true, false, false, false, false, false);
 
-      if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0 || lineBackSensorValue() == 127 || lineBackSensorValue() == 0) // ön ve arka sensor full veya hiçbir deger görmezse stop
-      {
-        agvDirection = 0;
-      }
-      else if ((lineFrontSensorValue() & 0b1110000) >= 16 && (lineFrontSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() == 0 && lineLeftSensorValue() > 0)
-      {
-        // sola git
-      }
-      else if ((lineFrontSensorValue() & 0b1110000) >= 16 && (lineFrontSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() > 0 && lineLeftSensorValue() == 0)
-      {
-        // saga git
-      }
-      else if (lineRightSensorValue() > 0 && lineLeftSensorValue() > 0 && sayacmsduraklama == 0) // hem sag hem sol sensorde deger okunursa
-      {
-        // ara durak detect
-      }
-      else if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120) // ileri sollu git
+      if ((lineFrontSensorValue() & 0b1111000) >= 16 && (lineFrontSensorValue() & 0b1111000) <= 120) // ileri sollu git
       {
         PwmStraigtLeft(PWM_START);
       }
@@ -500,23 +561,7 @@ void loop()
       rgbController(false, false, false, true, false, false, false, false);
       buzzerStateLoop = 3;
 
-      if (lineFrontSensorValue() == 127 || lineFrontSensorValue() == 0 || lineBackSensorValue() == 127 || lineBackSensorValue() == 0) // ön ve arka sensor full veya hiçbir deger görmezse stop
-      {
-        agvDirection = 0;
-      }
-      else if ((lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() == 0 && lineLeftSensorValue() > 0)
-      {
-        // sola git
-      }
-      else if ((lineBackSensorValue() & 0b1110000) >= 16 && (lineBackSensorValue() & 0b0000111) >= 1 && lineRightSensorValue() > 0 && lineLeftSensorValue() == 0)
-      {
-        // saga git
-      }
-      else if (lineRightSensorValue() > 0 && lineLeftSensorValue() > 0 && sayacmsduraklama == 0) // hem sag hem sol sensorde deger okunursa
-      {
-        // ara durak
-      }
-      else if ((lineBackSensorValue() & 0b1111000) >= 16 && (lineBackSensorValue() & 0b1111000) <= 120) // geri sagli git
+      if ((lineBackSensorValue() & 0b1111000) >= 16 && (lineBackSensorValue() & 0b1111000) <= 120) // geri sagli git
       {
         PwmStraigtRight(PWM_START);
       }
@@ -534,21 +579,7 @@ void loop()
       rgbController(false, false, false, true, false, false, false, false);
       buzzerStateLoop = 3;
 
-      if (lineRightSensorValue() == 127 || lineRightSensorValue() == 0)
-      {
-        // sag  sensor full veya hiçbir deger görmezse stop
-        agvDirection = 0;
-      }
-      else if ((lineRightSensorValue() & 0b1110000) >= 16 && (lineRightSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() > 0 && lineBackSensorValue() == 0)
-      {
-        // ileri hareket
-         agvDirection = 1;
-      }
-      else if ((lineRightSensorValue() & 0b1110000) >= 16 && (lineRightSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() == 0 && lineBackSensorValue() > 0)
-      {
-        agvDirection = 2; // geri
-      }
-      else if ((lineRightSensorValue() & 0b1111000) >= 16 && (lineRightSensorValue() & 0b1111000) <= 120) // ileri sagli git
+      if ((lineRightSensorValue() & 0b1111000) >= 16 && (lineRightSensorValue() & 0b1111000) <= 120) // ileri sagli git
       {
         PwmLateralRight(PWM_START);
       }
@@ -566,24 +597,7 @@ void loop()
       rgbController(false, false, false, false, true, false, false, false);
       buzzerStateLoop = 3;
 
-      if (lineLeftSensorValue() == 127 || lineLeftSensorValue() == 0 || lineRightSensorValue() == 127 || lineRightSensorValue() == 0) // sag ve sol sensor full veya hiçbir deger görmezse stop
-      {
-        agvDirection = 0;
-      }
-
-      if ((lineLeftSensorValue() & 0b1110000) >= 16 && (lineLeftSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() == 0 && lineBackSensorValue() > 0)
-      {
-        agvDirection = 2; // geri
-      }
-      else if ((lineLeftSensorValue() & 0b1110000) >= 16 && (lineLeftSensorValue() & 0b0000111) >= 1 && lineFrontSensorValue() > 0 && lineBackSensorValue() == 0)
-      {
-        agvDirection = 1; // ileri
-      }
-      else if (lineFrontSensorValue() > 0 && lineBackSensorValue() > 0 && sayacmsduraklama == 0) // hem sag hem sol sensorde deger okunursa
-      {
-        agvDirection = 15; // ara durak detect
-      }
-      else if ((lineLeftSensorValue() & 0b1111000) >= 16 && (lineLeftSensorValue() & 0b1111000) <= 120) // ileri sagli git
+      if ((lineLeftSensorValue() & 0b1111000) >= 16 && (lineLeftSensorValue() & 0b1111000) <= 120) // ileri sagli git
       {
         PwmLateralRight(PWM_START);
       }
